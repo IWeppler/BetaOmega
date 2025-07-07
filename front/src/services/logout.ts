@@ -1,0 +1,11 @@
+// "use server";
+
+import axios from "axios";
+
+export async function logout() {
+  await axios.post(
+    `${process.env.NEXT_PUBLIC_API_URL}/users/logout`,
+    {},
+    { withCredentials: true }
+  );
+}
