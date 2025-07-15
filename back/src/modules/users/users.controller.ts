@@ -1,0 +1,45 @@
+import {
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Body,
+  UseGuards,
+  Req,
+  ParseUUIDPipe,
+} from '@nestjs/common';
+import { UsersService } from './users.service';
+import { AuthGuard } from '@nestjs/passport';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { Request } from 'express';
+/* import { ChangePasswordDto } from './dto/change-password.dto'; */
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':id')
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.usersService.findById(id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('update')
+  updateProfile(@Req() req: Request, @Body() dto: UpdateUserDto) {
+    const user = req.user as any;
+    return this.usersService.updateUser(user.id, dto);
+  }
+
+/*   @UseGuards(AuthGuard('jwt'))
+  @Patch('change-password')
+  async changePassword(@Req() req: Request, @Body() dto: ChangePasswordDto) {
+  const user = req.user as any;
+  return this.usersService.changePassword(user.id, dto.currentPassword, dto.newPassword);
+} */
+}
