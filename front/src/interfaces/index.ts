@@ -4,11 +4,10 @@ enum eRole {
 }
 
 export interface IUser {
-  id: number;
-  name?: string;
+  userId: string;
   email?: string;
-  phone?: string;
-  role?: eRole;
+  name?: string;
+  roles?: eRole[];
 }
 
 export interface IGetUser {

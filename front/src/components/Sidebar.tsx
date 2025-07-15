@@ -39,11 +39,10 @@ interface SideBarProps {
 
 const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
   ({ isCollapsed, toggleCollapse, selectedModule, onModuleSelect }, ref) => {
-    const { user, loading } = useAuthStore();
+    const { user, loading, logOut } = useAuthStore();
     const [search, setSearch] = useState("");
     const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
     const [isWisdomDropdownOpen, setWisdomDropdownOpen] = useState(true);
-
     const searchInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -280,7 +279,9 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
               <button className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-50">
                 <HelpCircle className="w-4 h-4" /> Soporte
               </button>
-              <button className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-50">
+              <button 
+              onClick={() => logOut()}
+              className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-50">
                 <LogOut className="w-4 h-4" /> Cerrar sesión
               </button>
             </div>

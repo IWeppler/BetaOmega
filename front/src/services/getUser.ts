@@ -1,11 +1,10 @@
 import axios from "axios";
 import { IUser } from "@/interfaces";
 
-
 export async function getUser(): Promise<IUser | null> {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/me`,
       { withCredentials: true }
     );
     return response.data;
@@ -14,4 +13,3 @@ export async function getUser(): Promise<IUser | null> {
     return null;
   }
 }
-

@@ -55,7 +55,7 @@ export const RegisterFormUI = () => {
     const response = await registerAction(values);
 
     if (response.success) {
-      toast.success("Has ingresado correctamente");
+      toast.success("Te has registrado correctamente");
       router.push(routes.login);
     } else {
       toast.error(response.error || "Error al registrarse");
