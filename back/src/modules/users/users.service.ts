@@ -24,7 +24,7 @@ export class UsersService {
     await this.userRepository.update(id, dto);
     const user = await this.findById(id);
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('Usuario no encontrado');
     }
     return user;
   }
@@ -32,7 +32,7 @@ export class UsersService {
   async updateUserRole(id: string, role: UserRole): Promise<User> {
     const user = await this.findById(id);
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('Usuario no encontrado');
     }
   
     user.role = role;
@@ -44,17 +44,17 @@ export class UsersService {
     const user = await this.userRepository.findOne({ where: { id: userId }, select: ['password'] });
   
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('Usuario no encontrado');
     }
   
     const passwordMatch = await bcrypt.compare(currentPassword, user.password);
     if (!passwordMatch) {
-      throw new Error('Current password is incorrect');
+      throw new Error('La contraseña actual es incorrecta');
     }
   
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await this.userRepository.update(userId, { password: hashedPassword });
   
-    return { message: 'Password changed successfully' };
+    return { message: 'Contraseña cambiada correctamente' };
   } */
 }
