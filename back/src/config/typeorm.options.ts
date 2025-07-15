@@ -11,8 +11,8 @@ export const typeOrmConfig = (): PostgresConnectionOptions => ({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [join(__dirname, '/../**/*.entity.{js,ts}')],
-  migrations: [join(__dirname, '../../dist/migrations/*{.ts,.js}')],
+  entities: [__dirname + '/../**/*.entity.{js,ts}'],
+  migrations: [__dirname + '/../../dist/migrations/*{.ts,.js}'],
   synchronize: true,
   dropSchema: false,
   ssl: {

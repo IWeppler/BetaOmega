@@ -34,7 +34,7 @@ export class User {
   @Column({ type: 'varchar', unique: true, nullable: true })
   phone_number: string;
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ type: 'varchar' })
   country: string;
 
   @Column({ type: 'varchar' })

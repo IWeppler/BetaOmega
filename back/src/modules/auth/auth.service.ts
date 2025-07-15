@@ -2,77 +2,66 @@ import {
   Injectable,
   ConflictException,
   UnauthorizedException,
-  InternalServerErrorException,
-  Logger,
-  BadRequestException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Repository, In } from 'typeorm';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { LoginDto } from './dto/login.dto';
 import { User } from '../users/entities/user.entity';
-// import { NotificationsService } from '../notifications/notifications.service'; //Steven
-import { instanceToPlain } from 'class-transformer';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserRole } from '../users/entities/user.entity';
-import AppDataSource from 'src/data.source';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
   ) {}
 
-  private getUserRepository(): Repository<User> {
-    return AppDataSource.getRepository(User);
-  }
-
   // 📝 Registro general
   async registerUser(dto: CreateUserDto): Promise<User> {
-    const repo = this.getUserRepository();
-    const existingUser = await repo.findOneBy({ email: dto.email });
-    if (existingUser) throw new ConflictException('Email already registered');
+    const existingUser = await this.userRepository.findOneBy({ email: dto.email });
+    if (existingUser) throw new ConflictException('Email ya registrado');
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const newUser = repo.create({ ...dto, password: hashedPassword });
-    return repo.save(newUser);
+    const newUser = this.userRepository.create({ ...dto, password: hashedPassword });
+    return this.userRepository.save(newUser);
   }
 
   // 🔐 Login con email
   async login(dto: LoginDto): Promise<string> {
     const { email, password } = dto;
-    const user = await this.getUserRepository().findOneBy({ email });
+    const user = await this.userRepository.findOneBy({ email });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Credenciales inválidas');
     }
 
     const payload = this.createJwtPayload(user);
     return this.jwtService.sign(payload);
   }
 
-  // 🔐 Login con Google (si existe, entra; si no, se crea)
+  // 🔐 Login con Google
   async validateOrCreateGoogleUser(googleUser: {
     email: string;
     firstName: string;
     lastName: string;
     picture?: string;
   }): Promise<string> {
-    const repo = this.getUserRepository();
-
-    let user = await repo.findOneBy({ email: googleUser.email });
+    let user = await this.userRepository.findOneBy({ email: googleUser.email });
     if (!user) {
       const randomPassword = await bcrypt.hash(Math.random().toString(36), 10);
-      user = repo.create({
+      user = this.userRepository.create({
         email: googleUser.email,
         first_name: googleUser.firstName,
         last_name: googleUser.lastName,
         password: randomPassword,
-        role: UserRole.STUDENT, // o ADMIN si lo determinás por lógica o dominio
+        role: UserRole.STUDENT,
       });
-      await repo.save(user);
+      await this.userRepository.save(user);
     }
 
     const payload = this.createJwtPayload(user);
@@ -80,7 +69,6 @@ export class AuthService {
   }
 
   private createJwtPayload(user: User) {
-
     return {
       sub: user.id,
       email: user.email,

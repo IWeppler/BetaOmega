@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { User, UserRole } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt'; // o bcryptjs
 
@@ -28,6 +28,17 @@ export class UsersService {
     }
     return user;
   }
+
+  async updateUserRole(id: string, role: UserRole): Promise<User> {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+  
+    user.role = role;
+    return this.userRepository.save(user);
+  }
+  
 
 /*   async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<{ message: string }> {
     const user = await this.userRepository.findOne({ where: { id: userId }, select: ['password'] });

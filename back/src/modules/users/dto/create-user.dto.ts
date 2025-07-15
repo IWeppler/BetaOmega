@@ -33,11 +33,7 @@ export class CreateUserDto {
   @MinLength(8)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message:
-      'Password is too weak. It must contain at least one uppercase letter, one lowercase letter, and one number or special character.',
+      'Contraseña demasiado debil. Debe contener al menos una letra mayúscula, una letra minúscula y un número o carácter especial.',
   })
   password: string;
-
-  @IsOptional()
-  @IsString()
-  role: UserRole;
 }
