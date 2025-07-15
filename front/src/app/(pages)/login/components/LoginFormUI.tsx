@@ -1,17 +1,17 @@
 "use client";
 
-// import { useRouter } from "next/navigation";
-// import { routes } from "@/app/routes";
+import { useRouter } from "next/navigation";
+import { routes } from "@/app/routes";
 import { ILogin } from "@/interfaces";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { PasswordInput } from "../../../../components/ui/PasswordInput";
 import * as yup from "yup";
-import { useAuth } from "@/app/context/authContext";
+import { useAuthStore } from "@/app/Store/authStore";
 import toast from "react-hot-toast";
 
 export const LoginFormUI = () => {
-  // const router = useRouter();
-  const { login } = useAuth();
+  const router = useRouter();
+  const { login } = useAuthStore();
 
   const validationSchema = yup.object({
     email: yup
@@ -28,12 +28,13 @@ export const LoginFormUI = () => {
     try {
       await login(values);
       toast.success("Has ingresado correctamente");
+      router.push(routes.dashboard);
     } catch (error) {
       const errorMessage =
-      error instanceof Error ? error.message : "Error al iniciar sesión";
-    toast.error(errorMessage);
-  }
-};
+        error instanceof Error ? error.message : "Error al iniciar sesión";
+      toast.error(errorMessage);
+    }
+  };
 
   return (
     <Formik
@@ -64,7 +65,11 @@ export const LoginFormUI = () => {
           </label>
 
           {/* PASSWORD */}
-          <PasswordInput name="password" label="Clave" placeholder="Escribí tu clave" />
+          <PasswordInput
+            name="password"
+            label="Clave"
+            placeholder="Escribí tu clave"
+          />
 
           <button
             type="submit"

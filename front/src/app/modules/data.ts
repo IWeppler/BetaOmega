@@ -1,5 +1,3 @@
-// RUTA: modules/data.ts
-
 export const modules = [
   {
     id: 1,
@@ -14,7 +12,7 @@ export const modules = [
     locked: false,
     publishedYear: "2024",
     rating: 4.8,
-    coverColor: "from-blue-400 to-blue-600",
+    coverUrl: "/uno.jpg",
     content: `...`,
   },
   {
@@ -28,8 +26,7 @@ export const modules = [
     locked: false,
     publishedYear: "2024",
     rating: 4.9,
-    coverColor: "from-green-400 to-green-600",
+    coverUrl: "/dos.jpg",
     content: `...`,
   },
-  // el resto igual que ya tenías
 ];

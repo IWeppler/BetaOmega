@@ -14,15 +14,17 @@ export interface IUser {
 export interface IGetUser {
   name: string;
   email: string;
-  phone: string;
 }
 
 export interface IRegister {
-  name: string;
   email: string;
-  phone: string;
   password: string;
+  phone: string;
+  country: string;
+  first_name: string;
+  last_name: string;
 }
+
 
 export interface ILogin {
   email: string;

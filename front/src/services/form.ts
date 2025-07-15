@@ -1,11 +1,10 @@
-import {ILogin, IRegister} from "@/interfaces";
+import { ILogin, IRegister } from "@/interfaces";
 import axios, { AxiosError } from "axios";
-
 
 export const loginAction = async (values: ILogin) => {
   try {
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/login`,
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
       values,
       { withCredentials: true }
     );
@@ -23,7 +22,7 @@ export const loginAction = async (values: ILogin) => {
 export const registerAction = async (values: IRegister) => {
   try {
     await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/register`,
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
       values,
       { withCredentials: true }
     );

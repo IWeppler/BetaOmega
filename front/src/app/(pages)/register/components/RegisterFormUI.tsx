@@ -3,17 +3,34 @@
 import { useRouter } from "next/navigation";
 import { routes } from "@/app/routes";
 import { IRegister } from "@/interfaces";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FieldProps } from "formik";
 import * as yup from "yup";
 import { registerAction } from "@/services/form";
 import toast from "react-hot-toast";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import Select from "react-select";
+// @ts-expect-error - No se ha creado el tipo para react-select-country-list
+import countryList from "react-select-country-list";
+import { useMemo } from "react";
+import { useEffect, useState } from "react";
 
 export const RegisterFormUI = () => {
   const router = useRouter();
+  const countries = useMemo(() => countryList().getData(), []);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) return null;
 
   const validationSchema = yup.object({
-    name: yup
+    first_name: yup
+      .string()
+      .max(20, "Debe tener 20 caracteres o menos")
+      .required("Campo requerido"),
+    last_name: yup
       .string()
       .max(20, "Debe tener 20 caracteres o menos")
       .required("Campo requerido"),
@@ -26,6 +43,7 @@ export const RegisterFormUI = () => {
       .matches(/^[0-9]+$/, "Solo se permiten números")
       .min(10, "Debe tener al menos 10 dígitos")
       .required("Campo requerido"),
+    country: yup.string().required("Campo requerido"),
     password: yup
       .string()
       .min(5, "Debe tener al menos 5 caracteres")
@@ -33,23 +51,24 @@ export const RegisterFormUI = () => {
   });
 
   const handleSubmit = async (values: IRegister) => {
-    try {
-      await registerAction(values);
+    console.log("Intentando enviar datos:", values);
+    const response = await registerAction(values);
+
+    if (response.success) {
       toast.success("Has ingresado correctamente");
       router.push(routes.login);
-    } catch (error) {
-      console.error(error);
-      const errorMessage =
-        error instanceof Error ? error.message : "Error al iniciar sesión";
-      toast.error(errorMessage);
+    } else {
+      toast.error(response.error || "Error al registrarse");
     }
   };
 
   return (
     <Formik
       initialValues={{
-        name: "",
+        first_name: "",
+        last_name: "",
         email: "",
+        country: "",
         phone: "",
         password: "",
       }}
@@ -75,19 +94,61 @@ export const RegisterFormUI = () => {
             </ErrorMessage>
           </label>
 
-          {/* NOMBRE */}
-          <label htmlFor="name">
-            <p className="font-medium text-slate-700 pb-1 mt-4">
-              Nombre y Apellido
-            </p>
+          {/* FIRST NAME */}
+          <label htmlFor="first_name">
+            <p className="font-medium text-slate-700 pb-1 mt-4">Nombre</p>
             <Field
-              id="name"
-              name="name"
+              id="first_name"
+              name="first_name"
               type="text"
               placeholder="Tu nombre"
               className="w-full py-3 mb-1 border border-zinc-500 rounded-lg px-3 transition hover:outline-1 hover:outline-gray-600 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
             />
-            <ErrorMessage name="name">
+            <ErrorMessage name="first_name">
+              {(err) => <div className="text-sm text-red-500 mt-1">{err}</div>}
+            </ErrorMessage>
+          </label>
+
+          {/* LAST NAME */}
+          <label htmlFor="last_name">
+            <p className="font-medium text-slate-700 pb-1 mt-4">Apellido</p>
+            <Field
+              id="last_name"
+              name="last_name"
+              type="text"
+              placeholder="Tu apellido"
+              className="w-full py-3 mb-1 border border-zinc-500 rounded-lg px-3 transition hover:outline-1 hover:outline-gray-600 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+            />
+            <ErrorMessage name="last_name">
+              {(err) => <div className="text-sm text-red-500 mt-1">{err}</div>}
+            </ErrorMessage>
+          </label>
+
+          {/* COUNTRY */}
+          <label htmlFor="country">
+            <p className="font-medium text-slate-700 pb-1 mt-4">País</p>
+            <Field name="country">
+              {({ form }: FieldProps<IRegister>) =>
+                hasMounted ? (
+                  <Select
+                    id="country"
+                    name="country"
+                    options={countries}
+                    onChange={(val) =>
+                      form.setFieldValue(
+                        "country",
+                        val ? (val as { label: string }).label : ""
+                      )
+                    }
+                    onBlur={() => form.setFieldTouched("country", true)}
+                    placeholder="Seleccioná tu país"
+                    className="react-select-container"
+                    classNamePrefix="react-select"
+                  />
+                ) : null
+              }
+            </Field>
+            <ErrorMessage name="country">
               {(err) => <div className="text-sm text-red-500 mt-1">{err}</div>}
             </ErrorMessage>
           </label>
@@ -115,6 +176,9 @@ export const RegisterFormUI = () => {
             label="Clave"
             placeholder="Escribí tu clave"
           />
+          <ErrorMessage name="password">
+            {(err) => <div className="text-sm text-red-500 mt-1">{err}</div>}
+          </ErrorMessage>
 
           <button
             type="submit"

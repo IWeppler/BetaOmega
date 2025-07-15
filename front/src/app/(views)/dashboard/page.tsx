@@ -1,23 +1,25 @@
 "use client";
 
-import { useState } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { SideBar, type modules } from "../../../components/Sidebar";
+import { SideBar } from "@/components/Sidebar";
 import { Content } from "./components/Content";
+import { useSidebar } from "@/hooks/useSidebar";
 
 export default function Dashboard() {
-  const [selectedModule, setSelectedModule] = useState<
-    (typeof modules)[0] | null
-  >(null);
-
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const toggleCollapse = () => setIsCollapsed((prev) => !prev);
+  const {
+    isSidebarCollapsed,
+    toggleCollapse,
+    selectedModule,
+    setSelectedModule,
+    sidebarRef,
+  } = useSidebar();
 
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full">
         <SideBar
-          isCollapsed={isCollapsed}
+          ref={sidebarRef}
+          isCollapsed={isSidebarCollapsed}
           toggleCollapse={toggleCollapse}
           selectedModule={selectedModule}
           onModuleSelect={setSelectedModule}

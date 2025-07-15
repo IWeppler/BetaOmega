@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { AuthProvider } from "@/app/context/authContext";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
@@ -16,12 +15,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <AuthProvider>
-        <body className="antialiased font-brutal-mono">
-          {children}
-          <Toaster position="bottom-right" />
-        </body>
-      </AuthProvider>
+      <body className="antialiased font-brutal-mono">
+        {children}
+        <Toaster position="bottom-right" />
+      </body>
     </html>
   );
 }
