@@ -1,8 +1,6 @@
-// src/stores/authStore.ts
+
 import { create } from "zustand";
-import { getUser } from "@/services/getUser";
-import { loginAction } from "@/services/form";
-import { logout as logoutAction } from "@/services/logout";
+import { login, getMe, logout } from "@/services/auth.service";
 import { ILogin, IUser } from "@/interfaces";
 
 interface AuthState {
@@ -17,10 +15,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   loading: true,
 
-  // Fetch user al inicio
   fetchUser: async () => {
     try {
-      const user = await getUser();
+      const user = await getMe();
       set({ user, loading: false });
     } catch (error) {
       console.error("Error al obtener usuario:", error);
@@ -31,12 +28,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   // Login
   login: async (values) => {
     try {
-      const response = await loginAction(values);
+      const response = await login(values);
       if (response.success) {
-        const user = await getUser();
+        const user = await getMe();
         set({ user });
       } else {
-        throw new Error(response.error || "Error al iniciar sesión");
+        throw new Error("Error al iniciar sesión");
       }
     } catch (error) {
       console.error("Error desconocido al iniciar sesión:", error);
@@ -47,7 +44,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   // Logout
   logOut: async () => {
     try {
-      await logoutAction();
+      await logout();
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     } finally {

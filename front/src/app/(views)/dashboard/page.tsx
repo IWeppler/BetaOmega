@@ -24,7 +24,7 @@ export default function Dashboard() {
           selectedModule={selectedModule}
           onModuleSelect={setSelectedModule}
         />
-        <Content selectedModule={selectedModule} />
+        <Content slug={selectedModule?.slug || null} />
       </div>
     </SidebarProvider>
   );

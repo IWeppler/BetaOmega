@@ -1,49 +1,61 @@
 "use client";
 
+import { forwardRef, useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { clsx } from "clsx";
+import {
+  BookOpen,
+  CheckCircle,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  HelpCircle,
+  LogOut,
+  PlayCircle,
+  Search,
+} from "lucide-react";
+import { useAuthStore } from "@/app/Store/authStore";
+import { useBookStore } from "@/app/Store/bookStore";
+import { useProgressStore } from "@/app/Store/progressStore";
+import { IBook } from "@/interfaces";
 import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarHeader,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import {
-  Clock,
-  CheckCircle,
-  PlayCircle,
-  Lock,
-  Search,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  LogOut,
-  HelpCircle,
-  BookOpen, // Reemplaza a Layers para "Sabiduría"
-} from "lucide-react";
-import { useAuthStore } from "@/app/Store/authStore";
-import { forwardRef, useEffect, useRef, useState } from "react";
-import { modules } from "../app/modules/data";
-import Image from "next/image";
-import { clsx } from "clsx";
 
 interface SideBarProps {
   isCollapsed: boolean;
   toggleCollapse: () => void;
-  selectedModule: (typeof modules)[0] | null;
-  onModuleSelect: (module: (typeof modules)[0] | null) => void;
+  selectedModule: IBook | null;
+  onModuleSelect: (module: IBook) => void;
 }
 
 const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
   ({ isCollapsed, toggleCollapse, selectedModule, onModuleSelect }, ref) => {
-    const { user, loading, logOut } = useAuthStore();
+    // 2. Conectamos con todos los stores necesarios
+    const { user, loading: userLoading, logOut } = useAuthStore();
+    const { books, fetchAllBooks } = useBookStore();
+    const { progressMap, getUserProgress } = useProgressStore();
+
     const [search, setSearch] = useState("");
     const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
     const [isWisdomDropdownOpen, setWisdomDropdownOpen] = useState(true);
     const searchInputRef = useRef<HTMLInputElement>(null);
+
+    // 3. Cargamos los libros y el progreso del usuario
+    useEffect(() => {
+      fetchAllBooks();
+      if (user?.userId) {
+        getUserProgress(user.userId);
+      }
+    }, [fetchAllBooks, getUserProgress, user?.userId]);
 
     useEffect(() => {
       if (!isCollapsed) {
@@ -54,14 +66,33 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
       }
     }, [isCollapsed]);
 
-    if (loading) return <div className="p-4">Cargando...</div>;
+    const filteredBooks = books.filter((book) =>
+      book.title.toLowerCase().includes(search.toLowerCase())
+    );
+
+    if (userLoading) return <div className="p-4">Cargando...</div>;
     if (!user) return <div className="p-4 text-red-500">Error de usuario.</div>;
+
+    // 4. Lógica para obtener el estado y el progreso de cada libro
+    const getBookStatus = (bookId: string) => {
+      const progress = progressMap.get(bookId);
+      if (!progress || progress.progress === 0) {
+        return { status: "in-progress", progress: 0, label: "Empezar" };
+      }
+      if (progress.progress >= 100) {
+        return { status: "completed", progress: 100, label: "Completado" };
+      }
+      return {
+        status: "in-progress",
+        progress: progress.progress,
+        label: "En progreso",
+      };
+    };
 
     const getStatusColor = (status: string) => {
       const colors: { [key: string]: string } = {
         completed: "bg-green-100 text-green-800",
         "in-progress": "bg-blue-100 text-blue-800",
-        locked: "bg-gray-100 text-gray-500",
       };
       return colors[status] || "bg-gray-100 text-gray-800";
     };
@@ -70,28 +101,18 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
       const icons: { [key: string]: React.ReactNode } = {
         completed: <CheckCircle className="h-4 w-4" />,
         "in-progress": <PlayCircle className="h-4 w-4" />,
-        locked: <Lock className="h-4 w-4" />,
       };
-      return icons[status] || <Clock className="h-4 w-4" />;
+      return icons[status] || <PlayCircle className="h-4 w-4" />;
     };
-
-    const handleModuleClick = (module: (typeof modules)[0]) => {
-      if (!module.locked) onModuleSelect(module);
-    };
-
-    const filteredModules = modules.filter((m) =>
-      m.title.toLowerCase().includes(search.toLowerCase())
-    );
 
     return (
       <aside
         ref={ref}
         className={clsx(
           "relative top-0 left-0 z-40 h-screen bg-white border-r border-gray-200 shadow-md flex flex-col transition-all duration-300",
-          isCollapsed ? "w-20" : "w-72" // Ajuste de ancho
+          isCollapsed ? "w-20" : "w-72"
         )}
       >
-        {/* Botón para colapsar/expandir, posicionado absolutamente */}
         <button
           onClick={toggleCollapse}
           className="absolute top-5 -right-3 z-50 p-1 rounded-full bg-white border border-gray-300 shadow-md hover:bg-gray-100 transition"
@@ -119,7 +140,7 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
         </SidebarHeader>
 
         <div className="p-4 border-b border-gray-100">
-        {isCollapsed ? (
+          {isCollapsed ? (
             <button
               onClick={toggleCollapse}
               className="w-full flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 transition"
@@ -146,12 +167,11 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
-                {/* Dropdown de Sabiduría */}
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     onClick={() => setWisdomDropdownOpen(!isWisdomDropdownOpen)}
                     className={clsx(
-                      "flex items-center justify-between p-3 w-full",
+                      "flex items-center justify-between p-3 w-full cursor-pointer",
                       { "justify-center": isCollapsed }
                     )}
                   >
@@ -172,77 +192,66 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                   </SidebarMenuButton>
                 </SidebarMenuItem>
 
-                {/* Módulos de estudio (condicionales) */}
                 {isWisdomDropdownOpen &&
-                  filteredModules.map((module, index) => (
-                    <SidebarMenuItem
-                      key={module.id}
-                      className={clsx(
-                        !isCollapsed && "px-3", // Padding horizontal solo si está expandida
-                        "border-b border-gray-100 last:border-b-0"
-                      )}
-                    >
-                      <SidebarMenuButton
-                        onClick={() => handleModuleClick(module)}
-                        isActive={selectedModule?.id === module.id}
-                        disabled={module.locked}
+                  filteredBooks.map((book, index) => {
+                    // 5. Obtenemos el progreso para cada libro
+                    const { status, progress, label } = getBookStatus(book.id);
+                    return (
+                      <SidebarMenuItem
+                        key={book.id}
                         className={clsx(
-                          "flex flex-col items-start p-3 h-auto w-full",
-                          {
-                            "opacity-50 cursor-not-allowed": module.locked,
-                            "cursor-pointer": !module.locked,
-                            "items-center": isCollapsed,
-                          }
+                          !isCollapsed && "px-3",
+                          "border-b border-gray-100 hover:bg-gray-100 last:border-b-0 cursor-pointer"
                         )}
                       >
-                        <div className="flex items-center gap-2 w-full">
-                          {module.locked ? (
-                            <Lock className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                          ) : (
+                        <SidebarMenuButton
+                          onClick={() => onModuleSelect(book)}
+                          isActive={selectedModule?.id === book.id}
+                          className={clsx(
+                            "flex flex-col items-start p-3 h-auto w-full cursor-pointer",
+                            { "items-center": isCollapsed }
+                          )}
+                        >
+                          <div className="flex items-center gap-2 w-full">
                             <span className="h-4 w-4 text-gray-600 font-semibold text-xs flex-shrink-0 flex items-center justify-center">
                               {index + 1}
                             </span>
-                          )}
-                          {!isCollapsed && (
-                            <span className="text-sm font-medium truncate">
-                              {module.title}
-                            </span>
-                          )}
-                        </div>
-
-                        {!isCollapsed && !module.locked && (
-                          <div className="w-full pl-6 space-y-2 mt-2">
-                            <div className="flex justify-between text-xs">
-                              <Badge
-                                variant="secondary"
-                                className={`${getStatusColor(
-                                  module.status
-                                )} text-xs px-2 py-0.5`}
-                              >
-                                <span className="flex items-center gap-1">
-                                  {getStatusIcon(module.status)}
-                                  {module.status === "completed"
-                                    ? "Completado"
-                                    : "En progreso"}
-                                </span>
-                              </Badge>
-                              <span>{module.progress}%</span>
-                            </div>
-                            <Progress
-                              value={module.progress}
-                              className="h-1.5"
-                            />
+                            {!isCollapsed && (
+                              <span className="text-sm font-medium truncate">
+                                {book.title}
+                              </span>
+                            )}
                           </div>
-                        )}
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+
+                          {/* 6. Mostramos el progreso real */}
+                          {!isCollapsed && (
+                            <div className="w-full pl-6 space-y-2 mt-2">
+                              <div className="flex justify-between text-xs">
+                                <Badge
+                                  variant="secondary"
+                                  className={`${getStatusColor(
+                                    status
+                                  )} text-xs px-2 py-0.5`}
+                                >
+                                  <span className="flex items-center gap-1">
+                                    {getStatusIcon(status)}
+                                    {label}
+                                  </span>
+                                </Badge>
+                                <span>{progress}%</span>
+                              </div>
+                              <Progress value={progress} className="h-1.5" />
+                            </div>
+                          )}
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
 
-        {/* Footer del usuario */}
         <div className="border-t border-gray-200 p-4 relative">
           <div
             className="flex items-center gap-3 cursor-pointer"
@@ -273,15 +282,15 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
             )}
           </div>
 
-          {/* Dropdown de opciones de usuario */}
           {!isCollapsed && isUserDropdownOpen && (
             <div className="absolute bottom-full mb-2 left-4 right-4 bg-white rounded shadow-lg border border-gray-100 text-sm">
               <button className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-50">
                 <HelpCircle className="w-4 h-4" /> Soporte
               </button>
-              <button 
-              onClick={() => logOut()}
-              className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-50">
+              <button
+                onClick={() => logOut()}
+                className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-red-50 cursor-pointer"
+              >
                 <LogOut className="w-4 h-4" /> Cerrar sesión
               </button>
             </div>
@@ -293,5 +302,4 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
 );
 
 SideBar.displayName = "SideBar";
-export { modules };
 export { SideBar };

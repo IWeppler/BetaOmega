@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useOutsideClick } from "./useOutsideClick";
-import { modules } from "@/app/modules/data";
+import { IBook } from "@/interfaces";
 
 export function useSidebar() {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [isMobileOverlay, setIsMobileOverlay] = useState(false);
-  const [selectedModule, setSelectedModule] = useState<(typeof modules)[0] | null>(null);
+  const [selectedModule, setSelectedModule] = useState<IBook | null>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const toggleCollapse = () => setSidebarCollapsed(prev => !prev);
