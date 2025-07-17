@@ -1,18 +1,20 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    CreateDateColumn,
-    OneToMany,
-  } from 'typeorm';
-  import { BookContent } from '../../content/entities/content.entity';
-  import { UserBookProgress } from '../../progress/entities/progress.entity';
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  OneToMany,
+} from 'typeorm';
+import { BookContent } from '../../content/entities/content.entity';
+import { UserBookProgress } from '../../progress/entities/progress.entity';
 
-
-  @Entity('books')
+@Entity('books')
 export class Book {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ type: 'varchar', length: 100, unique: true })
+  slug: string;
 
   @Column({ type: 'varchar', length: 100, unique: true })
   title: string;

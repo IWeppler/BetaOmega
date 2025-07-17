@@ -5,14 +5,18 @@ import {
     UpdateDateColumn,
     ManyToOne,
     JoinColumn,
+    PrimaryGeneratedColumn,
   } from 'typeorm';
   import { User } from '../../users/entities/user.entity';
   import { Book } from '../../books/entities/book.entity';
 
 
   @Entity('user_book_progress')
-export class UserBookProgress {
-    
+  export class UserBookProgress {
+  
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
   @PrimaryColumn()
   user_id: string;
 

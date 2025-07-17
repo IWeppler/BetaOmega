@@ -1,4 +1,4 @@
-import { IsUUID, IsInt } from 'class-validator';
+import { IsUUID, IsInt, Min } from 'class-validator';
 
 export class CreateProgressDto {
   @IsUUID()
@@ -8,8 +8,6 @@ export class CreateProgressDto {
   book_id: string;
 
   @IsInt()
+  @Min(1)
   current_chapter: number;
-
-  @IsInt()
-  progress: number;
 }

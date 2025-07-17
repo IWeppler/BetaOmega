@@ -19,6 +19,7 @@ import { AuthModule } from './modules/auth/auth.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         const typeOrmConfig = config.get('typeorm');
+        console.log('✅ TypeORM config loaded:', typeOrmConfig);
         if (!typeOrmConfig) {
           throw new Error('TypeORM configuration not found');
         }

@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { typeOrmConfig } from './config/typeorm.options';
+import { typeOrmOptions } from './config/typeorm.options';
 
-const AppDataSource = new DataSource(typeOrmConfig());
+const AppDataSource = new DataSource(typeOrmOptions);
 export default AppDataSource;
