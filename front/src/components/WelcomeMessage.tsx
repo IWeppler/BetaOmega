@@ -12,7 +12,7 @@ export const WelcomeMessage = () => {
         <BookOpen className="h-12 w-12 text-blue-600" />
       </div>
       <h2 className="text-2xl font-semibold text-gray-900 mt-4">
-        ¡Bienvenido/a, {user?.name || "usuario"}!
+        ¡Bienvenido/a, {user?.first_name || "usuario"}!
       </h2>
       <p className="text-gray-600 max-w-md mt-2">
         Selecciona un módulo del menú lateral para comenzar tu viaje de

@@ -23,59 +23,6 @@
   background: #126445;
 }
 
-.btn-secondary-betaomega {
-  color: var(--color-brutal-white);
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-weight: 500;
-  font-size: 1rem;
-  text-shadow: none;
-  background: transparent;
-  cursor: pointer;
-  border: 1px solid #ffffff80;
-  transition: 0.5s ease;
-  user-select: none;
-  text-decoration: none;
-  backdrop-filter: blur(5px);
-}
-
-.btn-secondary-betaomega:hover {
-  background: var(--color-brutal-green);
-  border: 1px solid var(--color-brutal-green);
-  text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 20px #ffffff;
-  box-shadow: 0 0 5px var(--color-brutal-green), 0 0 20px var(--color-brutal-green), 0 0 50px var(--color-brutal-green), 0 0 100px var(--color-brutal-green);
-}
-
-.btn-secondary-betaomega:active {
-  transform: scale(0.95);
-  box-shadow: 0 0 16px 4px rgba(232, 166, 100, 0.4);
-}
-
-.btn-primary-betaomega {
-  color: var(--color-brutal-black);
-  padding: 12px 24px;
-  position: relative;
-  font-weight: 500;
-  font-size: 1rem;
-  background-color: var(--color-brutal-yellow);
-  cursor: pointer;
-  border: none;
-  border-radius: 10px;
-  overflow: hidden;
-  transition: all 0.4s ease;
-}
-
-.btn-primary-betaomega:hover {
-  color: var(--color-brutal-white);
-  background-color: var(--color-brutal-orange);
-  box-shadow: 0 0 24px 8px rgba(254, 159, 16, 0.574);
-}
-
-.btn-primary-betaomega:active {
-  transform: scale(0.95);
-  box-shadow: 0 0 16px 4px rgba(232, 166, 100, 0.4);
-}
-
 
 
 body {

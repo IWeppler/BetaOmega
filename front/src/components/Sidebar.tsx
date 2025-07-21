@@ -1,7 +1,9 @@
 "use client";
 
-import { forwardRef, useEffect, useRef, useState } from "react";
+// Imports from React and libraries
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { clsx } from "clsx";
 import {
   BookOpen,
@@ -10,14 +12,20 @@ import {
   ChevronLeft,
   ChevronRight,
   HelpCircle,
+  Library,
+  Lock,
   LogOut,
   PlayCircle,
   Search,
+  Shield,
+  User,
+  Users,
 } from "lucide-react";
+
 import { useAuthStore } from "@/app/Store/authStore";
 import { useBookStore } from "@/app/Store/bookStore";
 import { useProgressStore } from "@/app/Store/progressStore";
-import { IBook } from "@/interfaces";
+import { IBook, UserRole } from "@/interfaces";
 import {
   SidebarContent,
   SidebarGroup,
@@ -29,42 +37,68 @@ import {
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { routes } from "@/app/routes";
+import { useRouter } from "next/navigation";
 
 interface SideBarProps {
   isCollapsed: boolean;
   toggleCollapse: () => void;
   selectedModule: IBook | null;
-  onModuleSelect: (module: IBook) => void;
 }
 
 const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
-  ({ isCollapsed, toggleCollapse, selectedModule, onModuleSelect }, ref) => {
-    // 2. Conectamos con todos los stores necesarios
+  ({ isCollapsed, toggleCollapse, selectedModule }, ref) => {
+    const router = useRouter();
+    // 1. Conexión a todos los stores
     const { user, loading: userLoading, logOut } = useAuthStore();
     const { books, fetchAllBooks } = useBookStore();
     const { progressMap, getUserProgress } = useProgressStore();
 
+    // 2. Estados locales para la UI
     const [search, setSearch] = useState("");
     const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
     const [isWisdomDropdownOpen, setWisdomDropdownOpen] = useState(true);
+    const [isAdminDropdownOpen, setAdminDropdownOpen] = useState(true);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
-    // 3. Cargamos los libros y el progreso del usuario
+    // 3. Verificación de rol de administrador
+    const isAdmin = user?.role === UserRole.ADMIN;
+
+    // 4. Carga de datos inicial
     useEffect(() => {
       fetchAllBooks();
-      if (user?.userId) {
-        getUserProgress(user.userId);
+      if (user?.id) {
+        getUserProgress(user.id);
       }
-    }, [fetchAllBooks, getUserProgress, user?.userId]);
+    }, [fetchAllBooks, getUserProgress, user?.id]);
 
     useEffect(() => {
       if (!isCollapsed) {
-        const timer = setTimeout(() => {
-          searchInputRef.current?.focus();
-        }, 100);
+        const timer = setTimeout(() => searchInputRef.current?.focus(), 100);
         return () => clearTimeout(timer);
       }
     }, [isCollapsed]);
+
+    // 5. Lógica de bloqueo de libros
+    const bookLockStatus = useMemo(() => {
+      const lockMap = new Map<string, boolean>();
+
+      if (isAdmin) {
+        books.forEach((book) => lockMap.set(book.id, false));
+        return lockMap;
+      }
+
+      books.forEach((book, index) => {
+        if (index === 0) {
+          lockMap.set(book.id, false);
+          return;
+        }
+        const prevBook = books[index - 1];
+        const prevBookProgress = progressMap.get(prevBook.id)?.progress || 0;
+        lockMap.set(book.id, prevBookProgress < 100);
+      });
+      return lockMap;
+    }, [books, progressMap, isAdmin]);
 
     const filteredBooks = books.filter((book) =>
       book.title.toLowerCase().includes(search.toLowerCase())
@@ -73,37 +107,28 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
     if (userLoading) return <div className="p-4">Cargando...</div>;
     if (!user) return <div className="p-4 text-red-500">Error de usuario.</div>;
 
-    // 4. Lógica para obtener el estado y el progreso de cada libro
     const getBookStatus = (bookId: string) => {
       const progress = progressMap.get(bookId);
-      if (!progress || progress.progress === 0) {
-        return { status: "in-progress", progress: 0, label: "Empezar" };
-      }
-      if (progress.progress >= 100) {
+      if (!progress || progress.progress === 0)
+        return { status: "new", progress: 0, label: "Empezar" };
+      if (progress.progress >= 100)
         return { status: "completed", progress: 100, label: "Completado" };
-      }
       return {
         status: "in-progress",
         progress: progress.progress,
         label: "En progreso",
       };
     };
-
-    const getStatusColor = (status: string) => {
-      const colors: { [key: string]: string } = {
+    const getStatusColor = (status: string) =>
+      ({
         completed: "bg-green-100 text-green-800",
         "in-progress": "bg-blue-100 text-blue-800",
-      };
-      return colors[status] || "bg-gray-100 text-gray-800";
-    };
-
-    const getStatusIcon = (status: string) => {
-      const icons: { [key: string]: React.ReactNode } = {
+      }[status] || "bg-gray-100 text-gray-800");
+    const getStatusIcon = (status: string) =>
+      ({
         completed: <CheckCircle className="h-4 w-4" />,
         "in-progress": <PlayCircle className="h-4 w-4" />,
-      };
-      return icons[status] || <PlayCircle className="h-4 w-4" />;
-    };
+      }[status] || <PlayCircle className="h-4 w-4" />);
 
     return (
       <aside
@@ -167,11 +192,12 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
+                {/* Menú de Sabiduría */}
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     onClick={() => setWisdomDropdownOpen(!isWisdomDropdownOpen)}
                     className={clsx(
-                      "flex items-center justify-between p-3 w-full cursor-pointer",
+                      "flex items-center justify-between p-3 w-full",
                       { "justify-center": isCollapsed }
                     )}
                   >
@@ -187,44 +213,51 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                           "w-4 h-4 text-gray-500 transition-transform",
                           isWisdomDropdownOpen && "rotate-180"
                         )}
-                      />
+                      />  
                     )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-
                 {isWisdomDropdownOpen &&
-                  filteredBooks.map((book, index) => {
-                    // 5. Obtenemos el progreso para cada libro
+                  filteredBooks.map((book) => {
+                    const isLocked = bookLockStatus.get(book.id) ?? true;
                     const { status, progress, label } = getBookStatus(book.id);
                     return (
                       <SidebarMenuItem
                         key={book.id}
                         className={clsx(
                           !isCollapsed && "px-3",
-                          "border-b border-gray-100 hover:bg-gray-100 last:border-b-0 cursor-pointer"
+                          "border-b border-gray-100 last:border-b-0"
                         )}
                       >
                         <SidebarMenuButton
-                          onClick={() => onModuleSelect(book)}
-                          isActive={selectedModule?.id === book.id}
+                          onClick={() => {
+                            if (!isLocked && selectedModule?.slug !== book.slug) {
+                              router.push(`/dashboard/${book.slug}`);
+                            }
+                          }}
+                          isActive={selectedModule?.slug === book.slug}
+                          disabled={isLocked}
                           className={clsx(
-                            "flex flex-col items-start p-3 h-auto w-full cursor-pointer",
-                            { "items-center": isCollapsed }
+                            "flex flex-col items-start p-3 h-auto w-full rounded-lg hover:bg-gray-100 transition-colors duration-300 cursor-pointer",
+                            { "items-center": isCollapsed },
+                            isLocked && "opacity-50 cursor-not-allowed"
                           )}
                         >
                           <div className="flex items-center gap-2 w-full">
-                            <span className="h-4 w-4 text-gray-600 font-semibold text-xs flex-shrink-0 flex items-center justify-center">
-                              {index + 1}
-                            </span>
+                            {isLocked ? (
+                              <Lock className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                            ) : (
+                              <span className="h-4 w-4 text-gray-600 font-semibold text-xs flex-shrink-0 flex items-center justify-center">
+                                {books.indexOf(book) + 1}
+                              </span>
+                            )}
                             {!isCollapsed && (
                               <span className="text-sm font-medium truncate">
                                 {book.title}
                               </span>
                             )}
                           </div>
-
-                          {/* 6. Mostramos el progreso real */}
-                          {!isCollapsed && (
+                          {!isCollapsed && !isLocked && (
                             <div className="w-full pl-6 space-y-2 mt-2">
                               <div className="flex justify-between text-xs">
                                 <Badge
@@ -247,11 +280,79 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                       </SidebarMenuItem>
                     );
                   })}
+
+                {/* Sección de Administración */}
+                {isAdmin && (
+                  <>
+                    <hr className="my-2 border-gray-200" />
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        onClick={() =>
+                          setAdminDropdownOpen(!isAdminDropdownOpen)
+                        }
+                        className={clsx(
+                          "flex items-center justify-between p-3 w-full",
+                          { "justify-center": isCollapsed }
+                        )}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Shield className="h-5 w-5 text-gray-700 flex-shrink-0" />
+                          {!isCollapsed && (
+                            <span className="font-semibold text-sm">
+                              Gestión
+                            </span>
+                          )}
+                        </div>
+                        {!isCollapsed && (
+                          <ChevronDown
+                            className={clsx(
+                              "w-4 h-4 text-gray-500 transition-transform",
+                              isAdminDropdownOpen && "rotate-180"
+                            )}
+                          />
+                        )}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    {isAdminDropdownOpen && (
+                      <>
+                        <Link href={routes.manager.users} passHref>
+                          <SidebarMenuItem
+                            className={clsx(!isCollapsed && "px-3")}
+                          >
+                            <SidebarMenuButton className="flex items-center p-3 h-auto w-full gap-2 hover:bg-gray-100 transition-colors cursor-pointer">
+                              <Users className="h-4 w-4 flex-shrink-0" />
+                              {!isCollapsed && (
+                                <span className="text-sm">
+                                  Gestionar Usuarios
+                                </span>
+                              )}
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        </Link>
+                        <Link href={routes.manager.library} passHref>
+                          <SidebarMenuItem
+                            className={clsx(!isCollapsed && "px-3")}
+                          >
+                            <SidebarMenuButton className="flex items-center p-3 h-auto w-full gap-2 hover:bg-gray-100 transition-colors cursor-pointer">
+                              <Library className="h-4 w-4 flex-shrink-0" />
+                              {!isCollapsed && (
+                                <span className="text-sm">
+                                  Gestionar Libros
+                                </span>
+                              )}
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        </Link>
+                      </>
+                    )}
+                  </>
+                )}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
 
+        {/* Footer del usuario */}
         <div className="border-t border-gray-200 p-4 relative">
           <div
             className="flex items-center gap-3 cursor-pointer"
@@ -268,9 +369,11 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
               <>
                 <div className="flex-1 truncate">
                   <p className="text-sm font-medium text-gray-800 truncate">
-                    {user.name}
+                    {user.first_name} {user.last_name}
                   </p>
-                  <p className="text-xs text-gray-500">Pro trial</p>
+                  <p className="text-xs text-gray-500 capitalize">
+                    {user.role}
+                  </p>
                 </div>
                 <ChevronDown
                   className={clsx(
@@ -281,9 +384,13 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
               </>
             )}
           </div>
-
           {!isCollapsed && isUserDropdownOpen && (
             <div className="absolute bottom-full mb-2 left-4 right-4 bg-white rounded shadow-lg border border-gray-100 text-sm">
+              <Link href={routes.profile} passHref>
+                <button className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-50">
+                  <User className="w-4 h-4" /> Mi Perfil
+                </button>
+              </Link>
               <button className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-50">
                 <HelpCircle className="w-4 h-4" /> Soporte
               </button>

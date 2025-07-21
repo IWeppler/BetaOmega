@@ -1,6 +1,9 @@
-import { create } from 'zustand';
-import { fetchUserProgress, upsertUserProgress } from '@/services/progress.service';
-import { IUserProgress, IUpsertProgressDto } from '@/interfaces';
+import { create } from "zustand";
+import {
+  fetchUserProgress,
+  upsertUserProgress,
+} from "@/services/progress.service";
+import { IUserProgress, IUpsertProgressDto } from "@/interfaces";
 
 type ProgressMap = Map<string, IUserProgress>;
 
@@ -21,7 +24,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     try {
       const progressList = await fetchUserProgress(userId);
       const newMap: ProgressMap = new Map();
-      progressList.forEach(p => newMap.set(p.book_id, p));
+      progressList.forEach((p) => newMap.set(p.book_id, p));
       set({ progressMap: newMap, loading: false });
     } catch (error) {
       console.error("Error al cargar el progreso del usuario:", error);

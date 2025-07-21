@@ -1,23 +1,41 @@
-enum eRole {
+export enum UserRole {
   ADMIN = "admin",
-  USER = "user",
+  STUDENT = "student",
 }
 
 export interface IUser {
   id: string;
+  profile_image_url: string;
   email: string;
   first_name: string;
   last_name: string;
-  role: eRole;
+  role: UserRole;
   phone_number: string;
   country: string;
 }
 
 export interface IGetUser {
   id: string;
-  name: string;
-  email: string;
+  first_name: string;
+  last_name: string;
+  role: UserRole;
+  phone_number: string;
+  country: string;
 }
+
+export interface IUpdateUser { 
+  profile_image_url?: string;
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
+  country?: string;
+}
+
+export interface IChangePassword {
+  old_password: string;
+  new_password: string;
+}
+
 
 export interface IRegister {
   email: string;

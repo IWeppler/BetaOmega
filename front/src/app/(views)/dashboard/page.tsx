@@ -1,31 +1,17 @@
 "use client";
-
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { SideBar } from "@/components/Sidebar";
-import { Content } from "./components/Content";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useSidebar } from "@/hooks/useSidebar";
 
 export default function Dashboard() {
-  const {
-    isSidebarCollapsed,
-    toggleCollapse,
-    selectedModule,
-    setSelectedModule,
-    sidebarRef,
-  } = useSidebar();
+  const { selectedModule } = useSidebar();
+  const router = useRouter();
 
-  return (
-    <SidebarProvider>
-      <div className="flex h-screen w-full">
-        <SideBar
-          ref={sidebarRef}
-          isCollapsed={isSidebarCollapsed}
-          toggleCollapse={toggleCollapse}
-          selectedModule={selectedModule}
-          onModuleSelect={setSelectedModule}
-        />
-        <Content slug={selectedModule?.slug || null} />
-      </div>
-    </SidebarProvider>
-  );
+  useEffect(() => {
+    if (selectedModule?.slug) {
+      router.push(`/dashboard/${selectedModule.slug}`);
+    }
+  }, [selectedModule]);
+
+  return null;
 }

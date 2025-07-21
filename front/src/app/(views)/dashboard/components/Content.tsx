@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useBookStore } from "@/app/Store/bookStore";
+import { useProgressStore } from "@/app/Store/progressStore";
 import { Loader2 } from "lucide-react";
 import { BookCoverView } from "@/components/BookCoverView";
 import { BookReadingView } from "@/components/BookView";
@@ -12,9 +13,11 @@ interface ContentProps {
 }
 
 export function Content({ slug }: ContentProps) {
-  const { currentBook, loading, fetchBookBySlug, clearCurrentBook } =
-    useBookStore();
+  const { currentBook, loading, fetchBookBySlug, clearCurrentBook } = useBookStore();
+  const { progressMap } = useProgressStore();
+  
   const [viewMode, setViewMode] = useState<"cover" | "content">("cover");
+  const [startAtChapter, setStartAtChapter] = useState(1);
 
   useEffect(() => {
     if (slug) {
@@ -25,6 +28,17 @@ export function Content({ slug }: ContentProps) {
     }
     return () => clearCurrentBook();
   }, [slug, fetchBookBySlug, clearCurrentBook]);
+
+  const handleStartReading = () => {
+    const lastReadChapter = progressMap.get(currentBook!.id)?.chapter_number || 1;
+    setStartAtChapter(lastReadChapter);
+    setViewMode("content");
+  };
+
+  const handleChapterSelect = (chapterNumber: number) => {
+    setStartAtChapter(chapterNumber);
+    setViewMode("content");
+  };
 
   if (loading) {
     return (
@@ -49,12 +63,14 @@ export function Content({ slug }: ContentProps) {
         {viewMode === "cover" ? (
           <BookCoverView
             book={currentBook}
-            onStartReading={() => setViewMode("content")}
-          />
-        ) : (
-          <BookReadingView
+            onStartReading={handleStartReading}
+            onChapterSelect={handleChapterSelect}
+            />
+          ) : (
+            <BookReadingView
             book={currentBook}
             onClose={() => setViewMode("cover")}
+            startAtChapter={startAtChapter}
           />
         )}
       </main>

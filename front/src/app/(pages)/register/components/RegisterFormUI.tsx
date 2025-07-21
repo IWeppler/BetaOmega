@@ -5,7 +5,7 @@ import { routes } from "@/app/routes";
 import { IRegister } from "@/interfaces";
 import { Formik, Form, Field, ErrorMessage, FieldProps } from "formik";
 import * as yup from "yup";
-import { registerAction } from "@/services/form";
+import { register } from "@/services/auth.service";
 import toast from "react-hot-toast";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import Select from "react-select";
@@ -52,13 +52,13 @@ export const RegisterFormUI = () => {
 
   const handleSubmit = async (values: IRegister) => {
     console.log("Intentando enviar datos:", values);
-    const response = await registerAction(values);
+    const response = await register(values);
 
     if (response.success) {
       toast.success("Te has registrado correctamente");
       router.push(routes.login);
     } else {
-      toast.error(response.error || "Error al registrarse");
+      toast.error("Error al registrarse");
     }
   };
 

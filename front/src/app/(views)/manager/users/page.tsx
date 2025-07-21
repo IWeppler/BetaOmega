@@ -1,0 +1,173 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  fetchAllUsers,
+  updateUserRole,
+  deleteUser as deleteUserService,
+} from "@/services/user.service";
+import { IUser, UserRole } from "@/interfaces";
+import { Button } from "@/components/ui/button";
+import { PencilIcon, TrashIcon } from "lucide-react";
+
+const roles = [
+  { value: UserRole.ADMIN, label: "Admin" },
+  { value: UserRole.STUDENT, label: "Estudiante" },
+];
+
+export default function AdminUsersPage() {
+  const [users, setUsers] = useState<IUser[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [editingUser, setEditingUser] = useState<IUser | null>(null);
+  const [deletingUser, setDeletingUser] = useState<IUser | null>(null);
+  const [selectedRole, setSelectedRole] = useState<string>("");
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleError = (error: any) => {
+    setError(error.message || "Ocurrió un error inesperado");
+  };
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    setError(null);
+    const res = await fetchAllUsers();
+    if (res.success && "users" in res) {
+      setUsers(res.users);
+    } else {
+      handleError(res);
+    }
+    setLoading(false);
+  };
+
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    const res = await updateUserRole(userId, newRole as UserRole);
+    if (res.success) {
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === userId
+            ? { ...user, role: newRole as IUser["role"] }
+            : user
+        )
+      );
+      setEditingUser(null);
+    } else {
+      handleError(res);
+    }
+  };
+
+  // 2. confirma y ejecuta la eliminación
+  const handleConfirmDelete = async () => {
+    if (!deletingUser) return;
+
+    const res = await deleteUserService(deletingUser.id);
+    if (res.success) {
+      setUsers(users.filter((u) => u.id !== deletingUser.id));
+      setDeletingUser(null);
+    } else {
+      handleError(res);
+      setDeletingUser(null);
+    }
+  };
+
+  return (
+    <div className="flex-1 flex flex-col">
+      <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-200 px-4">
+        <h1 className="font-semibold text-gray-900">Gestión de Usuarios</h1>
+      </header>
+
+      <main className="flex-1 overflow-auto p-6 bg-gradient-to-b from-[#f9f7f5] to-white">
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {loading ? (
+          <p>Cargando...</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white shadow rounded-lg">
+              <thead>
+                <tr className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+                  <th className="p-3">Nombre</th>
+                  <th className="p-3">Email</th>
+                  <th className="p-3">País</th>
+                  <th className="p-3">Rol</th>
+                  <th className="p-3">Teléfono</th>
+                  <th className="p-3">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id} className="border-t text-sm">
+                    <td className="p-3">{user.first_name} {user.last_name}</td>
+                    <td className="p-3">{user.email}</td>
+                    <td className="p-3">{user.country}</td>
+                    <td className="p-3 capitalize">{user.role}</td>
+                    <td className="p-3">{user.phone_number || "-"}</td>
+                    <td className="p-3 flex gap-2 items-center">
+                      {/* 3. El botón de eliminar ahora abre el modal */}
+                      <Button variant="ghost" size="icon" onClick={() => setDeletingUser(user)}>
+                        <TrashIcon className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => {
+                        setEditingUser(user);
+                        setSelectedRole(user.role);
+                      }}>
+                        <PencilIcon className="w-4 h-4" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Modal para editar rol */}
+        {editingUser && (
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">
+              <h2 className="text-lg font-semibold mb-4">Editar Rol de {editingUser.first_name}</h2>
+              <select
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                className="w-full border rounded p-2 mb-4"
+              >
+                {roles.map((r) => (
+                  <option key={r.value} value={r.value}>{r.label}</option>
+                ))}
+              </select>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setEditingUser(null)}>Cancelar</Button>
+                <Button onClick={() => handleRoleChange(editingUser.id, selectedRole)}>Guardar</Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 4. Nuevo Modal para confirmar eliminación */}
+        {deletingUser && (
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">
+              <h2 className="text-lg font-semibold mb-2">Confirmar Eliminación</h2>
+              <p className="text-sm text-gray-600 mb-4">
+                ¿Estás seguro de que quieres eliminar al usuario{" "}
+                <strong>{deletingUser.first_name} {deletingUser.last_name}</strong>? Esta acción no se puede deshacer.
+              </p>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setDeletingUser(null)}>Cancelar</Button>
+                <Button
+                  variant="destructive" 
+                  onClick={handleConfirmDelete}
+                >
+                  Eliminar
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}

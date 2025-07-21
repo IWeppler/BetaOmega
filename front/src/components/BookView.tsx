@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IBook } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -8,19 +8,23 @@ import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import { useProgressStore } from "@/app/Store/progressStore";
 import { useAuthStore } from "@/app/Store/authStore";
-
 interface BookReadingViewProps {
   book: IBook;
   onClose: () => void;
+  startAtChapter: number;
 }
 
-export const BookReadingView = ({ book, onClose }: BookReadingViewProps) => {
+export const BookReadingView = ({ book, onClose, startAtChapter }: BookReadingViewProps) => {
   const { user } = useAuthStore();
   const { progressMap, updateBookProgress } = useProgressStore();
 
-  const initialChapter = progressMap.get(book.id)?.progress || 1;
-  const [currentChapterNumber, setCurrentChapterNumber] =
-    useState(initialChapter);
+  const initialChapter = progressMap.get(book.id)?.chapter_number || 1;
+
+  const [currentChapterNumber, setCurrentChapterNumber] = useState(initialChapter);
+
+  useEffect(() => {
+    setCurrentChapterNumber(startAtChapter);
+  }, [startAtChapter]);
 
   const handleProgressUpdate = (newChapter: number) => {
     if (!user) return;
@@ -28,6 +32,7 @@ export const BookReadingView = ({ book, onClose }: BookReadingViewProps) => {
       user_id: user.id,
       book_id: book.id,
       current_chapter: newChapter,
+      progress: 0,
     });
   };
 
