@@ -3,7 +3,7 @@ import { UserRole } from '../entities/user.entity';
 
 export class UpdateUserRoleDto {
   @IsEnum(UserRole, {
-    message: 'Role must be either "admin" or "student"',
+    message: 'El rol debe ser "admin" o "estudiante"',
   })
   role: UserRole;
 }

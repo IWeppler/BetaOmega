@@ -1,4 +1,4 @@
-/* import { IsString, MinLength, Matches } from 'class-validator';
+ import { IsString, MinLength, Matches } from 'class-validator';
 
 export class ChangePasswordDto {
   @IsString()
@@ -12,4 +12,3 @@ export class ChangePasswordDto {
   })
   newPassword: string;
 }
- */

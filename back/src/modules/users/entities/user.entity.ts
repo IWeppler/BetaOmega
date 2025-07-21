@@ -19,6 +19,9 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  profile_image_url: string;
+
   @Column({ type: 'varchar', length: 100 })
   first_name: string;
 

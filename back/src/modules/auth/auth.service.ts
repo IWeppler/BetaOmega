@@ -72,8 +72,11 @@ export class AuthService {
     return {
       sub: user.id,
       email: user.email,
-      name: `${user.first_name} ${user.last_name}`,
-      roles: [user.role],
+      first_name: user.first_name,
+      last_name: user.last_name,
+      role: user.role,
+      phone_number: user.phone_number,
+      country: user.country,
     };
   }
 }

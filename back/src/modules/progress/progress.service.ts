@@ -23,6 +23,19 @@ export class ProgressService {
   }
 
   async upsert(dto: CreateProgressDto) {
+    const existing = await this.progressRepository.findOne({
+      where: { user_id: dto.user_id, book_id: dto.book_id },
+    });
+
+    if (!existing) {
+      throw new NotFoundException(`Libro con ID "${dto.book_id}" no encontrado.`);
+    }
+
+   if (existing && dto.current_chapter <= existing.current_chapter) {
+      console.log(`Intento de retroceder progreso para el libro ${dto.book_id}. No se guardará.`);
+      return existing;
+    }
+
     const book = await this.bookRepository.findOne({
       where: { id: dto.book_id },
     });
@@ -30,27 +43,20 @@ export class ProgressService {
       throw new NotFoundException(`Libro con ID "${dto.book_id}" no encontrado.`);
     }
 
-    // 2. Calculamos el porcentaje de progreso.
-    const progressPercentage = Math.round(
-      (dto.current_chapter / book.total_chapters) * 100,
+    const progressPercentage = Math.min(
+      100,
+      Math.round((dto.current_chapter / book.total_chapters) * 100),
     );
 
-    // 3. Buscamos si ya existe un progreso para este usuario y libro.
-    const existing = await this.progressRepository.findOne({
-      where: { user_id: dto.user_id, book_id: dto.book_id },
-    });
-
     if (existing) {
-      // Si existe, lo actualizamos.
       existing.current_chapter = dto.current_chapter;
-      existing.progress = progressPercentage; // Usamos el valor calculado
+      existing.progress = progressPercentage;
       return this.progressRepository.save(existing);
     }
 
-    // Si no existe, creamos una nueva entrada.
     const newProgress = this.progressRepository.create({
       ...dto,
-      progress: progressPercentage, // Usamos el valor calculado
+      progress: progressPercentage,
     });
     return this.progressRepository.save(newProgress);
   }
