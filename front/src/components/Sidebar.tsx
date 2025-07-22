@@ -150,7 +150,7 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
       >
         <button
           onClick={toggleCollapse}
-          className="absolute top-5 -right-3 z-50 p-1 rounded-full bg-white border border-gray-300 shadow-md hover:bg-gray-100 transition"
+          className="absolute top-5 -right-3 z-50 p-1 rounded-full bg-white border border-gray-300 shadow-md hover:bg-gray-100 transition cursor-pointer"
         >
           {isCollapsed ? (
             <ChevronRight className="h-4 w-4 text-gray-700" />

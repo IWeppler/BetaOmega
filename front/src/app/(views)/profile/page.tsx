@@ -23,6 +23,7 @@ import {
 } from "@/services/user.service";
 import { toast } from "react-hot-toast";
 import { useRef, ChangeEvent, useState } from "react";
+import clsx from "clsx";
 
 // Esquema de validación para el cambio de contraseña
 const ChangePasswordSchema = Yup.object().shape({
@@ -39,6 +40,8 @@ export default function ProfilePage() {
   const { user, updateUserState } = useAuthStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+
+  const [activeTab, setActiveTab] = useState("personal");
 
   if (!user) {
     return <div>Cargando perfil...</div>;
@@ -92,14 +95,16 @@ export default function ProfilePage() {
     : "/default-avatar.jpg";
 
   return (
-    <div className="flex-1 flex flex-col h-full">
+    <div className="h-[calc(100vh-52px)] overflow-y-auto">
+
+    <div className="flex-1 flex flex-col min-h-screen "> 
       <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-200 px-4">
         <h1 className="font-semibold text-gray-900">Ajustes de la Cuenta</h1>
       </header>
-      <main className="flex-1 overflow-auto p-6">
+      <main className="flex-1 overflow-auto p-2 sm:p-6 bg-gradient-to-b from-[#f9f7f5] to-white">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
-            <Card>
+            <Card className="bg-white shadow-md">
               <CardContent className="p-6 flex flex-col items-center text-center">
                 <Image
                   src={imageUrl}
@@ -121,7 +126,7 @@ export default function ProfilePage() {
                 />
                 <Button
                   variant="outline"
-                  className="mt-4 w-full"
+                  className="mt-4 w-full focus:bg-neutral-950 focus:text-white"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading}
                 >
@@ -132,14 +137,35 @@ export default function ProfilePage() {
           </div>
 
           <div className="lg:col-span-2">
-            <Tabs defaultValue="personal">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="personal">Información Personal</TabsTrigger>
-                <TabsTrigger value="security">Contraseña</TabsTrigger>
+            <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="personal">
+              {/* CAMBIO 1: Hacemos la lista de pestañas flexible */}
+              <TabsList className="flex flex-col sm:flex-row h-auto sm:h-10 sm:grid sm:w-full sm:grid-cols-2 gap-2">
+                <TabsTrigger 
+                  value="personal" 
+                  className={clsx(
+                    "w-full sm:w-auto",
+                    activeTab === 'personal' 
+                      ? 'bg-neutral-950 text-white shadow-sm' 
+                      : 'bg-white text-neutral-950'
+                  )}
+                >
+                  Información Personal
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="security" 
+                  className={clsx(
+                    "w-full sm:w-auto",
+                    activeTab === 'security' 
+                      ? 'bg-neutral-950 text-white shadow-sm' 
+                      : 'bg-white text-neutral-950'
+                  )}
+                >
+                  Contraseña
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="personal">
-                <Card>
+                <Card className="bg-white shadow-md">
                   <CardHeader>
                     <CardTitle>Datos Personales</CardTitle>
                     <CardDescription>
@@ -280,6 +306,7 @@ export default function ProfilePage() {
           </div>
         </div>
       </main>
+    </div>
     </div>
   );
 }

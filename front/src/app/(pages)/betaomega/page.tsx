@@ -1,4 +1,5 @@
 "use client";
+
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,19 +7,32 @@ import { useState, useEffect } from "react";
 
 const Betaomega = () => {
   const [showLinks, setShowLinks] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowLinks(true), 1000); // después de la animación
-    return () => clearTimeout(timer);
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024); 
+    };
+    
+    handleResize(); 
+    window.addEventListener('resize', handleResize); 
+    
+    const timer = setTimeout(() => setShowLinks(true), 1000);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   return (
-    <div className="grid grid-cols-2 h-screen">
+    <div className="grid grid-cols-1 lg:grid-cols-2 h-screen">
+      
       {/* Columna izquierda */}
       <div className="bg-green flex flex-col items-center justify-center overflow-hidden">
         <motion.div
-          initial={{ x: -300, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
+          initial={isDesktop ? { x: -300, opacity: 0 } : { y: 50, opacity: 0 }}
+          animate={isDesktop ? { x: 0, opacity: 1 } : { y: 0, opacity: 1 }}
           transition={{ duration: 1 }}
         >
           <Image
@@ -49,8 +63,8 @@ const Betaomega = () => {
       {/* Columna derecha */}
       <div className="bg-red flex flex-col items-center justify-center overflow-hidden">
         <motion.div
-          initial={{ x: 300, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
+          initial={isDesktop ? { x: 300, opacity: 0 } : { y: 50, opacity: 0 }}
+          animate={isDesktop ? { x: 0, opacity: 1 } : { y: 0, opacity: 1 }}
           transition={{ duration: 1 }}
         >
           <Image

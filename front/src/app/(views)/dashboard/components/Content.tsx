@@ -42,7 +42,7 @@ export function Content({ slug }: ContentProps) {
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
       </div>
     );
@@ -59,7 +59,7 @@ export function Content({ slug }: ContentProps) {
         <span className="text-gray-500">/</span>
         <span className="text-gray-500">{currentBook.title}</span>
       </header>
-      <main className="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-[#f9f7f5] to-white h-full">
+      <main className="flex-1 overflow-y-auto p-2 sm:p-6 bg-gradient-to-b from-[#f9f7f5] to-white h-full">
         {viewMode === "cover" ? (
           <BookCoverView
             book={currentBook}

@@ -3,26 +3,22 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import yacuchilData from "../yacuchil.json";
+
+
+interface Oracion {
+  source: string;
+  id: string;
+  text: string;
+}
+
 
 export default function SabiduriaOmniversal() {
-  const versiculos = [
-    "“El Señor es mi pastor, nada me faltará.” – Salmo 23:1",
-    "“Todo lo puedo en Cristo que me fortalece.” – Filipenses 4:13",
-    "“No temas, porque yo estoy contigo.” – Isaías 41:10",
-    "“Porque de tal manera amó Dios al mundo…” – Juan 3:16",
-    "“El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente.” – Salmo 91:1",
-    "“En el principio creó Dios los cielos y la tierra.” – Génesis 1:1",
-    "“Amarás a tu prójimo como a ti mismo.” – Mateo 22:39",
-    "“La fe es la certeza de lo que se espera, la convicción de lo que no se ve.” – Hebreos 11:1",
-    "“Bendice, alma mía, al Señor, y no olvides ninguno de sus beneficios.” – Salmo 103:2",
-    "“El gozo del Señor es mi fortaleza.” – Nehemías 8:10",
-  ];
-
-  const [versiculo, setVersiculo] = useState("");
+  const [oracion, setOracion] = useState<Oracion | null>(null);
 
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * versiculos.length);
-    setVersiculo(versiculos[randomIndex]);
+    const randomIndex = Math.floor(Math.random() * yacuchilData.length);
+    setOracion(yacuchilData[randomIndex]);
   }, []);
 
   return (
@@ -37,12 +33,21 @@ export default function SabiduriaOmniversal() {
 
       {/* Versículo animado */}
       <motion.div
-        className="relative z-10 mb-16 max-w-xl text-center text-lg sm:text-xl font-semibold px-6"
+        className="relative z-10 mb-16 max-w-2xl text-center px-6"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
       >
-        {versiculo}
+        {oracion && (
+          <>
+            <p className="text-lg sm:text-xl font-semibold italic">
+              “{oracion.text}”
+            </p>
+            <p className="text-sm text-white/70 mt-4 font-normal tracking-wider">
+              - {oracion.source}, {oracion.id}
+            </p>
+          </>
+        )}
       </motion.div>
 
       {/* Botones */}

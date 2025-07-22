@@ -49,14 +49,14 @@ export const RegisterFormUI = () => {
   });
 
   const handleSubmit = async (
-    values: Omit<IRegister, 'country'>, 
+    values: Omit<IRegister, "country">,
     { setFieldError }: FormikHelpers<IRegister>
   ) => {
     const payload = {
       ...values,
-      country: 'Derivado del teléfono'
+      country: "Derivado del teléfono",
     };
-    
+
     const response = await register(payload);
 
     if (response.success) {
@@ -74,7 +74,6 @@ export const RegisterFormUI = () => {
       }
     }
   };
-
 
   return (
     <Formik
@@ -110,51 +109,62 @@ export const RegisterFormUI = () => {
             </ErrorMessage>
           </label>
 
-          {/* FIRST NAME */}
-          <label htmlFor="first_name">
-            <p className="font-medium text-slate-700 pb-1 mt-4">Nombre</p>
-            <Field
-              id="first_name"
-              name="first_name"
-              type="text"
-              placeholder="Tu nombre"
-              className="w-full py-3 mb-1 border border-zinc-500 rounded-lg px-3 transition hover:outline-1 hover:outline-gray-600 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
-            />
-            <ErrorMessage name="first_name">
-              {(err) => <div className="text-sm text-red-500 mt-1">{err}</div>}
-            </ErrorMessage>
-          </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            {/* FIRST NAME */}
+            <label htmlFor="first_name">
+              <p className="font-medium text-slate-700 pb-1">Nombre</p>
+              <Field
+                id="first_name"
+                name="first_name"
+                type="text"
+                placeholder="Tu nombre"
+                className="w-full py-3 mb-1 border border-zinc-500 rounded-lg px-3 transition hover:outline-1 hover:outline-gray-600 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+              />
+              <ErrorMessage name="first_name">
+                {(err) => (
+                  <div className="text-sm text-red-500 mt-1">{err}</div>
+                )}
+              </ErrorMessage>
+            </label>
 
-          {/* LAST NAME */}
-          <label htmlFor="last_name">
-            <p className="font-medium text-slate-700 pb-1 mt-4">Apellido</p>
-            <Field
-              id="last_name"
-              name="last_name"
-              type="text"
-              placeholder="Tu apellido"
-              className="w-full py-3 mb-1 border border-zinc-500 rounded-lg px-3 transition hover:outline-1 hover:outline-gray-600 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
-            />
-            <ErrorMessage name="last_name">
-              {(err) => <div className="text-sm text-red-500 mt-1">{err}</div>}
-            </ErrorMessage>
-          </label>
+            {/* LAST NAME */}
+            <label htmlFor="last_name">
+              <p className="font-medium text-slate-700 pb-1">Apellido</p>
+              <Field
+                id="last_name"
+                name="last_name"
+                type="text"
+                placeholder="Tu apellido"
+                className="w-full py-3 mb-1 border border-zinc-500 rounded-lg px-3 transition hover:outline-1 hover:outline-gray-600 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+              />
+              <ErrorMessage name="last_name">
+                {(err) => (
+                  <div className="text-sm text-red-500 mt-1">{err}</div>
+                )}
+              </ErrorMessage>
+            </label>
+          </div>
 
+          {/* PHONE NUMBER */}
           <label htmlFor="phone_number">
             <p className="font-medium text-slate-700 pb-1 mt-4">
               Número de celular
             </p>
             <Field name="phone_number">
-              {({ field, form }: FieldProps) => ( // Eliminamos el tipo genérico <IRegister>
+              {({ field, form }: FieldProps) => (
                 <PhoneInput
                   id="phone_number"
                   international
                   defaultCountry="AR"
                   placeholder="Tu número de teléfono"
-                  value={form.values.phone_number} 
-                  onChange={(value) => form.setFieldValue(field.name, value || '')}
+                  value={form.values.phone_number}
+                  onChange={(value) =>
+                    form.setFieldValue(field.name, value || "")
+                  }
                   onBlur={() => form.setFieldTouched(field.name, true)}
-                  onCountryChange={(countryCode) => form.setFieldValue('country', countryCode || '')}
+                  onCountryChange={(countryCode) =>
+                    form.setFieldValue("country", countryCode || "")
+                  }
                   className="phone-input-container"
                 />
               )}
@@ -170,14 +180,11 @@ export const RegisterFormUI = () => {
             label="Clave"
             placeholder="Escribí tu clave"
           />
-          <ErrorMessage name="password">
-            {(err) => <div className="text-sm text-red-500 mt-1">{err}</div>}
-          </ErrorMessage>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 mt-8 font-medium text-white bg-black rounded-lg border-black inline-flex space-x-2 items-center justify-center cursor-pointer hover:bg-purple-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 mt-8 font-medium text-white bg-black rounded-lg border-black inline-flex space-x-2 items-center justify-center cursor-pointer hover:bg-purple-600 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span>Registrarme</span>
           </button>

@@ -74,7 +74,7 @@ export const LoginFormUI = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 mt-8 font-medium text-white bg-black rounded-lg border-black inline-flex space-x-2 items-center justify-center cursor-pointer hover:bg-orange-500 "
+            className="w-full py-3 mt-8 font-medium text-white bg-black rounded-lg border-black inline-flex space-x-2 items-center justify-center cursor-pointer hover:bg-orange-500 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
           >
             <span>Iniciar Sesión</span>
           </button>
