@@ -5,6 +5,7 @@ import {
   MinLength,
   IsOptional,
   Matches,
+  IsPhoneNumber,
 } from 'class-validator';
 import { UserRole } from '../entities/user.entity';
 
@@ -22,7 +23,7 @@ export class CreateUserDto {
   email: string;
 
   @IsOptional()
-  @IsString()
+  @IsPhoneNumber()
   phone_number?: string;
 
   @IsString()
