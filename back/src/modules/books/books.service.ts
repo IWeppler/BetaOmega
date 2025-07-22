@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Book } from './entities/book.entity';
 import { CreateBookDto } from './dto/create-book.dto';
 import { BookContent } from '../content/entities/content.entity';
+import { UpdateBookDto } from './dto/update-book.dto';
 
 @Injectable()
 export class BooksService {
@@ -79,4 +80,22 @@ export class BooksService {
     return this.bookRepo.save(book);
   }
 
+  async update(id: string, dto: UpdateBookDto) {
+    const book = await this.bookRepo.preload({
+      id: id,
+      ...dto,
+    });
+    if (!book) {
+      throw new NotFoundException(`Libro con ID "${id}" no encontrado.`);
+    }
+    return this.bookRepo.save(book);
+  }
+  
+  async remove(id: string) {
+    const book = await this.findOne(id);
+    if (!book) {
+      throw new NotFoundException(`Libro con ID "${id}" no encontrado.`);
+    }
+    await this.bookRepo.remove(book);
+  }
 }

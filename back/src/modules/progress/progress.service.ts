@@ -23,39 +23,40 @@ export class ProgressService {
   }
 
   async upsert(dto: CreateProgressDto) {
-    const existing = await this.progressRepository.findOne({
-      where: { user_id: dto.user_id, book_id: dto.book_id },
-    });
-
-    if (!existing) {
-      throw new NotFoundException(`Libro con ID "${dto.book_id}" no encontrado.`);
-    }
-
-   if (existing && dto.current_chapter <= existing.current_chapter) {
-      console.log(`Intento de retroceder progreso para el libro ${dto.book_id}. No se guardará.`);
-      return existing;
-    }
-
     const book = await this.bookRepository.findOne({
       where: { id: dto.book_id },
     });
+
     if (!book) {
       throw new NotFoundException(`Libro con ID "${dto.book_id}" no encontrado.`);
     }
+
+    const existingProgress = await this.progressRepository.findOne({
+      where: { user_id: dto.user_id, book_id: dto.book_id },
+    });
 
     const progressPercentage = Math.min(
       100,
       Math.round((dto.current_chapter / book.total_chapters) * 100),
     );
 
-    if (existing) {
-      existing.current_chapter = dto.current_chapter;
-      existing.progress = progressPercentage;
-      return this.progressRepository.save(existing);
+    if (existingProgress) {
+      // Opcional: Evitar que el usuario guarde un capítulo anterior al actual.
+      if (dto.current_chapter < existingProgress.current_chapter) {
+        console.log(`Intento de retroceder progreso para el libro ${dto.book_id}. No se guardará.`);
+        return existingProgress; // Devolvemos el progreso sin cambios.
+      }
+      
+      // Actualizamos los datos del progreso existente.
+      existingProgress.current_chapter = dto.current_chapter;
+      existingProgress.progress = progressPercentage;
+      return this.progressRepository.save(existingProgress);
     }
 
     const newProgress = this.progressRepository.create({
-      ...dto,
+      user_id: dto.user_id,
+      book_id: dto.book_id,
+      current_chapter: dto.current_chapter,
       progress: progressPercentage,
     });
     return this.progressRepository.save(newProgress);

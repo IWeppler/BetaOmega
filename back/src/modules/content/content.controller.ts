@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Param, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, UseInterceptors, UploadedFile, Put, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { ContentService } from './content.service';
 import { CreateBookContentDto } from './dto/create-book-content.dto';
+import { UpdateBookContentDto } from './dto/update-book-content.dto';
 import {FileInterceptor} from '@nestjs/platform-express';
 import {diskStorage} from 'multer';
 import {extname} from 'path';
@@ -41,5 +42,16 @@ export class ContentController {
       filename: file.filename,
       url: `/public/book-content/${file.filename}`,
     };
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() dto: UpdateBookContentDto) {
+    return this.contentService.update(id, dto);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id') id: string) {
+    return this.contentService.remove(id);
   }
 }
