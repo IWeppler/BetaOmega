@@ -32,7 +32,6 @@ export const BookReadingView = ({ book, onClose, startAtChapter }: BookReadingVi
       user_id: user.id,
       book_id: book.id,
       current_chapter: newChapter,
-      progress: 0,
     });
   };
 
@@ -53,7 +52,7 @@ export const BookReadingView = ({ book, onClose, startAtChapter }: BookReadingVi
   );
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+    <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <Button
         onClick={onClose}
         variant="outline"

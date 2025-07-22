@@ -53,13 +53,13 @@ export function Content({ slug }: ContentProps) {
   }
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col h-screen">
       <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-200 px-4">
         <h1 className="font-semibold text-gray-900">Dashboard Educativo</h1>
         <span className="text-gray-500">/</span>
         <span className="text-gray-500">{currentBook.title}</span>
       </header>
-      <main className="flex-1 overflow-auto p-6 bg-gradient-to-b from-[#f9f7f5] to-white">
+      <main className="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-[#f9f7f5] to-white h-full">
         {viewMode === "cover" ? (
           <BookCoverView
             book={currentBook}

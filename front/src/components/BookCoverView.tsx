@@ -47,7 +47,7 @@ export const BookCoverView = ({ book, onStartReading, onChapterSelect }: BookCov
               const isChapterRead = chapter.chapter_number <= lastReadChapter;
               return (
                 <li
-                  key={chapter.id}
+                  key={`${chapter.book_id}-${chapter.chapter_number}`}
                   onClick={() => onChapterSelect(chapter.chapter_number)}
                   className="flex items-center gap-3 p-2 rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
                 >
@@ -70,7 +70,7 @@ export const BookCoverView = ({ book, onStartReading, onChapterSelect }: BookCov
       <div className="flex flex-col items-center">
         <div className="w-full max-w-xs aspect-[3/4] rounded-lg overflow-hidden shadow-xl border border-gray-200 mb-6">
           <Image
-            src={`${process.env.NEXT_PUBLIC_API_URL}/${book.cover_url}`}
+            src={book.cover_url}
             alt={`Tapa de ${book.title}`}
             className="object-cover w-full h-full"
             width={400}

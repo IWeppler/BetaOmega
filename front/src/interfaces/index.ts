@@ -1,3 +1,5 @@
+// --- Entidades de la Aplicación (Datos que recibes de la API) ---
+
 export enum UserRole {
   ADMIN = "admin",
   STUDENT = "student",
@@ -14,6 +16,16 @@ export interface IUser {
   country: string;
 }
 
+export interface IBook {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  cover_url: string;
+  total_chapters: number;
+  contents: IBookContent[]; 
+}
+
 export interface IGetUser {
   id: string;
   first_name: string;
@@ -21,6 +33,37 @@ export interface IGetUser {
   role: UserRole;
   phone_number: string;
   country: string;
+}
+
+
+
+// La entidad BookContent tal como la recibes del backend
+
+export interface IBookContent {
+  id: string; 
+  book_id: string;
+  chapter_number: number;
+  title: string;
+  md_content: string;
+}
+
+export interface IUserProgress {
+  id: string;
+  user_id: string;
+  book_id: string;
+  chapter_number: number;
+  progress: number;
+  updated_at: string;
+}
+
+
+
+// --- DTOs (Data Transfer Objects - Datos que envías a la API) ---
+
+export interface IUpsertProgressDto {
+  user_id: string;
+  book_id: string;
+  current_chapter: number;
 }
 
 export interface IUpdateUser { 
@@ -31,11 +74,50 @@ export interface IUpdateUser {
   country?: string;
 }
 
+export interface ICreateBook {
+  title: string;
+  slug: string;
+  description: string;
+  total_chapters: number;
+  cover_url: string;
+}
+
+export interface IUpdateBook {
+  title?: string;
+  slug?: string;
+  description?: string;
+  total_chapters?: number;
+  cover_url?: string;
+}
+
+export interface IBookContent {
+  book_id: string;
+  chapter_number: number;
+  title: string;
+  md_content: string;
+}
+
+export interface ICreateBookContent {
+  book_id: string;
+  chapter_number: number;
+  title: string;
+  md_content: string;
+}
+
+export interface IUpdateBookContent {
+  title?: string;
+  md_content?: string;
+}
+
+
+
+
+
+
 export interface IChangePassword {
   old_password: string;
   new_password: string;
 }
-
 
 export interface IRegister {
   email: string;
@@ -61,24 +143,6 @@ export interface IBook {
   contents: IBookContent[];
 }
 
-export interface IBookContent {
-  id: string;
-  chapter_number: number;
-  title: string;
-  md_content: string;
-}
 
-export interface IUserProgress {
-  id: string;
-  user_id: string;
-  book_id: string;
-  chapter_number: number;
-  progress: number;
-  updated_at: string;
-}
 
-export interface IUpsertProgressDto {
-  user_id: string;
-  book_id: string;
-  current_chapter: number;
-}
+

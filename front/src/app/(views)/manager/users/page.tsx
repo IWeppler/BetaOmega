@@ -10,6 +10,7 @@ import {
 import { IUser, UserRole } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 import { PencilIcon, TrashIcon } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 const roles = [
   { value: UserRole.ADMIN, label: "Admin" },
@@ -19,7 +20,6 @@ const roles = [
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<IUser[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState<IUser | null>(null);
   const [deletingUser, setDeletingUser] = useState<IUser | null>(null);
   const [selectedRole, setSelectedRole] = useState<string>("");
@@ -29,12 +29,12 @@ export default function AdminUsersPage() {
   }, []);
 
   const handleError = (error: any) => {
-    setError(error.message || "Ocurrió un error inesperado");
+    const errorMessage = error.error || error.message || "Ocurrió un error inesperado";
+    toast.error(errorMessage);
   };
 
   const fetchUsers = async () => {
     setLoading(true);
-    setError(null);
     const res = await fetchAllUsers();
     if (res.success && "users" in res) {
       setUsers(res.users);
@@ -81,7 +81,6 @@ export default function AdminUsersPage() {
       </header>
 
       <main className="flex-1 overflow-auto p-6 bg-gradient-to-b from-[#f9f7f5] to-white">
-        {error && <p className="text-red-500 mb-4">{error}</p>}
         {loading ? (
           <p>Cargando...</p>
         ) : (
@@ -106,7 +105,6 @@ export default function AdminUsersPage() {
                     <td className="p-3 capitalize">{user.role}</td>
                     <td className="p-3">{user.phone_number || "-"}</td>
                     <td className="p-3 flex gap-2 items-center">
-                      {/* 3. El botón de eliminar ahora abre el modal */}
                       <Button variant="ghost" size="icon" onClick={() => setDeletingUser(user)}>
                         <TrashIcon className="w-4 h-4" />
                       </Button>
@@ -124,7 +122,6 @@ export default function AdminUsersPage() {
           </div>
         )}
 
-        {/* Modal para editar rol */}
         {editingUser && (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">
@@ -146,7 +143,6 @@ export default function AdminUsersPage() {
           </div>
         )}
 
-        {/* 4. Nuevo Modal para confirmar eliminación */}
         {deletingUser && (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">

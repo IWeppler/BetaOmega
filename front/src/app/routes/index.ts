@@ -9,5 +9,7 @@ export const routes = {
     manager: {
         users: '/manager/users',
         library: '/manager/library',
+        libraryNew: '/manager/library/new',
+        
     }
 }
