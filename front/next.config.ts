@@ -7,13 +7,12 @@ const nextConfig: NextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '3001', // El puerto donde corre tu API de NestJS
-        pathname: '/public/**', // Permite cualquier imagen dentro de la carpeta /public de tu backend
+        port: '3001', 
+        pathname: '/public/**', 
       },
     ],
   },
 
-  // Tu configuración de headers se mantiene intacta
   async headers() {
     return [
       {
@@ -21,7 +20,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Access-Control-Allow-Origin",
-            value: "http://localhost:3000", // Asegúrate que este es el puerto de tu frontend
+            value: "http://localhost:3000", // este es el puerto de frontend
           },
           {
             key: "Access-Control-Allow-Credentials",

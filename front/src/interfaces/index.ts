@@ -2,7 +2,7 @@
 
 export enum UserRole {
   ADMIN = "admin",
-  STUDENT = "student",
+  STUDENT = "estudiante",
 }
 
 export interface IUser {
@@ -18,6 +18,7 @@ export interface IUser {
 
 export interface IBook {
   id: string;
+  order: string;
   title: string;
   slug: string;
   description: string;
@@ -110,19 +111,16 @@ export interface IUpdateBookContent {
 }
 
 
-
-
-
-
 export interface IChangePassword {
-  old_password: string;
-  new_password: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword?: string;
 }
 
 export interface IRegister {
   email: string;
   password: string;
-  phone: string;
+  phone_number: string;
   country: string;
   first_name: string;
   last_name: string;
@@ -142,7 +140,3 @@ export interface IBook {
   total_chapters: number;
   contents: IBookContent[];
 }
-
-
-
-

@@ -49,22 +49,21 @@ interface SideBarProps {
 const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
   ({ isCollapsed, toggleCollapse, selectedModule }, ref) => {
     const router = useRouter();
-    // 1. Conexión a todos los stores
+    
     const { user, loading: userLoading, logOut } = useAuthStore();
     const { books, fetchAllBooks } = useBookStore();
     const { progressMap, getUserProgress } = useProgressStore();
 
-    // 2. Estados locales para la UI
+    
     const [search, setSearch] = useState("");
     const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
     const [isWisdomDropdownOpen, setWisdomDropdownOpen] = useState(true);
     const [isAdminDropdownOpen, setAdminDropdownOpen] = useState(true);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
-    // 3. Verificación de rol de administrador
+    
     const isAdmin = user?.role === UserRole.ADMIN;
 
-    // 4. Carga de datos inicial
     useEffect(() => {
       fetchAllBooks();
       if (user?.id) {
@@ -79,7 +78,6 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
       }
     }, [isCollapsed]);
 
-    // 5. Lógica de bloqueo de libros
     const bookLockStatus = useMemo(() => {
       const lockMap = new Map<string, boolean>();
 
@@ -104,9 +102,21 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
       book.title.toLowerCase().includes(search.toLowerCase())
     );
 
+    const handleUserAreaClick = () => {
+      if (isCollapsed) {
+        toggleCollapse();
+      } else {
+        setUserDropdownOpen(!isUserDropdownOpen);
+      }
+    };
+
     if (userLoading) return <div className="p-4">Cargando...</div>;
     if (!user) return <div className="p-4 text-red-500">Error de usuario.</div>;
 
+    const imageUrl = user?.profile_image_url
+      ? `${process.env.NEXT_PUBLIC_API_URL}${user.profile_image_url}`
+      : "/default-avatar.jpg"; 
+    
     const getBookStatus = (bookId: string) => {
       const progress = progressMap.get(bookId);
       if (!progress || progress.progress === 0)
@@ -192,6 +202,88 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
+                {/* Sección de Administración */}
+                {isAdmin && (
+                  <>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        onClick={() =>
+                          setAdminDropdownOpen(!isAdminDropdownOpen)
+                        }
+                        className={clsx(
+                          "flex items-center justify-between p-3 w-full",
+                          { "justify-center": isCollapsed }
+                        )}
+                      >
+                        <div
+                          className={clsx(
+                            "flex justify-center items-center gap-2",
+                            { "w-full justify-center": isCollapsed }
+                          )}
+                        >
+                          <Shield className="h-5 w-5 text-gray-700 flex-shrink-0" />
+                          {!isCollapsed && (
+                            <span className="font-semibold text-sm">
+                              Gestión
+                            </span>
+                          )}
+                        </div>
+                        {!isCollapsed && (
+                          <ChevronDown
+                            className={clsx(
+                              "w-4 h-4 text-gray-500 transition-transform",
+                              isAdminDropdownOpen && "rotate-180"
+                            )}
+                          />
+                        )}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    {isAdminDropdownOpen && (
+                      <>
+                        <Link href={routes.manager.users} passHref>
+                          <SidebarMenuItem
+                            className={clsx(!isCollapsed && "px-3")}
+                          >
+                            <SidebarMenuButton className="flex items-center p-3 h-auto w-full gap-2 hover:bg-gray-100 transition-colors cursor-pointer">
+                              <div
+                                className={clsx("flex items-center gap-2", {
+                                  "w-full justify-center": isCollapsed,
+                                })}
+                              >
+                                <Users className="h-4 w-4 flex-shrink-0" />
+                                {!isCollapsed && (
+                                  <span className="text-sm">
+                                    Gestionar Usuarios
+                                  </span>
+                                )}
+                              </div>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        </Link>
+                        <Link href={routes.manager.library} passHref>
+                          <SidebarMenuItem
+                            className={clsx(!isCollapsed && "px-3")}
+                          >
+                            <SidebarMenuButton className="flex items-center p-3 h-auto w-full gap-2 hover:bg-gray-100 transition-colors cursor-pointer">
+                              <div
+                                className={clsx("flex items-center gap-2", {
+                                  "w-full justify-center": isCollapsed,
+                                })}
+                              >
+                                <Library className="h-4 w-4 flex-shrink-0" />
+                                {!isCollapsed && (
+                                  <span className="text-sm">
+                                    Gestionar Libros
+                                  </span>
+                                )}
+                              </div>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        </Link>
+                      </>
+                    )}
+                  </>
+                )}
                 {/* Menú de Sabiduría */}
                 <SidebarMenuItem>
                   <SidebarMenuButton
@@ -201,7 +293,11 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                       { "justify-center": isCollapsed }
                     )}
                   >
-                    <div className="flex items-center gap-2">
+                    <div
+                      className={clsx("flex items-center gap-2", {
+                        "w-full justify-center": isCollapsed,
+                      })}
+                    >
                       <BookOpen className="h-5 w-5 text-gray-700 flex-shrink-0" />
                       {!isCollapsed && (
                         <span className="font-semibold text-sm">Sabiduría</span>
@@ -213,7 +309,7 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                           "w-4 h-4 text-gray-500 transition-transform",
                           isWisdomDropdownOpen && "rotate-180"
                         )}
-                      />  
+                      />
                     )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -231,7 +327,10 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                       >
                         <SidebarMenuButton
                           onClick={() => {
-                            if (!isLocked && selectedModule?.slug !== book.slug) {
+                            if (
+                              !isLocked &&
+                              selectedModule?.slug !== book.slug
+                            ) {
                               router.push(`/dashboard/${book.slug}`);
                             }
                           }}
@@ -243,7 +342,11 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                             isLocked && "opacity-50 cursor-not-allowed"
                           )}
                         >
-                          <div className="flex items-center gap-2 w-full">
+                          <div
+                            className={clsx("flex items-center gap-2 w-full", {
+                              "justify-center": isCollapsed,
+                            })}
+                          >
                             {isLocked ? (
                               <Lock className="h-4 w-4 text-gray-400 flex-shrink-0" />
                             ) : (
@@ -280,73 +383,6 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                       </SidebarMenuItem>
                     );
                   })}
-
-                {/* Sección de Administración */}
-                {isAdmin && (
-                  <>
-                    <hr className="my-2 border-gray-200" />
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        onClick={() =>
-                          setAdminDropdownOpen(!isAdminDropdownOpen)
-                        }
-                        className={clsx(
-                          "flex items-center justify-between p-3 w-full",
-                          { "justify-center": isCollapsed }
-                        )}
-                      >
-                        <div className="flex items-center gap-2">
-                          <Shield className="h-5 w-5 text-gray-700 flex-shrink-0" />
-                          {!isCollapsed && (
-                            <span className="font-semibold text-sm">
-                              Gestión
-                            </span>
-                          )}
-                        </div>
-                        {!isCollapsed && (
-                          <ChevronDown
-                            className={clsx(
-                              "w-4 h-4 text-gray-500 transition-transform",
-                              isAdminDropdownOpen && "rotate-180"
-                            )}
-                          />
-                        )}
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    {isAdminDropdownOpen && (
-                      <>
-                        <Link href={routes.manager.users} passHref>
-                          <SidebarMenuItem
-                            className={clsx(!isCollapsed && "px-3")}
-                          >
-                            <SidebarMenuButton className="flex items-center p-3 h-auto w-full gap-2 hover:bg-gray-100 transition-colors cursor-pointer">
-                              <Users className="h-4 w-4 flex-shrink-0" />
-                              {!isCollapsed && (
-                                <span className="text-sm">
-                                  Gestionar Usuarios
-                                </span>
-                              )}
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        </Link>
-                        <Link href={routes.manager.library} passHref>
-                          <SidebarMenuItem
-                            className={clsx(!isCollapsed && "px-3")}
-                          >
-                            <SidebarMenuButton className="flex items-center p-3 h-auto w-full gap-2 hover:bg-gray-100 transition-colors cursor-pointer">
-                              <Library className="h-4 w-4 flex-shrink-0" />
-                              {!isCollapsed && (
-                                <span className="text-sm">
-                                  Gestionar Libros
-                                </span>
-                              )}
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        </Link>
-                      </>
-                    )}
-                  </>
-                )}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -356,11 +392,11 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
         <div className="border-t border-gray-200 p-4 relative">
           <div
             className="flex items-center gap-3 cursor-pointer"
-            onClick={() => setUserDropdownOpen(!isUserDropdownOpen)}
+            onClick={handleUserAreaClick}
           >
             <Image
-              src="/user2.png"
-              alt="Avatar de usuario"
+              src={imageUrl}
+              alt={user.email}
               width={32}
               height={32}
               className="rounded-full flex-shrink-0"

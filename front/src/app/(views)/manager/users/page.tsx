@@ -88,7 +88,7 @@ export default function AdminUsersPage() {
             <table className="min-w-full bg-white shadow rounded-lg">
               <thead>
                 <tr className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
-                  <th className="p-3">Nombre</th>
+                  <th className="p-3">Usuario</th>
                   <th className="p-3">Email</th>
                   <th className="p-3">País</th>
                   <th className="p-3">Rol</th>
@@ -99,7 +99,8 @@ export default function AdminUsersPage() {
               <tbody>
                 {users.map((user) => (
                   <tr key={user.id} className="border-t text-sm">
-                    <td className="p-3">{user.first_name} {user.last_name}</td>
+                    <td className="p-3">
+                      {user.first_name} {user.last_name}</td>
                     <td className="p-3">{user.email}</td>
                     <td className="p-3">{user.country}</td>
                     <td className="p-3 capitalize">{user.role}</td>

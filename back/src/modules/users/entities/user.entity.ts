@@ -19,7 +19,7 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar', nullable: true, default: '/avatars/default-avatar.jpg' })
   profile_image_url: string;
 
   @Column({ type: 'varchar', length: 100 })

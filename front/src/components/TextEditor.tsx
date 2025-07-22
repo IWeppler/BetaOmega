@@ -6,7 +6,8 @@ import Image from '@tiptap/extension-image';
 import {
   Bold, Italic, Strikethrough, Heading1, Heading2, Heading3, Heading4, List, ListOrdered, Quote, Image as ImageIcon, Underline as UnderlineIcon
 } from 'lucide-react';
-import { uploadContentImage } from '@/services/book.service';
+import Heading from '@tiptap/extension-heading';
+import { uploadContentImage } from '@/services/content.service';
 import Underline from '@tiptap/extension-underline';
 import type { Editor } from '@tiptap/react';
 import { useRef } from 'react';
@@ -61,9 +62,10 @@ const Toolbar = ({ editor }: { editor: Editor | null }) => {
       const editor = useEditor({
         extensions: [
           StarterKit.configure({ 
-            heading: { 
-                levels: [1, 2, 3, 4],
-            },
+            heading: false,
+        }),
+        Heading.configure({
+          levels: [1, 2, 3, 4]
         }),
         Image,
         Underline,
@@ -79,6 +81,9 @@ const Toolbar = ({ editor }: { editor: Editor | null }) => {
         onUpdate({ editor }) {
           onChange(editor.getHTML());
         },
+        onCreate({ editor }) {
+          console.log('Editor creado:', editor.getJSON());
+        },        
       });
     
       return (

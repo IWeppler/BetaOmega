@@ -22,7 +22,7 @@ export const BookDetailsForm = ({ book, onSave }: Props) => {
       slug: book.slug,
     },
     validationSchema: Yup.object({
-      // ... tus validaciones ...
+      
     }),
     onSubmit: async (values) => {
       await onSave(values);

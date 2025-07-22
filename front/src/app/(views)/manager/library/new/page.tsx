@@ -64,7 +64,7 @@ export default function CreateBookPage() {
 
     if (createResult.success && createResult.book) {
       toast.success(`Libro "${createResult.book.title}" creado con éxito.`);
-      router.push(`${routes.manager.library}/${createResult.book.id}`);
+      router.push(`${routes.manager.library}/edit/${createResult.book.slug}`);
     } else {
       toast.error(`Error al crear el libro: ${createResult.error}`);
     }

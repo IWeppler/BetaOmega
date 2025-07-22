@@ -12,6 +12,7 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
+  Patch,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -21,6 +22,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { Request } from 'express';
+import { ReorderBooksDto } from './dto/reorder-book.dto';
 
 @Controller('books')
 export class BooksController {
@@ -31,14 +33,22 @@ export class BooksController {
     return this.booksService.findAll();
   }
 
+  @Get('id/:id')
+  findById(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.booksService.findOne(id);
+  }
+
   @Get(':slug')
   findBySlug(@Param('slug') slug: string) {
     return this.booksService.findBySlug(slug);
   }
 
-  @Get('id/:id')
-  findById(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.booksService.findOne(id);
+  @Get(':slug/chapters/:chapterNumber')
+  findChapter(
+    @Param('slug') slug: string,
+    @Param('chapterNumber') chapterNumber: string,
+  ) {
+    return this.booksService.findChapterBySlugAndNumber(slug, +chapterNumber);
   }
 
   @Post()
@@ -79,14 +89,23 @@ export class BooksController {
     };
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateBookDto) {
+  @Put('id/:id')
+  update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() dto: UpdateBookDto,
+  ) {
+    console.log(`Petición PUT recibida para el libro con ID: ${id}`);
     return this.booksService.update(id, dto);
   }
 
-  @Delete(':id')
+  @Delete('id/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
+  remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.booksService.remove(id);
+  }
+
+  @Patch('reorder')
+  updateOrder(@Body() dto: ReorderBooksDto) {
+    return this.booksService.reorder(dto);
   }
 }

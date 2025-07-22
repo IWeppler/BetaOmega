@@ -4,10 +4,10 @@ import { routes } from "./app/routes";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
-const adminPaths = ["/dashboard/admin"];
+const adminPaths = ["/manager"];
 
 interface CustomJWTPayload extends JWTPayload {
-  roles?: string[];
+  role?: string[];
 }
 
 export async function middleware(req: NextRequest) {
@@ -27,7 +27,7 @@ export async function middleware(req: NextRequest) {
     // CAPA DE SEGURIDAD DE ROLES:
     // Verificamos si el usuario intenta acceder a una ruta de administrador
     const isAccessingAdminPath = adminPaths.some(adminPath => path.startsWith(adminPath));
-    if (isAccessingAdminPath && !payload.roles?.includes('admin')) {
+    if (isAccessingAdminPath && !payload.role?.includes('admin')) {
       // Si no es admin, lo redirigimos al dashboard principal
       console.warn(`Acceso denegado a ruta de admin para el usuario: ${payload.sub}`);
       return NextResponse.redirect(new URL(routes.dashboard, req.url));

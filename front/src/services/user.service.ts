@@ -16,7 +16,7 @@ const handleError = (err: unknown) => {
 
 export const updateUserProfile = async (values: IUpdateUser) => {
   try {
-    const response = await apiClient.patch<IUser>("/users/me", values);
+    const response = await apiClient.patch<IUser>("/users/update", values);
     return { success: true, user: response.data };
   } catch (err) {
     return handleError(err);

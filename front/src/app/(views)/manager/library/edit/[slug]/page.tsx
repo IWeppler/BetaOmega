@@ -50,11 +50,13 @@ export default function EditBookPage() {
 
   const handleUpdateBook = async (data: IUpdateBook) => {
     if (!book) return;
+
     const updatedBook = await updateBook(book.id, data);
     if (updatedBook) {
       setBook(updatedBook);
       toast.success("¡Libro actualizado!");
-      if (updatedBook.slug !== slug) {
+
+      if (updatedBook.slug !== params.slug) {
         router.push(`/manager/library/edit/${updatedBook.slug}`);
       }
     } else {
@@ -140,7 +142,7 @@ export default function EditBookPage() {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
                     <AlertDialogAction
-                      className="bg-destructive hover:bg-destructive/90"
+                      className="bg-neutral-950"
                       onClick={handleDeleteBook}
                     >
                       Sí, eliminar

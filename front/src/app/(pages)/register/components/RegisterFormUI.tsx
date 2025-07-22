@@ -8,15 +8,13 @@ import * as yup from "yup";
 import { register } from "@/services/auth.service";
 import toast from "react-hot-toast";
 import { PasswordInput } from "@/components/ui/PasswordInput";
-import Select from "react-select";
-// @ts-expect-error - No se ha creado el tipo para react-select-country-list
-import countryList from "react-select-country-list";
-import { useMemo } from "react";
 import { useEffect, useState } from "react";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import type { FormikHelpers } from "formik";
 
 export const RegisterFormUI = () => {
   const router = useRouter();
-  const countries = useMemo(() => countryList().getData(), []);
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
@@ -38,29 +36,45 @@ export const RegisterFormUI = () => {
       .string()
       .email("Correo electrónico no válido")
       .required("Campo requerido"),
-    phone: yup
+    phone_number: yup
       .string()
-      .matches(/^[0-9]+$/, "Solo se permiten números")
-      .min(10, "Debe tener al menos 10 dígitos")
+      .test("is-valid-phone", "El número de teléfono no es válido", (value) =>
+        value ? isValidPhoneNumber(value) : false
+      )
       .required("Campo requerido"),
-    country: yup.string().required("Campo requerido"),
     password: yup
       .string()
-      .min(5, "Debe tener al menos 5 caracteres")
+      .min(8, "Debe tener al menos 8 caracteres")
       .required("Campo requerido"),
   });
 
-  const handleSubmit = async (values: IRegister) => {
-    console.log("Intentando enviar datos:", values);
-    const response = await register(values);
+  const handleSubmit = async (
+    values: Omit<IRegister, 'country'>, 
+    { setFieldError }: FormikHelpers<IRegister>
+  ) => {
+    const payload = {
+      ...values,
+      country: 'Derivado del teléfono'
+    };
+    
+    const response = await register(payload);
 
     if (response.success) {
       toast.success("Te has registrado correctamente");
       router.push(routes.login);
     } else {
-      toast.error("Error al registrarse");
+      const errorMessage =
+        "error" in response
+          ? response.error || "Error desconocido"
+          : "Error desconocido";
+      if (errorMessage.toLowerCase().includes("email")) {
+        setFieldError("email", errorMessage);
+      } else {
+        toast.error(errorMessage);
+      }
     }
   };
+
 
   return (
     <Formik
@@ -68,12 +82,14 @@ export const RegisterFormUI = () => {
         first_name: "",
         last_name: "",
         email: "",
-        country: "",
-        phone: "",
+        phone_number: "",
         password: "",
+        country: "",
       }}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
+      validateOnChange={true}
+      validateOnBlur={true}
     >
       {({ isSubmitting }) => (
         <Form>
@@ -124,48 +140,26 @@ export const RegisterFormUI = () => {
             </ErrorMessage>
           </label>
 
-          {/* COUNTRY */}
-          <label htmlFor="country">
-            <p className="font-medium text-slate-700 pb-1 mt-4">País</p>
-            <Field name="country">
-              {({ form }: FieldProps<IRegister>) =>
-                hasMounted ? (
-                  <Select
-                    id="country"
-                    name="country"
-                    options={countries}
-                    onChange={(val) =>
-                      form.setFieldValue(
-                        "country",
-                        val ? (val as { label: string }).label : ""
-                      )
-                    }
-                    onBlur={() => form.setFieldTouched("country", true)}
-                    placeholder="Seleccioná tu país"
-                    className="react-select-container"
-                    classNamePrefix="react-select"
-                  />
-                ) : null
-              }
-            </Field>
-            <ErrorMessage name="country">
-              {(err) => <div className="text-sm text-red-500 mt-1">{err}</div>}
-            </ErrorMessage>
-          </label>
-
-          {/* PHONE */}
-          <label htmlFor="phone">
+          <label htmlFor="phone_number">
             <p className="font-medium text-slate-700 pb-1 mt-4">
-              Numero de celular
+              Número de celular
             </p>
-            <Field
-              id="phone"
-              name="phone"
-              type="tel"
-              placeholder="+54 (011) 1111-1111"
-              className="w-full py-3 mb-1 border border-zinc-500 rounded-lg px-3 transition hover:outline-1 hover:outline-gray-600 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
-            />
-            <ErrorMessage name="phone">
+            <Field name="phone_number">
+              {({ field, form }: FieldProps) => ( // Eliminamos el tipo genérico <IRegister>
+                <PhoneInput
+                  id="phone_number"
+                  international
+                  defaultCountry="AR"
+                  placeholder="Tu número de teléfono"
+                  value={form.values.phone_number} 
+                  onChange={(value) => form.setFieldValue(field.name, value || '')}
+                  onBlur={() => form.setFieldTouched(field.name, true)}
+                  onCountryChange={(countryCode) => form.setFieldValue('country', countryCode || '')}
+                  className="phone-input-container"
+                />
+              )}
+            </Field>
+            <ErrorMessage name="phone_number">
               {(err) => <div className="text-sm text-red-500 mt-1">{err}</div>}
             </ErrorMessage>
           </label>

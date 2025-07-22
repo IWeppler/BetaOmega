@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { getBookById, createBookContent } from '@/services/book.service';
+import { getBookById } from '@/services/book.service';
+import { createBookContent } from '@/services/content.service';
 import { IBook, IBookContent } from '@/interfaces';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

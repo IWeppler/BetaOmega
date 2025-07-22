@@ -11,6 +11,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -18,7 +19,9 @@ import { Response, Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService) {
     console.log('✅ AuthController cargado');
   }
 
@@ -79,7 +82,8 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
-  me(@Req() req: Request) {
-    return req.user;
+  async me(@Req() req: Request) {
+    const userFromToken = req.user as { id: string };
+    return this.usersService.findById(userFromToken.id);
   }
 }

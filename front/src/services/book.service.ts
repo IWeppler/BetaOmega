@@ -1,7 +1,9 @@
 import { AxiosError } from "axios";
 import apiClient from "./api";
-import { IBook, ICreateBookContent, ICreateBook, IUpdateBook, IUpdateBookContent } from "@/interfaces";
+import { IBook, ICreateBook, IUpdateBook } from "@/interfaces";
 
+
+// Obtiene todos los libros
 export const getAllBooks = async (): Promise<IBook[]> => {
   try {
     const response = await apiClient.get<IBook[]>("/books");
@@ -12,6 +14,8 @@ export const getAllBooks = async (): Promise<IBook[]> => {
   }
 };
 
+
+// Obtiene un libro por slug
 export const getBookBySlug = async (slug: string): Promise<IBook | null> => {
   try {
     const response = await apiClient.get<IBook>(`/books/${slug}`);
@@ -22,6 +26,8 @@ export const getBookBySlug = async (slug: string): Promise<IBook | null> => {
   }
 };
 
+
+// Obtiene un libro por ID
 export const getBookById = async (bookId: string): Promise<IBook | null> => {
   try {
     const response = await apiClient.get<IBook>(`/books/id/${bookId}`);
@@ -32,21 +38,8 @@ export const getBookById = async (bookId: string): Promise<IBook | null> => {
   }
 };
 
-export const getChapter = async (slug: string, chapterNumber: number) => {
-  try {
-    const response = await apiClient.get(
-      `/books/${slug}/chapters/${chapterNumber}`
-    );
-    return response.data;
-  } catch (error) {
-    console.error(
-      `Error al obtener el capítulo ${chapterNumber} del libro "${slug}":`,
-      error
-    );
-    return null;
-  }
-};
 
+// Crea un libro nuevo.
   export const createBook = async (bookData: ICreateBook): Promise<{ success: boolean; book?: IBook; error?: string | string[] }> => {
     try {
       const response = await apiClient.post("/books", bookData);
@@ -61,6 +54,8 @@ export const getChapter = async (slug: string, chapterNumber: number) => {
   };
 
 
+
+// Sube la imagen del nuevo libro
 export const uploadBookCover = async (
   coverFile: File
 ): Promise<{ success: boolean; url?: string; error?: string | string[] }> => {
@@ -85,46 +80,6 @@ export const uploadBookCover = async (
   }
 };
 
-export const createBookContent = async (contentData: ICreateBookContent): Promise<{ success: boolean; content?: ICreateBookContent; error?: string | string[] }>  => {
-  try {
-    const response = await apiClient.post<ICreateBookContent>(
-      "/book-content",
-      contentData
-    );
-    return { success: true, content: response.data };
-  } catch (err) {
-    const error = err as AxiosError<{ message?: string | string[] }>;
-    return {
-      success: false,
-      error: error.response?.data?.message || "Error al crear el capítulo",
-    };
-  }
-};
-
-export const uploadContentImage = async (
-  imageFile: File
-): Promise<{ success: boolean; url?: string; error?: string | string[] }> => {
-  const formData = new FormData();
-  formData.append("file", imageFile);
-
-  try {
-    const response = await apiClient.post<{ url: string }>(
-      "/book-content/upload-image",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
-    return { success: true, url: response.data.url };
-  } catch (err) {
-    const error = err as AxiosError<{ message?: string | string[] }>;
-    return {
-      success: false,
-      error: error.response?.data?.message || "Error al subir la imagen",
-    };
-  }
-};
-
 
 // Actualiza los datos de un libro existente.
 export const updateBook = async (
@@ -132,7 +87,7 @@ export const updateBook = async (
   bookData: IUpdateBook
 ): Promise<IBook | null> => {
   try {
-    const response = await apiClient.put<IBook>(`/books/${bookId}`, bookData);
+    const response = await apiClient.put<IBook>(`/books/id/${bookId}`, bookData);
     return response.data;
   } catch (err) {
     const error = err as AxiosError<{ message?: string | string[] }>;
@@ -144,7 +99,7 @@ export const updateBook = async (
 // Elimina un libro por su ID.
 export const deleteBook = async (bookId: string): Promise<boolean> => {
   try {
-    await apiClient.delete(`/books/${bookId}`);
+    await apiClient.delete(`/books/id/${bookId}`);
     return true;
   } catch (err) {
     const error = err as AxiosError<{ message?: string | string[] }>;
@@ -153,33 +108,14 @@ export const deleteBook = async (bookId: string): Promise<boolean> => {
   }
 };
 
-
-
-
-// Actualiza un capítulo (contenido) existente.
-
-export const updateContent = async (
-  contentId: string,
-  contentData: IUpdateBookContent
-): Promise<IUpdateBookContent | null> => {
+// Intercambia el orden de dos libros.
+export const reorderBooks = async (bookId1: string, bookId2: string): Promise<boolean> => {
   try {
-    const response = await apiClient.put<IUpdateBookContent>(`/book-content/${contentId}`, contentData);
-    return response.data;
-  } catch (err) {
-    const error = err as AxiosError<{ message?: string | string[] }>;
-    console.error(`Error al actualizar el contenido "${contentId}":`, error.response?.data);
-    return null;
-  }
-};
-
-// Elimina un capítulo (contenido) por su ID.
-export const deleteContent = async (contentId: string): Promise<boolean> => {
-  try {
-    await apiClient.delete(`/book-content/${contentId}`);
+    await apiClient.patch('/books/reorder', { bookId1, bookId2 });
     return true;
   } catch (err) {
     const error = err as AxiosError<{ message?: string | string[] }>;
-    console.error(`Error al eliminar el contenido "${contentId}":`, error.response?.data);
+    console.error(`Error al reordenar los libros:`, error.response?.data);
     return false;
   }
 };

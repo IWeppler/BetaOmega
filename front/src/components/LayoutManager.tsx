@@ -1,10 +1,8 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { SideBar } from "@/components/Sidebar";
 import ExcludedWrapper from "../components/ExcludedWrapper";
 import { useOutsideClick } from "../hooks/useOutsideClick";
-import { modules } from "../app/modules/data";
 import clsx from "clsx";
 
 interface LayoutManagerProps {
@@ -18,9 +16,6 @@ export default function LayoutManager({
 }: LayoutManagerProps) {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [isMobileOverlay, setIsMobileOverlay] = useState(false);
-  const [selectedModule, setSelectedModule] = useState<
-    (typeof modules)[0] | null
-  >(null);
 
   const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -51,16 +46,6 @@ export default function LayoutManager({
       {isMobileOverlay && (
         <div className="fixed inset-0 bg-black opacity-50 z-30" />
       )}
-
-      <ExcludedWrapper>
-        <SideBar
-          ref={sidebarRef}
-          isCollapsed={isSidebarCollapsed}
-          toggleCollapse={() => setSidebarCollapsed(!isSidebarCollapsed)}
-          selectedModule={selectedModule}
-          onModuleSelect={setSelectedModule}
-        />
-      </ExcludedWrapper>
 
       <div
         className={clsx(

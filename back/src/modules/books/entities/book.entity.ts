@@ -28,6 +28,9 @@ export class Book {
   @Column({ type: 'int' })
   total_chapters: number;
 
+  @Column({ type: 'int', default: 0 })
+  order: number;
+
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   created_at: Date;
 

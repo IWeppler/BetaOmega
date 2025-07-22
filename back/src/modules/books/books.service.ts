@@ -5,6 +5,7 @@ import { Book } from './entities/book.entity';
 import { CreateBookDto } from './dto/create-book.dto';
 import { BookContent } from '../content/entities/content.entity';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { ReorderBooksDto } from './dto/reorder-book.dto';
 
 @Injectable()
 export class BooksService {
@@ -15,7 +16,11 @@ export class BooksService {
   ) {}
 
   findAll() {
-    return this.bookRepo.find();
+    return this.bookRepo.find({
+      order: {
+        order: 'ASC',
+      },
+    });
   }
 
   async findBySlug(slug: string) {
@@ -75,20 +80,31 @@ export class BooksService {
     return this.bookRepo.findOne({ where: { id }, relations: ['contents'] });
   }
 
-  create(dto: CreateBookDto) {
+  async create(dto: CreateBookDto) {
+    const lastBook = await this.bookRepo.findOne({
+      order: { order: 'DESC' },
+    });
+  
+    const newOrder = lastBook ? lastBook.order + 1 : 1;
+
+
     const book = this.bookRepo.create(dto);
     return this.bookRepo.save(book);
   }
 
-  async update(id: string, dto: UpdateBookDto) {
-    const book = await this.bookRepo.preload({
-      id: id,
-      ...dto,
+  async update(id: string, dto: UpdateBookDto): Promise<Book> {
+    await this.bookRepo.update(id, dto);
+
+    const updatedBook = await this.bookRepo.findOne({
+      where: { id },
+      relations: ['contents'],
     });
-    if (!book) {
-      throw new NotFoundException(`Libro con ID "${id}" no encontrado.`);
+  
+    if (!updatedBook) {
+      throw new NotFoundException(`Libro con ID ${id} no encontrado.`);
     }
-    return this.bookRepo.save(book);
+  
+    return updatedBook;
   }
   
   async remove(id: string) {
@@ -97,5 +113,27 @@ export class BooksService {
       throw new NotFoundException(`Libro con ID "${id}" no encontrado.`);
     }
     await this.bookRepo.remove(book);
+  }
+
+  async reorder(dto: ReorderBooksDto) {
+    const book1 = await this.bookRepo.findOneBy({ id: dto.bookId1 });
+    const book2 = await this.bookRepo.findOneBy({ id: dto.bookId2 });
+  
+    if (!book1 || !book2) {
+      throw new NotFoundException('Uno o ambos libros no fueron encontrados.');
+    }
+  
+    // Intercambiamos sus valores de orden
+    const tempOrder = book1.order;
+    book1.order = book2.order;
+    book2.order = tempOrder;
+  
+    // Guardamos ambos cambios en una transacción
+    await this.bookRepo.manager.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager.save(book1);
+      await transactionalEntityManager.save(book2);
+    });
+  
+    return { success: true };
   }
 }

@@ -10,9 +10,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 // import { NotificationsModule } from '../notifications/notifications.module';
 import { AuthGuard } from './guards/auth.guard';
+import { UsersModule } from '../users/users.module';
+
 
 @Module({
   imports: [
+    UsersModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -34,7 +37,7 @@ import { AuthGuard } from './guards/auth.guard';
     GoogleStrategy,
     AuthGuard,
   ],
-  exports: [AuthService, AuthGuard, ],
+  exports: [AuthService, AuthGuard],
 })
 
 export class AuthModule {}
