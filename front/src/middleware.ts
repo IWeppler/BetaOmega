@@ -71,7 +71,6 @@ import { jwtVerify, JWTPayload } from "jose";
 import { routes } from "./app/routes";
 
 // --- Interfaces y Tipos ---
-// Es una buena práctica tener una interfaz para el payload del token.
 interface CustomJWTPayload extends JWTPayload {
   id: string; // Asumo que el 'sub' es el id del usuario.
   role?: string[];

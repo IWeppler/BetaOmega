@@ -30,6 +30,14 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "https://betaomega.onrender.com/api/:path*", // este es el puerto de backend
+      },
+    ];
+  },
 };
 
 export default nextConfig;
