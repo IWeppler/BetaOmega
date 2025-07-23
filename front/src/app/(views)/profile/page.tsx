@@ -91,7 +91,7 @@ export default function ProfilePage() {
   };
 
   const imageUrl = user?.profile_image_url
-    ? `${process.env.NEXT_PUBLIC_API_URL}${user.profile_image_url}`
+    ? `${user.profile_image_url}`
     : "/default-avatar.jpg";
 
   return (

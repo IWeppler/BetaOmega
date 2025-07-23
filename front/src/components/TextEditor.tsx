@@ -6,7 +6,6 @@ import Image from '@tiptap/extension-image';
 import {
   Bold, Italic, Strikethrough, Heading1, Heading2, Heading3, Heading4, List, ListOrdered, Quote, Image as ImageIcon, Underline as UnderlineIcon
 } from 'lucide-react';
-import Heading from '@tiptap/extension-heading';
 import { uploadContentImage } from '@/services/content.service';
 import Underline from '@tiptap/extension-underline';
 import type { Editor } from '@tiptap/react';
@@ -21,7 +20,7 @@ const Toolbar = ({ editor }: { editor: Editor | null }) => {
     if (file && editor) {
       const result = await uploadContentImage(file);
       if (result.success && result.url) {
-        const imageUrl = `${process.env.NEXT_PUBLIC_API_URL}${result.url}`;
+        const imageUrl = result.url;
         editor.chain().focus().setImage({ src: imageUrl }).run();
       } else {
         toast.error("Error al subir la imagen.");
@@ -61,12 +60,11 @@ const Toolbar = ({ editor }: { editor: Editor | null }) => {
 
       const editor = useEditor({
         extensions: [
-          StarterKit.configure({ 
-            heading: false,
-        }),
-        Heading.configure({
-          levels: [1, 2, 3, 4]
-        }),
+          StarterKit.configure({
+      heading: {
+        levels: [1, 2, 3, 4],
+      },
+    }),
         Image,
         Underline,
 
@@ -74,7 +72,7 @@ const Toolbar = ({ editor }: { editor: Editor | null }) => {
         content: content,
         editorProps: {
           attributes: {
-            class: 'prose max-w-none p-4 border border-t-0 border-gray-200 rounded-b-lg min-h-[300px] max-h-[500px] overflow-y-auto focus:outline-none bg-white prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-h4:text-base',
+            class: 'prose max-w-none p-4 border border-t-0 border-gray-200 rounded-b-lg min-h-[300px] max-h-[500px] overflow-y-auto focus:outline-none bg-white',
           },
         },
         immediatelyRender: false, // IMPORTANTE: Esto evita que el editor se renderice en el servidor

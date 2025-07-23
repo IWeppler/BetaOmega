@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: 'https',
+        hostname: 'betaomega.onrender.com',
+        port: '',
+        pathname: '/public/**',
+      },
+      {
         protocol: 'http',
         hostname: 'localhost',
         port: '3001', 

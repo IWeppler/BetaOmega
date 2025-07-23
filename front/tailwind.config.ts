@@ -27,36 +27,6 @@ const config: Config = {
         "brutal-lg": "8px 8px 0px 0px #111111",
         "brutal-xl": "12px 12px 0px 0px #111111",
       },
-      typography: ({ theme }) => ({
-        DEFAULT: {
-          css: {
-            'h1': {
-              fontSize: theme('fontSize.3xl'),
-              fontWeight: '700',
-              marginTop: '1.5em',
-              marginBottom: '0.5em',
-            },
-            'h2': {
-              fontSize: theme('fontSize.2xl'),
-              fontWeight: '600',
-              marginTop: '1.25em',
-              marginBottom: '0.5em',
-            },
-            'h3': {
-              fontSize: theme('fontSize.xl'),
-              fontWeight: '600',
-            },
-            'h4': {
-              fontSize: theme('fontSize.lg'),
-              fontWeight: '600',
-            },
-            // Puedes personalizar cualquier otro elemento aquí
-            'ul > li::marker': {
-              color: theme('colors.indigo.500'),
-            },
-          },
-        },
-      }),
     },
   },
   plugins: [animatePlugin, typography],

@@ -113,9 +113,9 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
     if (userLoading) return <div className="p-4">Cargando...</div>;
     if (!user) return <div className="p-4 text-red-500">Error de usuario.</div>;
 
-    const imageUrl = user?.profile_image_url
-      ? `${process.env.NEXT_PUBLIC_API_URL}${user.profile_image_url}`
-      : "/default-avatar.jpg"; 
+  const imageUrl = user?.profile_image_url
+    ? `${user.profile_image_url}`
+    : "/default-avatar.jpg"; 
     
     const getBookStatus = (bookId: string) => {
       const progress = progressMap.get(bookId);
