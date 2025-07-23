@@ -78,16 +78,22 @@ export class BooksService {
   }
 
   async create(dto: CreateBookDto) {
-    const lastBook = await this.bookRepo.findOne({
-      order: { order: 'DESC' },
-    });
+    const lastBooks = await this.bookRepo.find({
+    order: { order: 'DESC' },
+    take: 1,
+  });
   
-    const newOrder = lastBook ? lastBook.order + 1 : 1;
+  const lastBook = lastBooks.length > 0 ? lastBooks[0] : null;
+  const newOrder = lastBook ? lastBook.order + 1 : 1;
 
+  const newBookData = {
+    ...dto,
+    order: newOrder,
+  };
 
-    const book = this.bookRepo.create(dto);
-    return this.bookRepo.save(book);
-  }
+  const book = this.bookRepo.create(newBookData);
+  return this.bookRepo.save(book);
+}
 
   async update(id: string, dto: UpdateBookDto): Promise<Book> {
     await this.bookRepo.update(id, dto);
