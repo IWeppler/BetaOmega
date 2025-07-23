@@ -54,7 +54,7 @@ const Betaomega = () => {
 
         {/* Columna derecha (modificada) */}
         {/* 2. Aplicamos estilos para deshabilitar visualmente la columna */}
-        <div className="bg-red flex items-center justify-center overflow-hidden opacity-50 cursor-not-allowed">
+        <div className="bg-red-800 flex items-center justify-center overflow-hidden opacity-50 cursor-not-allowed">
           <motion.div
             className="flex flex-col items-center justify-center gap-4 text-center"
             variants={containerVariants}
