@@ -43,7 +43,8 @@ export class AuthController {
       secure: true,
       sameSite: 'none',
       maxAge: 1000 * 60 * 60 * 24 * 7,
-      path: "/"
+      path: "/",
+      domain: 'betaomega.vercel.app'
     });
 
     return { message: 'Login successful' };

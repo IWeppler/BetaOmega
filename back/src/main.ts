@@ -16,7 +16,7 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://betaomega.vercel.app'],
+    origin: 'https://betaomega.vercel.app',
     credentials: true,
   });
 
