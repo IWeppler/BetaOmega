@@ -13,23 +13,23 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  async headers() {
-    return [
-      {
-        source: "/:path*",
-        headers: [
-          {
-            key: "Access-Control-Allow-Origin",
-            value: "https://betaomega.vercel.app/:path*", // este es el puerto de frontend
-          },
-          {
-            key: "Access-Control-Allow-Credentials",
-            value: "true",
-          },
-        ],
-      },
-    ];
-  },
+  // async headers() {
+  //   return [
+  //     {
+  //       source: "/:path*",
+  //       headers: [
+  //         {
+  //           key: "Access-Control-Allow-Origin",
+  //           value: "https://betaomega.vercel.app/:path*", // este es el puerto de frontend
+  //         },
+  //         {
+  //           key: "Access-Control-Allow-Credentials",
+  //           value: "true",
+  //         },
+  //       ],
+  //     },
+  //   ];
+  // },
   async rewrites() {
     return [
       {
