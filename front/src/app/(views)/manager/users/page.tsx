@@ -10,6 +10,7 @@ import {
 import { IUser, UserRole } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 import { PencilIcon, TrashIcon } from "lucide-react";
+import Image from "next/image";
 import { toast } from "react-hot-toast";
 
 const roles = [
@@ -29,7 +30,8 @@ export default function AdminUsersPage() {
   }, []);
 
   const handleError = (error: any) => {
-    const errorMessage = error.error || error.message || "Ocurrió un error inesperado";
+    const errorMessage =
+      error.error || error.message || "Ocurrió un error inesperado";
     toast.error(errorMessage);
   };
 
@@ -100,19 +102,39 @@ export default function AdminUsersPage() {
                 {users.map((user) => (
                   <tr key={user.id} className="border-t text-sm">
                     <td className="p-3">
-                      {user.first_name} {user.last_name}</td>
+                      <div className="flex items-center gap-3">
+                        <Image
+                          src={user.profile_image_url || "/default-avatar.jpg"}
+                          alt={`Avatar de ${user.first_name}`}
+                          width={32}
+                          height={32}
+                          className="rounded-full object-cover"
+                        />
+                        <span>
+                          {user.first_name} {user.last_name}
+                        </span>
+                      </div>
+                    </td>
                     <td className="p-3">{user.email}</td>
                     <td className="p-3">{user.country}</td>
                     <td className="p-3 capitalize">{user.role}</td>
                     <td className="p-3">{user.phone_number || "-"}</td>
                     <td className="p-3 flex gap-2 items-center">
-                      <Button variant="ghost" size="icon" onClick={() => setDeletingUser(user)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setDeletingUser(user)}
+                      >
                         <TrashIcon className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => {
-                        setEditingUser(user);
-                        setSelectedRole(user.role);
-                      }}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setEditingUser(user);
+                          setSelectedRole(user.role);
+                        }}
+                      >
                         <PencilIcon className="w-4 h-4" />
                       </Button>
                     </td>
@@ -126,19 +148,29 @@ export default function AdminUsersPage() {
         {editingUser && (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">
-              <h2 className="text-lg font-semibold mb-4">Editar Rol de {editingUser.first_name}</h2>
+              <h2 className="text-lg font-semibold mb-4">
+                Editar Rol de {editingUser.first_name}
+              </h2>
               <select
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
                 className="w-full border rounded p-2 mb-4"
               >
                 {roles.map((r) => (
-                  <option key={r.value} value={r.value}>{r.label}</option>
+                  <option key={r.value} value={r.value}>
+                    {r.label}
+                  </option>
                 ))}
               </select>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setEditingUser(null)}>Cancelar</Button>
-                <Button onClick={() => handleRoleChange(editingUser.id, selectedRole)}>Guardar</Button>
+                <Button variant="outline" onClick={() => setEditingUser(null)}>
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={() => handleRoleChange(editingUser.id, selectedRole)}
+                >
+                  Guardar
+                </Button>
               </div>
             </div>
           </div>
@@ -147,17 +179,21 @@ export default function AdminUsersPage() {
         {deletingUser && (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">
-              <h2 className="text-lg font-semibold mb-2">Confirmar Eliminación</h2>
+              <h2 className="text-lg font-semibold mb-2">
+                Confirmar Eliminación
+              </h2>
               <p className="text-sm text-gray-600 mb-4">
                 ¿Estás seguro de que quieres eliminar al usuario{" "}
-                <strong>{deletingUser.first_name} {deletingUser.last_name}</strong>? Esta acción no se puede deshacer.
+                <strong>
+                  {deletingUser.first_name} {deletingUser.last_name}
+                </strong>
+                ? Esta acción no se puede deshacer.
               </p>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setDeletingUser(null)}>Cancelar</Button>
-                <Button
-                  variant="destructive" 
-                  onClick={handleConfirmDelete}
-                >
+                <Button variant="outline" onClick={() => setDeletingUser(null)}>
+                  Cancelar
+                </Button>
+                <Button variant="destructive" onClick={handleConfirmDelete}>
                   Eliminar
                 </Button>
               </div>

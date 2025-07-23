@@ -49,15 +49,10 @@ export const RegisterFormUI = () => {
   });
 
   const handleSubmit = async (
-    values: Omit<IRegister, "country">,
+    values: IRegister,
     { setFieldError }: FormikHelpers<IRegister>
   ) => {
-    const payload = {
-      ...values,
-      country: "Derivado del teléfono",
-    };
-
-    const response = await register(payload);
+    const response = await register(values);
 
     if (response.success) {
       toast.success("Te has registrado correctamente");
