@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useBookStore } from "@/app/Store/bookStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, ArrowUp, ArrowDown } from "lucide-react";
+import { PlusCircle, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 import { reorderBooks } from "@/services/book.service";
 import Link from "next/link";
 import Image from "next/image";
@@ -66,7 +66,10 @@ export default function LibraryManagerPage() {
           <CardDescription>Lista de todos los libros publicados.</CardDescription>
         </CardHeader>
         <CardContent>
-          {loading ? <p>Cargando libros...</p> : (
+          {loading ? 
+          <div className="flex-1 flex items-center justify-center h-screen">
+           <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+           </div> : (
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white">
                 <thead>

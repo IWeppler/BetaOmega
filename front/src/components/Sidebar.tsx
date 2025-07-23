@@ -44,24 +44,23 @@ interface SideBarProps {
   isCollapsed: boolean;
   toggleCollapse: () => void;
   selectedModule: IBook | null;
+  isMobileOverlay: boolean;
 }
 
 const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
-  ({ isCollapsed, toggleCollapse, selectedModule }, ref) => {
+  ({ isCollapsed, toggleCollapse, selectedModule, isMobileOverlay }, ref) => {
     const router = useRouter();
-    
+
     const { user, loading: userLoading, logOut } = useAuthStore();
     const { books, fetchAllBooks } = useBookStore();
     const { progressMap, getUserProgress } = useProgressStore();
 
-    
     const [search, setSearch] = useState("");
     const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
     const [isWisdomDropdownOpen, setWisdomDropdownOpen] = useState(true);
     const [isAdminDropdownOpen, setAdminDropdownOpen] = useState(true);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
-    
     const isAdmin = user?.role === UserRole.ADMIN;
 
     useEffect(() => {
@@ -113,10 +112,10 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
     if (userLoading) return <div className="p-4">Cargando...</div>;
     if (!user) return <div className="p-4 text-red-500">Error de usuario.</div>;
 
-  const imageUrl = user?.profile_image_url
-    ? `${user.profile_image_url}`
-    : "/default-avatar.jpg"; 
-    
+    const imageUrl = user?.profile_image_url
+      ? `${user.profile_image_url}`
+      : "/default-avatar.jpg";
+
     const getBookStatus = (bookId: string) => {
       const progress = progressMap.get(bookId);
       if (!progress || progress.progress === 0)
@@ -144,8 +143,11 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
       <aside
         ref={ref}
         className={clsx(
-          "relative top-0 left-0 z-40 h-screen bg-white border-r border-gray-200 shadow-md flex flex-col transition-all duration-300",
-          isCollapsed ? "w-20" : "w-72"
+          "h-screen bg-white border-r border-gray-200 shadow-md flex flex-col transition-all duration-300",
+          isCollapsed ? "w-20" : "w-72",
+          isMobileOverlay
+            ? "fixed top-0 left-0 z-50"
+            : "relative top-0 left-0 z-40"
         )}
       >
         <button

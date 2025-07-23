@@ -20,7 +20,7 @@ export const LoginFormUI = () => {
       .required("Campo requerido"),
     password: yup
       .string()
-      .min(5, "Debe tener al menos 5 caracteres")
+      .min(8, "Debe tener al menos 8 caracteres")
       .required("Campo requerido"),
   });
 

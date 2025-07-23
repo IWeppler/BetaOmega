@@ -9,7 +9,7 @@ import {
 } from "@/services/user.service";
 import { IUser, UserRole } from "@/interfaces";
 import { Button } from "@/components/ui/button";
-import { PencilIcon, TrashIcon } from "lucide-react";
+import { Loader2, PencilIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 
@@ -84,7 +84,9 @@ export default function AdminUsersPage() {
 
       <main className="flex-1 overflow-auto p-6 bg-gradient-to-b from-[#f9f7f5] to-white">
         {loading ? (
-          <p>Cargando...</p>
+          <div className="flex-1 flex items-center justify-center h-screen">
+            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white shadow rounded-lg">

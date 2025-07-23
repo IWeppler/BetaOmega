@@ -3,13 +3,15 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/app/Store/authStore";
-import { useSidebar } from "@/hooks/useSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import {SideBar} from "@/components/Sidebar";
+import { useSidebar } from "@/hooks/useSidebar";
+import {Loader2} from "lucide-react";
+
 
 const AppLoader = () => (
-  <div className="flex items-center justify-center h-screen bg-gray-100">
-    <p className="text-xl font-gray-700">Cargando...</p>
+  <div className="flex-1 flex items-center justify-center h-screen">
+      <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
   </div>
 );
 
@@ -23,6 +25,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     selectedModule,
     sidebarRef,
   } = useSidebar();
+
+  // Detect mobile overlay based on screen width
+  const isMobileOverlay = typeof window !== "undefined" ? window.innerWidth < 768 : false;
 
   useEffect(() => {
     fetchUser();
@@ -40,14 +45,17 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
+      <div className={`min-h-screen w-full ${isMobileOverlay ? 'relative' : 'flex'}`}>
         <SideBar
           ref={sidebarRef}
           isCollapsed={isSidebarCollapsed}
           toggleCollapse={toggleCollapse}
           selectedModule={selectedModule} 
+          isMobileOverlay={isMobileOverlay}
         />
-        <main className="min-h-[75vh] w-full">{children}</main>
+        <main className={`min-h-[75vh] w-full ${isMobileOverlay ? 'blur-sm pointer-events-none' : ''}`}>
+          {children}
+        </main>
       </div>
     </SidebarProvider>
   );
