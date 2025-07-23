@@ -20,6 +20,8 @@ async function bootstrap() {
     credentials: true,
   });
 
+  app.setGlobalPrefix('api');
+
   app.use(loggerGlobal);
   app.useGlobalPipes(
     new ValidationPipe({
