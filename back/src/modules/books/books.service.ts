@@ -26,7 +26,6 @@ export class BooksService {
   async findBySlug(slug: string) {
     console.log(`Buscando libro con slug: "${slug}"`);
 
-    // Paso 1: Buscar el libro principal, pero SIN cargar las relaciones.
     const book = await this.bookRepo.findOne({ where: { slug } });
 
     if (!book) {
@@ -36,15 +35,13 @@ export class BooksService {
     
     console.log(`Libro encontrado: ${book.title}`);
 
-    // Paso 2: Buscar los contenidos del libro en una consulta separada.
     const contents = await this.contentRepo.find({
       where: { book_id: book.id },
-      order: { chapter_number: 'ASC' }, // Ordenamos los capítulos aquí.
+      order: { chapter_number: 'ASC' },
     });
     
     console.log(`Encontrados ${contents.length} capítulos para el libro.`);
 
-    // Paso 3: Combinar el libro y sus contenidos.
     book.contents = contents;
 
     return book;
@@ -123,12 +120,10 @@ export class BooksService {
       throw new NotFoundException('Uno o ambos libros no fueron encontrados.');
     }
   
-    // Intercambiamos sus valores de orden
     const tempOrder = book1.order;
     book1.order = book2.order;
     book2.order = tempOrder;
   
-    // Guardamos ambos cambios en una transacción
     await this.bookRepo.manager.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager.save(book1);
       await transactionalEntityManager.save(book2);

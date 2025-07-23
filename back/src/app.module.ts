@@ -7,6 +7,7 @@ import { BooksModule } from './modules/books/books.module';
 import { ContentModule } from './modules/content/content.module';
 import { ProgressModule } from './modules/progress/progress.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { CloudinaryModule } from './config/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { AuthModule } from './modules/auth/auth.module';
       load: [typeOrmConfig],
     }),
     TypeOrmModule.forRootAsync({
-      imports: [AuthModule, ConfigModule, UsersModule, BooksModule, ContentModule, ProgressModule],
+      imports: [AuthModule, ConfigModule, UsersModule, BooksModule, ContentModule, ProgressModule, CloudinaryModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         const typeOrmConfig = config.get('typeorm');

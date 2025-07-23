@@ -22,8 +22,8 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Request } from 'express';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { v2 as cloudinary } from 'cloudinary'
 
 @Controller('users')
 export class UsersController {
@@ -71,22 +71,29 @@ async changePassword(@Req() req: Request, @Body() dto: ChangePasswordDto) {
 @UseGuards(AuthGuard('jwt'))
 @Post('me/avatar')
 @UseInterceptors(FileInterceptor('file', {
-  storage: diskStorage({
-    destination: './public/imageProfile', // Carpeta donde se guardarán las imágenes
-    filename: (req, file, cb) => {
-      const user = req.user as any;
-      const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('');
-      return cb(null, `${user.id}-${randomName}${extname(file.originalname)}`);
+  storage: new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: async (req: any, file) => {
+      const userId = req.user.id; 
+      return {
+        folder: 'imageProfile',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+        public_id: `avatar-${userId}`, 
+      };
     },
   }),
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
+      cb(new Error('Solo se permiten imágenes'), false);
+    } else {
+      cb(null, true);
+    }
+  },
 }))
-
-
-uploadImageProfile(@Req() req: Request, @UploadedFile() file: Express.Multer.File) {
+async uploadImageProfile(@Req() req: Request, @UploadedFile() file: Express.Multer.File) {
   const user = req.user as any;
-  // Guardamos la ruta del archivo en la base de datos
-  const imageProfileUrl = `/public/imageProfile/${file.filename}`;
-  return this.usersService.updateImageProfile(user.id, imageProfileUrl);
+  const cloudinaryUrl = file.path;
+  return this.usersService.updateImageProfile(user.id, cloudinaryUrl);
 }
 
 @UseGuards(AuthGuard('jwt'), RolesGuard)

@@ -3,9 +3,8 @@ import { ContentService } from './content.service';
 import { CreateBookContentDto } from './dto/create-book-content.dto';
 import { UpdateBookContentDto } from './dto/update-book-content.dto';
 import {FileInterceptor} from '@nestjs/platform-express';
-import {diskStorage} from 'multer';
-import {extname} from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import {CloudinaryStorage} from 'multer-storage-cloudinary';
+import { v2 as cloudinary } from 'cloudinary'
 
 @Controller('book-content')
 export class ContentController {
@@ -28,19 +27,30 @@ export class ContentController {
 
   @Post('upload-image')
   @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './public/book-content',
-      filename: (req, file, cb) => {
-        const uniqueSuffix = uuidv4();
-        cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-      },
-    }),
-  }))
+    storage: new CloudinaryStorage({
+            cloudinary: cloudinary,
+            params: async (req, file) => {
+              return {
+                folder: 'book-content',
+                allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+                public_id: `book-content-${Date.now()}`,
+              };
+            },
+          }),
+          fileFilter: (req, file, cb) => {
+            if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
+              cb(new Error('Solo se permiten imágenes'), false);
+            } else {
+              cb(null, true);
+            }
+          },
+        }),
+      )
   
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     return {
-      filename: file.filename,
-      url: `/public/book-content/${file.filename}`,
+      url: file.path, 
+      public_id: (file as any).filename, 
     };
   }
 

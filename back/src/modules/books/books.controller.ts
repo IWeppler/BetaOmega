@@ -17,12 +17,10 @@ import {
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-import { v4 as uuidv4 } from 'uuid';
-import { Request } from 'express';
 import { ReorderBooksDto } from './dto/reorder-book.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { v2 as cloudinary } from 'cloudinary'
 
 @Controller('books')
 export class BooksController {
@@ -59,11 +57,14 @@ export class BooksController {
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './public/book-covers',
-        filename: (req, file, cb) => {
-          const uniqueSuffix = uuidv4();
-          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+      storage: new CloudinaryStorage({
+        cloudinary: cloudinary,
+        params: async (req, file) => {
+          return {
+            folder: 'book-covers',
+            allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+            public_id: `book-cover-${Date.now()}`,
+          };
         },
       }),
       fileFilter: (req, file, cb) => {
@@ -75,17 +76,12 @@ export class BooksController {
       },
     }),
   )
-  async uploadCover(
-    @UploadedFile() file: Express.Multer.File,
-    @Req() req: Request,
-  ) {
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
-
-    const fullUrl = `${baseUrl}/public/book-covers/${file.filename}`;
+  async uploadCover(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
 
     return {
-      filename: file.filename,
-      url: fullUrl,
+      url: file.path, 
+      public_id: (file as any).filename, 
     };
   }
 
