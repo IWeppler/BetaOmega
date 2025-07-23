@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Access-Control-Allow-Origin",
-            value: "http://localhost:3000", // este es el puerto de frontend
+            value: "https://betaomega.vercel.app", // este es el puerto de frontend
           },
           {
             key: "Access-Control-Allow-Credentials",
