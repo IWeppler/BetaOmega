@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Gasoek+One&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Gasoek+One&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -25,108 +25,165 @@
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
-.bg-red{
+.bg-red {
   background: #ab2434;
 }
 
-.bg-green{
+.bg-green {
   background: #126445;
 }
 
 .phone-input-container input {
   width: 100%;
-  padding: 0.75rem; 
+  padding: 0.75rem;
   margin-bottom: 0.25rem;
   border: 1px solid #64748b;
   border-radius: 0.5rem;
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
 }
 
-/* markdown */
-/* Títulos */
-.title-center {
-  text-align: center;
-  font-size: 2rem;
+.prose h1 {
+  font-size: 2.5rem; /* O el tamaño que prefieras */
   font-weight: bold;
-  margin: 2rem 0 1rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
 }
 
-.subtitle {
+.prose h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.prose h3 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.prose h4 {
   font-size: 1.5rem;
   font-weight: 600;
-  margin: 1.5rem 0 1rem;
-  color: #3b3b3b;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
 }
 
-/* Texto general */
-.paragraph {
-  font-size: 1rem;
-  line-height: 1.8;
-  margin-bottom: 1rem;
-  color: #444;
+.prose p {
+  margin-bottom: 1em; /* Espacio entre párrafos */
+  line-height: 1.7;
 }
 
-.italic {
-  font-style: italic;
-}
-
-.underline {
-  text-decoration: underline;
-}
-
-.bold {
+.prose strong {
   font-weight: bold;
 }
 
-.highlight {
-  background-color: #fef3c7; /* amarillo claro */
-  padding: 0.1rem 0.4rem;
-  border-radius: 4px;
-}
-
-.quote {
+.prose em {
   font-style: italic;
-  padding-left: 1rem;
+}
+
+.prose ul,
+.prose ol {
+  margin-left: 1.5rem; /* Sangría para listas */
+  margin-bottom: 1em;
+}
+
+.prose ul li {
+  list-style-type: disc;
+}
+
+.prose ol li {
+  list-style-type: decimal;
+}
+
+.prose blockquote {
   border-left: 4px solid #ccc;
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  font-style: italic;
   color: #666;
-  margin: 1.5rem 0;
 }
 
-/* Imágenes */
-.img-centered {
-  display: block;
-  margin: 2rem auto;
+.prose img {
   max-width: 100%;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  height: auto;
+  display: block; /* Para centrar si usas margin: auto */
+  margin: 1em auto;
 }
 
-/* Tablas */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1.5rem 0;
-}
+/*  */
+@media screen and (max-width: 767px) {
+  /* Oculta el thead en pantallas pequeñas */
+  .responsive-table thead {
+    display: none;
+  }
 
-.table th,
-.table td {
-  border: 1px solid #ddd;
-  padding: 0.75rem;
-  text-align: left;
-}
+  /* Transforma las filas y celdas en bloques apilados */
+  .responsive-table,
+  .responsive-table tbody,
+  .responsive-table tr {
+    display: block;
+    width: 100%; /* Asegura que ocupen todo el ancho disponible */
+  }
 
-.table th {
-  background-color: #f3f4f6;
-  font-weight: 600;
-}
+  /* Estilo para cada "tarjeta" de fila */
+  .responsive-table tr {
+    margin-bottom: 1rem; /* Espacio entre cada tarjeta de usuario */
+    border: 1px solid #e2e8f0; /* Borde para simular la tarjeta */
+    border-radius: 0.5rem; /* Bordes redondeados */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* Sombra sutil */
+    padding: 0.75rem; /* Espaciado interno */
+  }
 
-/* Separadores */
-.separator {
-  border-top: 2px solid #eee;
-  margin: 2rem 0;
+  /* Oculta las celdas de la tabla por defecto, las mostraremos como bloques */
+  .responsive-table td {
+    display: block;
+    text-align: right; /* Alinea el valor a la derecha */
+    border-bottom: 1px solid #f1f5f9; /* Separador entre datos de la tarjeta */
+    padding: 0.5rem 0; /* Ajusta el padding vertical */
+    position: relative; /* Necesario para los pseudo-elementos */
+    padding-left: 50%; /* Deja espacio para el data-label */
+  }
+
+  /* El último td de cada tr no debe tener borde inferior */
+  .responsive-table td:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  /* Inyecta el contenido de data-label como un encabezado */
+  .responsive-table td::before {
+    content: attr(data-label); /* Usa el atributo data-label como contenido */
+    position: absolute;
+    left: 0;
+    width: 45%; /* Ancho para el encabezado */
+    padding-right: 10px; /* Espaciado entre encabezado y valor */
+    white-space: nowrap; /* Evita que el texto se rompa */
+    font-weight: bold;
+    text-align: left; /* Alinea el encabezado a la izquierda */
+    color: #4a5568; /* Color del texto del encabezado */
+  }
+
+  /* Ajustes específicos para las acciones */
+  .responsive-table td[data-label="Acciones"] {
+    text-align: left; /* Las acciones deberían estar a la izquierda */
+    display: flex; /* Asegura que los botones estén en línea */
+    justify-content: flex-end; /* Alinea los botones a la derecha si es necesario */
+    padding-left: 0; /* No necesitamos padding a la izquierda para el data-label */
+    padding-top: 1rem; /* Espaciado con el contenido de arriba */
+  }
+
+  .responsive-table td[data-label="Acciones"]::before {
+    display: none; /* Oculta el data-label para las acciones */
+  }
 }
 
 .dark {

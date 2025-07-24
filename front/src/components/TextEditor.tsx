@@ -12,6 +12,7 @@ import type { Editor } from '@tiptap/react';
 import { useRef } from 'react';
 import { toast } from 'react-hot-toast';
 
+
 const Toolbar = ({ editor }: { editor: Editor | null }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -67,7 +68,6 @@ const Toolbar = ({ editor }: { editor: Editor | null }) => {
     }),
         Image,
         Underline,
-
       ],
         content: content,
         editorProps: {

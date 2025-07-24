@@ -1,16 +1,12 @@
 "use client";
 
-// Imports from React and libraries
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { clsx } from "clsx";
 import {
   BookOpen,
   CheckCircle,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  X,
   HelpCircle,
   Library,
   Lock,
@@ -21,7 +17,10 @@ import {
   User,
   Users,
 } from "lucide-react";
-
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { clsx } from "clsx";
 import { useAuthStore } from "@/app/Store/authStore";
 import { useBookStore } from "@/app/Store/bookStore";
 import { useProgressStore } from "@/app/Store/progressStore";
@@ -44,11 +43,11 @@ interface SideBarProps {
   isCollapsed: boolean;
   toggleCollapse: () => void;
   selectedModule: IBook | null;
-  isMobileOverlay: boolean;
+  isMobile: boolean;
 }
 
 const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
-  ({ isCollapsed, toggleCollapse, selectedModule, isMobileOverlay }, ref) => {
+  ({ isCollapsed, toggleCollapse, selectedModule, isMobile }, ref) => {
     const router = useRouter();
 
     const { user, loading: userLoading, logOut } = useAuthStore();
@@ -71,11 +70,11 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
     }, [fetchAllBooks, getUserProgress, user?.id]);
 
     useEffect(() => {
-      if (!isCollapsed) {
+      if (!isCollapsed && !isMobile) {
         const timer = setTimeout(() => searchInputRef.current?.focus(), 100);
         return () => clearTimeout(timer);
       }
-    }, [isCollapsed]);
+    }, [isCollapsed, isMobile]);
 
     const bookLockStatus = useMemo(() => {
       const lockMap = new Map<string, boolean>();
@@ -143,18 +142,33 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
       <aside
         ref={ref}
         className={clsx(
-          "h-screen bg-white border-r border-gray-200 shadow-md flex flex-col transition-all duration-300",
-          isCollapsed ? "w-20" : "w-72",
-          isMobileOverlay
-            ? "fixed top-0 left-0 z-50"
-            : "relative top-0 left-0 z-40"
+          "h-screen bg-white border-r border-gray-200 relative shadow-md flex flex-col transition-all duration-300", // <<-- flex-col siempre presente
+
+          // Desktop widths (solo aplica width cuando no es mobile)
+          !isMobile && (isCollapsed ? "w-20" : "w-72"),
+
+          // Lógica para mobile (es un fixed overlay)
+          isMobile && "fixed top-0 left-0 h-screen z-50",
+          isMobile &&
+            (isCollapsed ? "w-0 overflow-hidden" : "w-full max-w-[320px]")
         )}
+        style={
+          isMobile && !isCollapsed
+            ? { backgroundColor: "rgba(255, 255, 255, 0.95)" }
+            : {}
+        }
       >
+        {/* Botón de colapso/expansión */}
         <button
           onClick={toggleCollapse}
-          className="absolute top-5 -right-3 z-50 p-1 rounded-full bg-white border border-gray-300 shadow-md hover:bg-gray-100 transition cursor-pointer"
+          className={clsx(
+            "absolute top-5 z-50 p-1 rounded-full bg-white border border-gray-300 shadow-md hover:bg-gray-100 transition cursor-pointer",
+            isMobile ? "right-3" : "-right-3"
+          )}
         >
-          {isCollapsed ? (
+          {isMobile ? (
+            <X className="h-4 w-4 text-gray-700" />
+          ) : isCollapsed ? (
             <ChevronRight className="h-4 w-4 text-gray-700" />
           ) : (
             <ChevronLeft className="h-4 w-4 text-gray-700" />
@@ -176,6 +190,7 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
           )}
         </SidebarHeader>
 
+        {/* Search Input */}
         <div className="p-4 border-b border-gray-100">
           {isCollapsed ? (
             <button
@@ -200,7 +215,10 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
           )}
         </div>
 
-        <SidebarContent className="flex-1 overflow-y-auto">
+        {/* MAIN CONTENT AREA - DEBE TENER flex-1 y overflow-y-auto */}
+        <SidebarContent className="flex-1 overflow-y-auto custom-scrollbar">
+          {" "}
+          {/* Asegúrate de que SidebarContent es un div y tiene flex-1 y overflow-y-auto */}
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -334,6 +352,10 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                               selectedModule?.slug !== book.slug
                             ) {
                               router.push(`/dashboard/${book.slug}`);
+                              // CERRAR SIDEBAR EN MOBILE DESPUÉS DE SELECCIONAR UN MÓDULO
+                              if (isMobile && !isCollapsed) {
+                                toggleCollapse();
+                              }
                             }
                           }}
                           isActive={selectedModule?.slug === book.slug}
@@ -425,11 +447,11 @@ const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
           {!isCollapsed && isUserDropdownOpen && (
             <div className="absolute bottom-full mb-2 left-4 right-4 bg-white rounded shadow-lg border border-gray-100 text-sm">
               <Link href={routes.profile} passHref>
-                <button className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-50">
+                <button className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-50 cursor-pointer">
                   <User className="w-4 h-4" /> Mi Perfil
                 </button>
               </Link>
-              <button className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-50">
+              <button className="w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-50 cursor-pointer">
                 <HelpCircle className="w-4 h-4" /> Soporte
               </button>
               <button

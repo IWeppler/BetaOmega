@@ -9,9 +9,10 @@ import {
 } from "@/services/user.service";
 import { IUser, UserRole } from "@/interfaces";
 import { Button } from "@/components/ui/button";
-import { Loader2, PencilIcon, TrashIcon } from "lucide-react";
+import { Loader2, PencilIcon, TrashIcon, X } from "lucide-react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const roles = [
   { value: UserRole.ADMIN, label: "Admin" },
@@ -24,6 +25,9 @@ export default function AdminUsersPage() {
   const [editingUser, setEditingUser] = useState<IUser | null>(null);
   const [deletingUser, setDeletingUser] = useState<IUser | null>(null);
   const [selectedRole, setSelectedRole] = useState<string>("");
+  const [selectedUserForModal, setSelectedUserForModal] =
+    useState<IUser | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchUsers();
@@ -57,12 +61,13 @@ export default function AdminUsersPage() {
         )
       );
       setEditingUser(null);
+      setSelectedUserForModal(null);
+      toast.success("Rol de usuario actualizado correctamente.");
     } else {
       handleError(res);
     }
   };
 
-  // 2. confirma y ejecuta la eliminación
   const handleConfirmDelete = async () => {
     if (!deletingUser) return;
 
@@ -70,10 +75,22 @@ export default function AdminUsersPage() {
     if (res.success) {
       setUsers(users.filter((u) => u.id !== deletingUser.id));
       setDeletingUser(null);
+      setSelectedUserForModal(null);
+      toast.success("Usuario eliminado correctamente.");
     } else {
       handleError(res);
       setDeletingUser(null);
     }
+  };
+
+  // Función para abrir el modal de detalles del usuario en mobile
+  const openUserDetailsModal = (user: IUser) => {
+    setSelectedUserForModal(user);
+  };
+
+  // Función para cerrar el modal de detalles
+  const closeUserDetailsModal = () => {
+    setSelectedUserForModal(null);
   };
 
   return (
@@ -88,65 +105,185 @@ export default function AdminUsersPage() {
             <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white shadow rounded-lg">
-              <thead>
-                <tr className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
-                  <th className="p-3">Usuario</th>
-                  <th className="p-3">Email</th>
-                  <th className="p-3">País</th>
-                  <th className="p-3">Rol</th>
-                  <th className="p-3">Teléfono</th>
-                  <th className="p-3">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
+          <>
+            {/* VISTA DE ESCRITORIO (TABLA) */}
+            {!isMobile && (
+              <div className="overflow-x-auto">
+                <table className="min-w-full bg-white shadow rounded-lg responsive-table">
+                  <thead>
+                    <tr className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+                      <th className="p-3">Usuario</th>
+                      <th className="p-3">Email</th>
+                      <th className="p-3">País</th>
+                      <th className="p-3">Rol</th>
+                      <th className="p-3">Teléfono</th>
+                      <th className="p-3">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((user) => (
+                      <tr key={user.id} className="border-t text-sm">
+                        <td className="p-3" data-label="Usuario">
+                          <div className="flex items-center gap-3">
+                            <Image
+                              src={
+                                user.profile_image_url || "/default-avatar.jpg"
+                              }
+                              alt={`Avatar de ${user.first_name}`}
+                              width={32}
+                              height={32}
+                              className="rounded-full object-cover"
+                            />
+                            <span>
+                              {user.first_name} {user.last_name}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="p-3" data-label="Email">
+                          {user.email}
+                        </td>
+                        <td className="p-3" data-label="País">
+                          {user.country}
+                        </td>
+                        <td className="p-3 capitalize" data-label="Rol">
+                          {user.role}
+                        </td>
+                        <td className="p-3" data-label="Teléfono">
+                          {user.phone_number || "-"}
+                        </td>
+                        <td
+                          className="p-3 flex gap-2 items-center"
+                          data-label="Acciones"
+                        >
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setEditingUser(user);
+                              setSelectedRole(user.role);
+                            }}
+                          >
+                            <PencilIcon className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setDeletingUser(user)}
+                          >
+                            <TrashIcon className="w-4 h-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* VISTA DE MÓVIL (LISTA DE TARJETAS/USUARIOS CLICKEABLES) */}
+            {isMobile && (
+              <div className="space-y-4">
                 {users.map((user) => (
-                  <tr key={user.id} className="border-t text-sm">
-                    <td className="p-3">
-                      <div className="flex items-center gap-3">
-                        <Image
-                          src={user.profile_image_url || "/default-avatar.jpg"}
-                          alt={`Avatar de ${user.first_name}`}
-                          width={32}
-                          height={32}
-                          className="rounded-full object-cover"
-                        />
-                        <span>
+                  <div
+                    key={user.id}
+                    className="bg-white shadow rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => openUserDetailsModal(user)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Image
+                        src={user.profile_image_url || "/default-avatar.jpg"}
+                        alt={`Avatar de ${user.first_name}`}
+                        width={40}
+                        height={40}
+                        className="rounded-full object-cover"
+                      />
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-800">
                           {user.first_name} {user.last_name}
-                        </span>
+                        </p>
+                        <p className="text-sm text-gray-500 capitalize">
+                          {user.role}
+                        </p>
                       </div>
-                    </td>
-                    <td className="p-3">{user.email}</td>
-                    <td className="p-3">{user.country}</td>
-                    <td className="p-3 capitalize">{user.role}</td>
-                    <td className="p-3">{user.phone_number || "-"}</td>
-                    <td className="p-3 flex gap-2 items-center">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setDeletingUser(user)}
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setEditingUser(user);
-                          setSelectedRole(user.role);
-                        }}
-                      >
-                        <PencilIcon className="w-4 h-4" />
-                      </Button>
-                    </td>
-                  </tr>
+                      <PencilIcon className="w-4 h-4 text-gray-400" />{" "}
+                      {/* Un pequeño icono para indicar que es clickeable */}
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* MODAL DE DETALLES Y ACCIONES RÁPIDAS (para mobile) */}
+        {isMobile && selectedUserForModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[49]">
+            {" "}
+            {/* z-index alto */}
+            <div className="bg-white p-6 rounded-lg shadow-2xl w-full max-w-sm mx-4 relative">
+              <button
+                onClick={closeUserDetailsModal}
+                className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100 transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+              <div className="flex flex-col items-center mb-4">
+                <Image
+                  src={
+                    selectedUserForModal.profile_image_url ||
+                    "/default-avatar.jpg"
+                  }
+                  alt={`Avatar de ${selectedUserForModal.first_name}`}
+                  width={80}
+                  height={80}
+                  className="rounded-full object-cover mb-3"
+                />
+                <h2 className="text-xl font-semibold text-gray-900 mb-1">
+                  {selectedUserForModal.first_name}{" "}
+                  {selectedUserForModal.last_name}
+                </h2>
+                <p className="text-sm text-gray-600 mb-1">
+                  {selectedUserForModal.email}
+                </p>
+                <p className="text-sm text-gray-500 capitalize">
+                  {selectedUserForModal.role}
+                </p>
+              </div>
+
+              <div className="space-y-3 mb-6">
+                <p className="text-sm text-gray-700">
+                  <strong>País:</strong> {selectedUserForModal.country}
+                </p>
+                <p className="text-sm text-gray-700">
+                  <strong>Teléfono:</strong>{" "}
+                  {selectedUserForModal.phone_number || "-"}
+                </p>
+                {/* Agrega más detalles si los hay */}
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    setEditingUser(selectedUserForModal);
+                    setSelectedRole(selectedUserForModal.role);
+                  }}
+                >
+                  <PencilIcon className="w-4 h-4 mr-2" /> Editar Rol
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="w-full"
+                  onClick={() => setDeletingUser(selectedUserForModal)}
+                >
+                  <TrashIcon className="w-4 h-4 mr-2" /> Eliminar Usuario
+                </Button>
+              </div>
+            </div>
           </div>
         )}
 
+        {/* MODAL DE EDICIÓN DE ROL (existente) */}
         {editingUser && (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">
@@ -178,6 +315,7 @@ export default function AdminUsersPage() {
           </div>
         )}
 
+        {/* MODAL DE CONFIRMACIÓN DE ELIMINACIÓN (existente) */}
         {deletingUser && (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">

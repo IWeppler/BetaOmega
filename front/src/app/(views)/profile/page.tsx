@@ -143,7 +143,7 @@ export default function ProfilePage() {
                 <TabsTrigger 
                   value="personal" 
                   className={clsx(
-                    "w-full sm:w-auto",
+                    "w-full sm:w-auto cursor-pointer",
                     activeTab === 'personal' 
                       ? 'bg-neutral-950 text-white shadow-sm' 
                       : 'bg-white text-neutral-950'
@@ -154,7 +154,7 @@ export default function ProfilePage() {
                 <TabsTrigger 
                   value="security" 
                   className={clsx(
-                    "w-full sm:w-auto",
+                    "w-full sm:w-auto cursor-pointer",
                     activeTab === 'security' 
                       ? 'bg-neutral-950 text-white shadow-sm' 
                       : 'bg-white text-neutral-950'
