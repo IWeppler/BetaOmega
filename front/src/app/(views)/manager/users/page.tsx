@@ -1,18 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   fetchAllUsers,
   updateUserRole,
   deleteUser as deleteUserService,
 } from "@/services/user.service";
 import { IUser, UserRole } from "@/interfaces";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/buttoncn";
 import { Loader2, PencilIcon, TrashIcon, X } from "lucide-react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileHeader } from "@/shared/components/MobileHeader";
 
 const roles = [
   { value: UserRole.ADMIN, label: "Admin" },
@@ -29,26 +29,43 @@ export default function AdminUsersPage() {
     useState<IUser | null>(null);
   const isMobile = useIsMobile();
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  const handleError = (error: unknown) => {
+    let errorMessage = "Ocurrió un error inesperado";
 
-  const handleError = (error: any) => {
-    const errorMessage =
-      error.error || error.message || "Ocurrió un error inesperado";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === "object" && error !== null) {
+      if ("error" in error) {
+        errorMessage = String((error as { error: unknown }).error);
+      } else if ("message" in error) {
+        errorMessage = String((error as { message: unknown }).message);
+      }
+    } else if (typeof error === "string") {
+      errorMessage = error;
+    }
+
     toast.error(errorMessage);
   };
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
-    const res = await fetchAllUsers();
-    if (res.success && "users" in res) {
-      setUsers(res.users);
-    } else {
-      handleError(res);
+    try {
+      const result = await fetchAllUsers();
+      if (result.success && result.users) {
+        setUsers(result.users);
+      } else {
+        handleError(result);
+      }
+    } catch (err) {
+      handleError(err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     const res = await updateUserRole(userId, newRole as UserRole);
@@ -95,11 +112,11 @@ export default function AdminUsersPage() {
 
   return (
     <div className="flex-1 flex flex-col">
-      <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-200 px-4">
-        <h1 className="font-semibold text-gray-900">Gestión de Usuarios</h1>
-      </header>
-
-      <main className="flex-1 overflow-auto p-6 bg-gradient-to-b from-[#f9f7f5] to-white">
+      <MobileHeader
+        title="Gestión de Usuarios"
+        subtitle="Gestiona tus usuarios aquí."
+      />
+      <main className="flex-1 overflow-auto p-6 bg-linear-to-b from-[#f9f7f5] to-white">
         {loading ? (
           <div className="flex-1 flex items-center justify-center h-screen">
             <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
@@ -126,17 +143,13 @@ export default function AdminUsersPage() {
                         <td className="p-3" data-label="Usuario">
                           <div className="flex items-center gap-3">
                             <Image
-                              src={
-                                user.profile_image_url || "/default-avatar.jpg"
-                              }
-                              alt={`Avatar de ${user.first_name}`}
+                              src={user.avatar_url || "/default-avatar.jpg"}
+                              alt={`Avatar de ${user.full_name}`}
                               width={32}
                               height={32}
                               className="rounded-full object-cover"
                             />
-                            <span>
-                              {user.first_name} {user.last_name}
-                            </span>
+                            <span>{user.full_name}</span>
                           </div>
                         </td>
                         <td className="p-3" data-label="Email">
@@ -191,15 +204,15 @@ export default function AdminUsersPage() {
                   >
                     <div className="flex items-center gap-3">
                       <Image
-                        src={user.profile_image_url || "/default-avatar.jpg"}
-                        alt={`Avatar de ${user.first_name}`}
+                        src={user.avatar_url || "/default-avatar.jpg"}
+                        alt={`Avatar de ${user.full_name}`}
                         width={40}
                         height={40}
                         className="rounded-full object-cover"
                       />
                       <div className="flex-1">
                         <p className="font-semibold text-gray-800">
-                          {user.first_name} {user.last_name}
+                          {user.full_name}
                         </p>
                         <p className="text-sm text-gray-500 capitalize">
                           {user.role}
@@ -217,7 +230,7 @@ export default function AdminUsersPage() {
 
         {/* MODAL DE DETALLES Y ACCIONES RÁPIDAS (para mobile) */}
         {isMobile && selectedUserForModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[49]">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-49">
             {" "}
             {/* z-index alto */}
             <div className="bg-white p-6 rounded-lg shadow-2xl w-full max-w-sm mx-4 relative">
@@ -229,18 +242,14 @@ export default function AdminUsersPage() {
               </button>
               <div className="flex flex-col items-center mb-4">
                 <Image
-                  src={
-                    selectedUserForModal.profile_image_url ||
-                    "/default-avatar.jpg"
-                  }
-                  alt={`Avatar de ${selectedUserForModal.first_name}`}
+                  src={selectedUserForModal.avatar_url || "/default-avatar.jpg"}
+                  alt={`Avatar de ${selectedUserForModal.full_name}`}
                   width={80}
                   height={80}
                   className="rounded-full object-cover mb-3"
                 />
                 <h2 className="text-xl font-semibold text-gray-900 mb-1">
-                  {selectedUserForModal.first_name}{" "}
-                  {selectedUserForModal.last_name}
+                  {selectedUserForModal.full_name}{" "}
                 </h2>
                 <p className="text-sm text-gray-600 mb-1">
                   {selectedUserForModal.email}
@@ -288,7 +297,7 @@ export default function AdminUsersPage() {
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">
               <h2 className="text-lg font-semibold mb-4">
-                Editar Rol de {editingUser.first_name}
+                Editar Rol de {editingUser.full_name}
               </h2>
               <select
                 value={selectedRole}
@@ -324,10 +333,8 @@ export default function AdminUsersPage() {
               </h2>
               <p className="text-sm text-gray-600 mb-4">
                 ¿Estás seguro de que quieres eliminar al usuario{" "}
-                <strong>
-                  {deletingUser.first_name} {deletingUser.last_name}
-                </strong>
-                ? Esta acción no se puede deshacer.
+                <strong>{deletingUser.full_name}</strong>? Esta acción no se
+                puede deshacer.
               </p>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setDeletingUser(null)}>

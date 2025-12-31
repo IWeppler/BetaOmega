@@ -4,8 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getBookBySlug, updateBook, deleteBook } from "@/services/book.service";
 import { IBook, IUpdateBook } from "@/interfaces";
-import { BookDetailsForm } from "@/components/manager/BookDetailsForm";
-import { ChapterManager } from "@/components/manager/ChapterManager";
+import { BookDetailsForm } from "@/features/manager/BookDetailForm";
+import { ChapterManager } from "@/features/manager/ChapterManager";
 import { toast } from "react-hot-toast";
 import {
   Card,
@@ -13,7 +13,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/shared/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,10 +24,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
+} from "@/shared/ui/alert-dialog";
+import { Button } from "@/shared/ui/buttoncn";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { MobileHeader } from "@/shared/components/MobileHeader";
 
 export default function EditBookPage() {
   const params = useParams();
@@ -98,26 +99,15 @@ export default function EditBookPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-8 h-full">
-      <div className="flex items-center gap-4">
-        <Button asChild variant="outline" size="icon">
-          <Link href="/manager/library">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold">Gestionar Libro</h1>
-          <p className="text-muted-foreground">{book.title}</p>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-156px)] overflow-y-auto">
+    <div className="h-full">
+      <MobileHeader title="Gestionar Libro" subtitle={book.title} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 p-4 md:p-8 space-y-8 gap-8 h-[calc(100vh-156px)] overflow-y-auto">
         <div className="lg:col-span-2 space-y-6">
           <ChapterManager book={book} onChaptersChange={fetchBook} />
         </div>
         <div className="lg:col-span-1 space-y-6">
           <BookDetailsForm book={book} onSave={handleUpdateBook} />
-          
+
           <Card className="border-destructive">
             <CardHeader>
               <CardTitle>Zona de Peligro</CardTitle>
@@ -134,9 +124,12 @@ export default function EditBookPage() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                      ¿Estás absolutamente seguro?
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                      Se eliminará permanentemente el libro {book.title} y todos sus capítulos.
+                      Se eliminará permanentemente el libro {book.title} y todos
+                      sus capítulos.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

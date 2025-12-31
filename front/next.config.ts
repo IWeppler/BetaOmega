@@ -12,9 +12,9 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "betaomega.onrender.com",
+        hostname: "lekwblhqpwsgqaqfjwwm.supabase.co",
         port: "",
-        pathname: "/public/**",
+        pathname: "/storage/v1/object/public/**",
       },
       {
         protocol: "http",
@@ -23,14 +23,6 @@ const nextConfig: NextConfig = {
         pathname: "/public/**",
       },
     ],
-  },
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: "https://betaomega.onrender.com/api/:path*", // este es el puerto de backend
-      },
-    ];
   },
 };
 

@@ -1,46 +1,85 @@
-import apiClient from './api';
-import { ILogin, IRegister, IUser } from '@/interfaces';
-import { AxiosError } from 'axios';
+import { supabase } from "@/lib/supabaseClient";
+import { ILogin, IRegister } from "@/interfaces";
+import { getErrorMessage } from "@/shared/helper/getErrorMessage";
 
-const handleError = (err: unknown) => {
-  const error = err as AxiosError<{ message?: string }>;
-  return {
-    success: false,
-    error: error.response?.data?.message || error.message || 'Error desconocido',
-  };
-};
-
+// Login con Supabase
 export const login = async (values: ILogin) => {
   try {
-    const response = await apiClient.post('/auth/login', values);
-    return { success: true, user: response.data.user };
-  } catch (err) {
-    return handleError(err);
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    });
+
+    if (error) throw error;
+
+    return { success: true, user: data.user };
+  } catch (error) {
+    return {
+      success: false,
+      error: getErrorMessage(error),
+    };
   }
 };
 
+// Registro con Supabase (incluyendo metadata)
 export const register = async (values: IRegister) => {
   try {
-    const response = await apiClient.post('/auth/register', values);
-    return { success: true, data: response.data };
-  } catch (err) {
-    return handleError(err);
+    const { data, error } = await supabase.auth.signUp({
+      email: values.email,
+      password: values.password,
+      options: {
+        data: {
+          full_name: values.full_name,
+          phone_number: values.phone_number,
+        },
+      },
+    });
+
+    if (error) throw error;
+
+    return { success: true, data };
+  } catch (error) {
+    return {
+      success: false,
+      error: getErrorMessage(error),
+    };
   }
 };
 
+// Logout
 export const logout = async () => {
   try {
-    await apiClient.post('/auth/logout');
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
     return { success: true };
-  } catch (err) {
-    return handleError(err);
+  } catch (error) {
+    return { success: false, error: getErrorMessage(error) };
   }
 };
 
-export const getMe = async (): Promise<IUser | null> => {
+// Obtener sesión actual (reemplaza a getMe)
+export const getSession = async () => {
   try {
-    const response = await apiClient.get<IUser>('/auth/me');
-    return response.data;
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+    if (error) throw error;
+    return session;
+  } catch {
+    return null;
+  }
+};
+
+// Obtener usuario actual
+export const getCurrentUser = async () => {
+  try {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+    if (error) throw error;
+    return user;
   } catch {
     return null;
   }

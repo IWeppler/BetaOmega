@@ -1,6 +1,5 @@
-
 import { create } from "zustand";
-import { login, getMe, logout } from "@/services/auth.service";
+import { supabase } from "@/lib/supabaseClient";
 import { ILogin, IUser } from "@/interfaces";
 
 interface AuthState {
@@ -18,38 +17,88 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   fetchUser: async () => {
     try {
-      const user = await getMe();
-      set({ user, loading: false });
+      set({ loading: true });
+
+      const {
+        data: { user: authUser },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError || !authUser) {
+        set({ user: null, loading: false });
+        return;
+      }
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", authUser.id)
+        .maybeSingle();
+
+      if (profileError) {
+        console.error("Error cargando perfil:", profileError);
+      }
+
+      if (!profile) {
+        console.warn(
+          "El usuario está autenticado pero no tiene perfil en la DB."
+        );
+        // Aquí podrías manejarlo, pero al menos ya no rompe la app con error 406.
+      }
+
+      // 3. Unificar datos de Auth + Base de Datos
+      const fullUser = {
+        ...authUser,
+        ...profile, // Esto inyecta: branch, full_name, avatar_url, etc.
+      } as IUser;
+
+      set({ user: fullUser, loading: false });
     } catch (error) {
-      console.error("Error al obtener usuario:", error);
+      console.error("Error general en fetchUser:", error);
       set({ user: null, loading: false });
     }
   },
 
-  // Login
-  login: async (values) => {
+  // Iniciar Sesión
+  login: async ({ email, password }: ILogin) => {
+    // Desestructuramos values
     try {
-      const response = await login(values);
-      if (response.success) {
-        const user = await getMe();
-        set({ user });
-      } else {
-        throw new Error("Error al iniciar sesión");
+      // 1. Login con Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw new Error(error.message);
+
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", data.user.id)
+          .single();
+
+        const fullUser = {
+          id: data.user.id,
+          email: data.user.email,
+          ...profile,
+        } as IUser;
+
+        set({ user: fullUser });
       }
-    } catch (error) {
-      console.error("Error desconocido al iniciar sesión:", error);
+    } catch (error: unknown) {
+      console.error("Error al iniciar sesión:", error);
       throw error;
     }
   },
 
-  // Logout
+  // Cerrar Sesión
   logOut: async () => {
     try {
-      await logout();
+      await supabase.auth.signOut();
+      set({ user: null });
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
-    } finally {
-      set({ user: null });
     }
   },
 
@@ -58,5 +107,4 @@ export const useAuthStore = create<AuthState>((set) => ({
       user: state.user ? { ...state.user, ...newUserData } : null,
     }));
   },
-
 }));

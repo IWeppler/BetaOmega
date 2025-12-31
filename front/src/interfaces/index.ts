@@ -2,46 +2,48 @@
 
 export enum UserRole {
   ADMIN = "admin",
-  STUDENT = "estudiante",
+  STUDENT = "user",
 }
 
 export interface IUser {
   id: string;
-  profile_image_url: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  full_name: string;
+  branch: string;
+  avatar_url?: string;
   role: UserRole;
-  phone_number: string;
+  phone_number?: string;
   country: string;
+  created_at: string;
+}
+
+export interface IEvent {
+  id: number;
+  title: string;
+  description: string;
+  event_date: string; // ISO String timestamp
+  image_url?: string;
+  created_at?: string;
 }
 
 export interface IBook {
   id: string;
-  order: string;
   title: string;
+  order: number;
   slug: string;
   description: string;
   cover_url: string;
+
+  pdf_url?: string; // URL del archivo en Storage
+  is_locked?: boolean;
+
   total_chapters: number;
-  contents: IBookContent[]; 
+  book_content?: IBookContent[];
+  chapters?: IBookContent[];
 }
-
-export interface IGetUser {
-  id: string;
-  first_name: string;
-  last_name: string;
-  role: UserRole;
-  phone_number: string;
-  country: string;
-}
-
-
-
-// La entidad BookContent tal como la recibes del backend
 
 export interface IBookContent {
-  id: string; 
+  id: number;
   book_id: string;
   chapter_number: number;
   title: string;
@@ -49,30 +51,25 @@ export interface IBookContent {
 }
 
 export interface IUserProgress {
-  id: string;
+  id: number;
   user_id: string;
   book_id: string;
-  chapter_number: number;
-  progress: number;
+  current_page: number;
+  is_completed: boolean;
   updated_at: string;
+  chapter_number: number;
+  current_chapter: number;
+  progress: number;
 }
 
-
-
-// --- DTOs (Data Transfer Objects - Datos que envías a la API) ---
-
+// --- DTOs ---
 export interface IUpsertProgressDto {
   user_id: string;
   book_id: string;
   current_chapter: number;
-}
-
-export interface IUpdateUser { 
-  profile_image_url?: string;
-  first_name?: string;
-  last_name?: string;
-  phone_number?: string;
-  country?: string;
+  chapter_number: number;
+  current_page: number;
+  is_completed: boolean;
 }
 
 export interface ICreateBook {
@@ -81,6 +78,7 @@ export interface ICreateBook {
   description: string;
   total_chapters: number;
   cover_url: string;
+  order?: number;
 }
 
 export interface IUpdateBook {
@@ -91,13 +89,6 @@ export interface IUpdateBook {
   cover_url?: string;
 }
 
-export interface IBookContent {
-  book_id: string;
-  chapter_number: number;
-  title: string;
-  md_content: string;
-}
-
 export interface ICreateBookContent {
   book_id: string;
   chapter_number: number;
@@ -106,10 +97,9 @@ export interface ICreateBookContent {
 }
 
 export interface IUpdateBookContent {
-  title?: string;
-  md_content?: string;
+  title: string;
+  md_content: string;
 }
-
 
 export interface IChangePassword {
   currentPassword: string;
@@ -122,8 +112,7 @@ export interface IRegister {
   password: string;
   phone_number: string;
   country: string;
-  first_name: string;
-  last_name: string;
+  full_name: string;
 }
 
 export interface ILogin {
@@ -131,12 +120,32 @@ export interface ILogin {
   password: string;
 }
 
-export interface IBook {
-  id: string;
+export type IUpdateUser = Partial<IUser>;
+
+export interface ICategory {
+  id: number;
+  name: string;
+  color_class: string;
+  created_at?: string;
+}
+
+export interface IPost {
+  id: number;
   title: string;
-  slug: string;
-  description: string;
-  cover_url: string;
-  total_chapters: number;
-  contents: IBookContent[];
+  content: string;
+  image_url?: string;
+  is_pinned: boolean;
+  created_at: string;
+  created_by?: string;
+  category_id: number;
+  category?: ICategory;
+}
+
+export interface SidebarItemProps {
+  icon: React.ReactElement;
+  label: string;
+  href: string;
+  isCollapsed: boolean;
+  isActive?: boolean;
+  className?: string;
 }

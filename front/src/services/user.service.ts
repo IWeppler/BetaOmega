@@ -1,79 +1,127 @@
-import apiClient from "./api";
+import { supabase } from "@/lib/supabaseClient";
 import { IUser, IUpdateUser, IChangePassword } from "@/interfaces";
-import { AxiosError } from "axios";
-
-const handleError = (err: unknown) => {
-  const error = err as AxiosError<{ message?: string | string[] }>;
-  const errorMessage = Array.isArray(error.response?.data?.message)
-    ? error.response.data.message.join(", ")
-    : error.response?.data?.message;
-
-  return {
-    success: false,
-    error: errorMessage || error.message || "Error desconocido",
-  };
-};
+import { getErrorMessage } from "@/shared/helper/getErrorMessage";
 
 export const updateUserProfile = async (values: IUpdateUser) => {
   try {
-    const response = await apiClient.patch<IUser>("/users/update", values);
-    return { success: true, user: response.data };
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new Error("No autenticado");
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .update(values)
+      .eq("id", user.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { success: true, user: data };
   } catch (err) {
-    return handleError(err);
+    return { success: false, error: getErrorMessage(err) };
   }
 };
 
+// Cambiar contraseña (Auth)
 export const changePassword = async (values: IChangePassword) => {
   try {
-    const response = await apiClient.post("/users/me/change-password", values);
-    return { success: true, message: response.data.message };
-  } catch (err) {
-    return handleError(err);
-  }
-};
-
-export const uploadImageProfile = async (file: File) => {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  try {
-    const response = await apiClient.post<IUser>("/users/me/avatar", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    const { error } = await supabase.auth.updateUser({
+      password: values.newPassword,
     });
-    return { success: true, user: response.data };
+
+    if (error) throw error;
+    return { success: true, message: "Contraseña actualizada correctamente" };
   } catch (err) {
-    return handleError(err);
+    return { success: false, error: getErrorMessage(err) };
   }
 };
 
+// Subir avatar (Storage + Profile Update)
+export const uploadImageProfile = async (file: File) => {
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new Error("No autenticado");
+
+    const fileExt = file.name.split(".").pop();
+    // o timestamp para evitar caché
+    const filePath = `${user.id}/avatar_${Date.now()}.${fileExt}`;
+
+    // 1. Subir
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) throw uploadError;
+
+    // 2. Obtener URL
+    const { data: urlData } = supabase.storage
+      .from("avatars")
+      .getPublicUrl(filePath);
+
+    // 3. Actualizar perfil
+    const { data: profile, error: updateError } = await supabase
+      .from("profiles")
+      .update({ avatar_url: urlData.publicUrl })
+      .eq("id", user.id)
+      .select()
+      .single();
+
+    if (updateError) throw updateError;
+
+    return { success: true, user: profile };
+  } catch (err) {
+    return { success: false, error: getErrorMessage(err) };
+  }
+};
+
+// Obtener todos los usuarios (Gestión Admin - desde public.profiles)
 export const fetchAllUsers = async () => {
   try {
-    const response = await apiClient.get<IUser[]>("/users");
-    return { success: true, users: response.data };
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return { success: true, users: data as IUser[] };
   } catch (err) {
-    return handleError(err);
+    return { success: false, error: getErrorMessage(err) };
   }
 };
 
+// Actualizar Rol (Solo Admins deberían poder hacer esto mediante RLS)
 export const updateUserRole = async (id: string, role: string) => {
   try {
-    const response = await apiClient.patch<IUser>(`/users/${id}/role`, {
-      role,
-    });
-    return { success: true, user: response.data };
+    const { data, error } = await supabase
+      .from("profiles")
+      .update({ role })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { success: true, user: data };
   } catch (err) {
-    return handleError(err);
+    return { success: false, error: getErrorMessage(err) };
   }
 };
 
+// Eliminar Usuario (Borrado lógico o de perfil)
 export const deleteUser = async (id: string) => {
   try {
-    const response = await apiClient.delete<IUser>(`/users/${id}`);
-    return { success: true, user: response.data };
-  } catch (err) {
-    return handleError(err);
-  }
+    const { data, error } = await supabase
+      .from("profiles")
+      .delete()
+      .eq("id", id)
+      .select()
+      .single();
 
+    if (error) throw error;
+    return { success: true, user: data };
+  } catch (err) {
+    return { success: false, error: getErrorMessage(err) };
+  }
 };
