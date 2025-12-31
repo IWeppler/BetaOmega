@@ -8,7 +8,7 @@ import { Progress } from "@/shared/ui/progress";
 import { BookOpen, CheckCircle, RotateCcw } from "lucide-react";
 import Image from "next/image";
 import { useProgressStore } from "@/app/store/progressStore";
-import { useAuthStore } from "@/app/store/authStore";
+import { useAuthStore } from "@/features/auth/store/authStore";
 import { clsx } from "clsx";
 
 interface BookCoverViewProps {

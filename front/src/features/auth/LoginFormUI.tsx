@@ -6,7 +6,7 @@ import { ILogin } from "@/interfaces";
 import { Formik, Form } from "formik";
 import { PasswordInput } from "@/shared/ui/PasswordInput";
 import * as yup from "yup";
-import { useAuthStore } from "@/app/store/authStore";
+import { useAuthStore } from "@/features/auth/store/authStore";
 import toast from "react-hot-toast";
 import { Button } from "@/shared/ui/Button";
 import { TextInput } from "@/shared/ui/Input";

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/app/store/authStore";
+import { useAuthStore } from "@/features/auth/store/authStore";
 // 1. Importamos TU Provider personalizado
 import { SidebarProvider } from "@/shared/ui/sidebar-context";
 import { SideBar } from "@/shared/components/Sidebar";

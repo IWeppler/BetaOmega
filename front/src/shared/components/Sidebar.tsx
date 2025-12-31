@@ -21,7 +21,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 // Stores
-import { useAuthStore } from "@/app/store/authStore";
+import { useAuthStore } from "@/features/auth/store/authStore";
 import { useBookStore } from "@/app/store/bookStore";
 import { useProgressStore } from "@/app/store/progressStore";
 import { IBook, SidebarItemProps, UserRole } from "@/interfaces";

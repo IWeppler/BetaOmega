@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabaseServer";
 import { DashboardFeed } from "@/features/dashboard/DashboardFeed";
 import { DashboardSidebar } from "@/features/dashboard/DashboardSidebar";
 import { ICategory, IPost } from "@/interfaces";
-import { DailySanzheiModal } from "@/features/dashboard/DailySanzheiModal";
+import { DailySanzheiModal } from "@/features/sanzhei/DailySanzheiModal";
 import { MobileHeader } from "@/shared/components/MobileHeader";
 
 export default async function DashboardPage() {

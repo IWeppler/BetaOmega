@@ -5,7 +5,7 @@ import { IBook } from "@/interfaces";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { ReactReader } from "react-reader";
 import { useProgressStore } from "@/app/store/progressStore";
-import { useAuthStore } from "@/app/store/authStore";
+import { useAuthStore } from "@/features/auth/store/authStore";
 import { supabase } from "@/lib/supabaseClient";
 import { generateFullBookEpub } from "@/lib/epubGenerator";
 
@@ -172,7 +172,9 @@ export const BookReadingView = ({ book, startAtChapter, onClose }: Props) => {
         {loading || !epubUrl ? (
           <div className="flex h-full items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-            <span className="ml-2 text-sm text-slate-500">Generando libro...</span>
+            <span className="ml-2 text-sm text-slate-500">
+              Generando libro...
+            </span>
           </div>
         ) : (
           <div className="absolute inset-0">
@@ -183,11 +185,9 @@ export const BookReadingView = ({ book, startAtChapter, onClose }: Props) => {
               title={book.title}
               location={location}
               locationChanged={onLocationChange}
-              
               epubInitOptions={{
                 openAs: "epub",
               }}
-              
               epubOptions={{
                 flow: "paginated",
                 manager: "default",

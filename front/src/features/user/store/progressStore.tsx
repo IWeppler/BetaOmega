@@ -2,7 +2,7 @@ import { create } from "zustand";
 import {
   fetchUserProgress,
   upsertUserProgress,
-} from "@/services/progress.service";
+} from "@/features/user/services/progress.service";
 import { IUserProgress, IUpsertProgressDto } from "@/interfaces";
 import { supabase } from "@/lib/supabaseClient";
 

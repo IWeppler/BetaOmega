@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuthStore } from "@/app/store/authStore";
+import { useAuthStore } from "@/features/auth/store/authStore";
 import { Button } from "@/shared/ui/buttoncn";
 import {
   Card,

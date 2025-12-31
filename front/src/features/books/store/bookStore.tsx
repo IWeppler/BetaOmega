@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getAllBooks, getBookBySlug } from '@/services/book.service';
+import { getAllBooks, getBookBySlug } from '@/features/books/services/book.service';
 import { IBook } from '@/interfaces';
 
 interface BookState {

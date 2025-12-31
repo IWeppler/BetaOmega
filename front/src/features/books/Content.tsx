@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useBookStore } from "@/app/store/bookStore";
 import { useProgressStore } from "@/app/store/progressStore";
 import { Loader2 } from "lucide-react";
-import { BookCoverView } from "@/features/dashboard/BookCoverView";
-import { BookReadingView } from "@/features/dashboard/BookView";
+import { BookCoverView } from "@/features/books/BookCoverView";
+import { BookReadingView } from "@/features/books/BookView";
 
 interface ContentProps {
   slug: string | null;
