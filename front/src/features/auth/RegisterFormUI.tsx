@@ -54,7 +54,6 @@ export const RegisterFormUI = () => {
         password: values.password,
         options: {
           data: {
-            // Guardamos el full_name en la metadata también por si acaso
             full_name: values.full_name,
           },
         },
@@ -69,11 +68,10 @@ export const RegisterFormUI = () => {
       }
 
       if (authData.user) {
-        // 3. Insertar en tabla 'profiles' con full_name
         const { error: profileError } = await supabase.from("profiles").insert({
           id: authData.user.id,
           email: values.email,
-          full_name: values.full_name, // Usamos el campo unificado
+          full_name: values.full_name,
           phone_number: values.phone_number,
           country: values.country || "AR",
           role: "user",

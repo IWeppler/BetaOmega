@@ -11,24 +11,40 @@ interface SanzheiState {
   sanzhei: Sanzhei | null;
   hasSeenToday: boolean;
   isLoading: boolean;
-  fetchDailySanzhei: () => Promise<void>;
+  currentUserId: string | null; // NUEVO: Guardamos el ID en el estado
+  fetchDailySanzhei: (userId?: string) => Promise<void>;
   markAsSeen: () => void;
 }
 
-export const useSanzheiStore = create<SanzheiState>((set) => ({
+const seededRandom = (seed: string) => {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    const char = seed.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+};
+
+export const useSanzheiStore = create<SanzheiState>((set, get) => ({
   sanzhei: null,
   hasSeenToday: false,
-  isLoading: true, // Empezamos cargando
+  isLoading: true,
+  currentUserId: null,
 
-  fetchDailySanzhei: async () => {
+  fetchDailySanzhei: async (userId?: string) => {
     const today = new Date().toLocaleDateString("en-CA");
+    
+    // Guardamos el userId en el estado para usarlo luego en markAsSeen
+    set({ currentUserId: userId || null }); 
 
-    // 1. Revisar LocalStorage
-    const storedDate = localStorage.getItem("betaomega_sanzhei_date");
-    const storedContent = localStorage.getItem("betaomega_sanzhei_content");
-    const storedSeenStatus = localStorage.getItem("betaomega_sanzhei_seen");
+    const storageKeySuffix = userId ? `_${userId}` : "";
+    
+    const storedDate = localStorage.getItem(`betaomega_sanzhei_date${storageKeySuffix}`);
+    const storedContent = localStorage.getItem(`betaomega_sanzhei_content${storageKeySuffix}`);
+    const storedSeenStatus = localStorage.getItem(`betaomega_sanzhei_seen${storageKeySuffix}`);
 
-    // Si ya tenemos datos DE HOY, usamos caché y terminamos
+    // 1. Caché Local
     if (storedDate === today && storedContent) {
       set({
         sanzhei: JSON.parse(storedContent),
@@ -38,27 +54,41 @@ export const useSanzheiStore = create<SanzheiState>((set) => ({
       return;
     }
 
-    // 2. Si es un nuevo día, buscamos en Supabase
+    // 2. Fetch
     try {
       set({ isLoading: true });
-      const { data, error } = await supabase.rpc("get_random_sanzhen");
 
-      if (error) throw error;
+      const { data: allIds, error: countError } = await supabase
+        .from("sanzheis")
+        .select("id");
 
-      if (data && data.length > 0) {
-        const newSanzhei = data[0];
+      if (countError || !allIds || allIds.length === 0) throw countError;
 
-        // Guardamos en LocalStorage
-        localStorage.setItem("betaomega_sanzhei_date", today);
+      const seedString = `${today}-${userId || "guest"}`;
+      const seedNumber = seededRandom(seedString);
+      
+      const targetIndex = seedNumber % allIds.length;
+      const targetId = allIds[targetIndex].id;
+
+      const { data: sanzheiData, error: fetchError } = await supabase
+        .from("sanzheis")
+        .select("*")
+        .eq("id", targetId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      if (sanzheiData) {
+        localStorage.setItem(`betaomega_sanzhei_date${storageKeySuffix}`, today);
         localStorage.setItem(
-          "betaomega_sanzhei_content",
-          JSON.stringify(newSanzhei)
+          `betaomega_sanzhei_content${storageKeySuffix}`,
+          JSON.stringify(sanzheiData)
         );
-        localStorage.setItem("betaomega_sanzhei_seen", "false");
+        // Inicializamos en false explícitamente si es nuevo día
+        localStorage.setItem(`betaomega_sanzhei_seen${storageKeySuffix}`, "false");
 
-        // Actualizamos Store
         set({
-          sanzhei: newSanzhei,
+          sanzhei: sanzheiData,
           hasSeenToday: false,
           isLoading: false,
         });
@@ -69,11 +99,24 @@ export const useSanzheiStore = create<SanzheiState>((set) => ({
     }
   },
 
-  markAsSeen: () => {
-    localStorage.setItem("betaomega_sanzhei_seen", "true");
-    set({ hasSeenToday: true });
+  markAsSeen: async () => {
+    // Recuperamos el userId del estado actual
+    const { currentUserId } = get();
+    const storageKeySuffix = currentUserId ? `_${currentUserId}` : "";
 
-    // Opcional: Actualizar racha en DB (sin await para no bloquear UI)
-    supabase.rpc("update_user_streak");
+    // 1. Actualizamos UI inmediatamente
+    set({ hasSeenToday: true });
+    
+    // 2. Guardamos en LocalStorage con la clave CORRECTA
+    localStorage.setItem(`betaomega_sanzhei_seen${storageKeySuffix}`, "true"); 
+    
+    // 3. Solo llamamos a la DB si hay usuario logueado
+    if (currentUserId) {
+      try {
+        await supabase.rpc("update_user_streak");
+      } catch (error) {
+        console.error("Error actualizando racha:", error);
+      }
+    }
   },
 }));

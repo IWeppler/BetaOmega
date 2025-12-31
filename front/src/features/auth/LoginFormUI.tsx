@@ -71,7 +71,7 @@ export const LoginFormUI = () => {
             disabled={isSubmitting}
             className="w-full flex align-center justify-center"
           >
-            Iniciar Sesión
+            {isSubmitting ? "Iniciando Sesión..." : "Iniciar Sesión"}
           </Button>
         </Form>
       )}

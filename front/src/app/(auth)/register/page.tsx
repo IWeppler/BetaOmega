@@ -6,14 +6,11 @@ export default function RegisterPage() {
   return (
     <div
       className="relative flex min-h-screen w-full 
-      /* Estilos Mobile: Imagen de fondo, centrado */
       bg-[url('/bglogin.png')] bg-cover bg-center justify-center items-center
-      /* Estilos Desktop: Reseteo de fondo y alineación */
       lg:bg-none lg:items-stretch lg:justify-start"
     >
       <div className="absolute inset-0 bg-black/40 lg:hidden" />
 
-     
       <div
         className="relative z-10 w-full max-w-lg p-8 m-4 
                       bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl

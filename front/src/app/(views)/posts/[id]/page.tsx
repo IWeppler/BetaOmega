@@ -8,6 +8,7 @@ import { Metadata } from "next";
 import { MobileHeader } from "@/shared/components/MobileHeader";
 import { routes } from "@/app/routes";
 import { PostQuestions } from "@/features/post/PostQuestion";
+import { PostActions } from "@/features/post/components/PostActions";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -40,23 +41,34 @@ export default async function PostDetailPage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
 
-  // Obtenemos el post y su categoría
-  const { data: post, error } = await supabase
-    .from("posts")
-    .select(
-      `
-      *,
-      categories (*)
-    `
-    )
-    .eq("id", id)
-    .single();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let isAdmin = false;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    isAdmin = profile?.role === "admin" || profile?.role === "superadmin";
+  }
+
+  const [postResponse, categoriesResponse] = await Promise.all([
+    supabase.from("posts").select(`*, categories (*)`).eq("id", id).single(),
+    supabase.from("categories").select("*").order("name"),
+  ]);
+
+  const { data: post, error } = postResponse;
+  const { data: categories } = categoriesResponse;
 
   if (error || !post) {
     notFound();
   }
 
   const postData = post as unknown as IPost & { categories: ICategory };
+  const categoriesList = (categories as ICategory[]) || [];
 
   return (
     <div className="h-full w-full overflow-y-auto bg-slate-50/50">
@@ -67,31 +79,45 @@ export default async function PostDetailPage({ params }: Props) {
         backUrl={routes.home}
       />
 
-      <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8 pb-24">
+     <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8 pb-24">
         <article className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <header className="p-6 border-b border-slate-100 bg-white">
-            <div className="flex items-center gap-3 mb-4">
-              {postData.categories && (
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${postData.categories.color_class
-                    .replace("bg-", "text-")
-                    .replace("text-", "border-")}`}
-                >
-                  {postData.categories.name}
-                </span>
-              )}
-              <span className="text-slate-400 text-sm flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                {formatDistanceToNow(new Date(postData.created_at), {
-                  addSuffix: true,
-                  locale: es,
-                })}
-              </span>
-            </div>
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-4">
+                  {postData.categories && (
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${postData.categories.color_class
+                        .replace("bg-", "text-")
+                        .replace("text-", "border-")}`}
+                    >
+                      {postData.categories.name}
+                    </span>
+                  )}
+                  <span className="text-slate-400 text-sm flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
+                    {formatDistanceToNow(new Date(postData.created_at), {
+                      addSuffix: true,
+                      locale: es,
+                    })}
+                  </span>
+                </div>
 
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
-              {postData.title}
-            </h1>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
+                  {postData.title}
+                </h1>
+              </div>
+
+              {isAdmin && (
+                <div className="shrink-0 mt-1">
+                  <PostActions
+                    post={postData}
+                    categories={categoriesList}
+                    isAdmin={isAdmin}
+                  />
+                </div>
+              )}
+            </div>
           </header>
 
           {/* Cuerpo del Contenido */}

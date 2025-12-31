@@ -5,33 +5,45 @@ import { supabase } from "@/lib/supabaseClient";
 import { Flame } from "lucide-react";
 import { Card, CardContent } from "@/shared/ui/card";
 
-export const StreakWidget = () => {
+// 1. Definimos la interfaz de las props
+interface StreakWidgetProps {
+  userId?: string; // Es opcional (?) por si el usuario no está logueado
+}
+
+// 2. Recibimos la prop en el componente
+export const StreakWidget = ({ userId }: StreakWidgetProps) => {
   const [streak, setStreak] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    getStreak();
-  }, []);
-
-  const getStreak = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data } = await supabase
-      .from("profiles")
-      .select("current_streak")
-      .eq("id", user.id)
-      .single();
-
-    if (data) {
-      setStreak(data.current_streak || 0);
+    if (userId) {
+      setLoading(true);
+      getStreak(userId);
+    } else {
+      setStreak(0); 
     }
-    setLoading(false);
+  }, [userId]);
+
+  const getStreak = async (uid: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("current_streak")
+        .eq("id", uid)
+        .single();
+
+      if (error && error.code !== "PGRST116") {
+        console.error("Error fetching streak:", error);
+      }
+
+      if (data) {
+        setStreak(data.current_streak || 0);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Mensajes motivadores según la racha
   const getMotivation = (days: number) => {
     if (days === 0) return "Hoy es un buen día para empezar.";
     if (days === 1) return "Primer paso completado.";
@@ -41,7 +53,14 @@ export const StreakWidget = () => {
     return "Tu disciplina es consistente y sólida. ¡Felicidades!";
   };
 
-  if (loading) return null;
+  // Si no hay usuario, no mostramos el widget (o podrías mostrar un placeholder)
+  if (!userId) return null;
+
+  if (loading) {
+    return (
+      <Card className="border-none shadow-sm bg-slate-50 animate-pulse h-[80px]" />
+    );
+  }
 
   return (
     <Card

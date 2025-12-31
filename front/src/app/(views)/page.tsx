@@ -8,6 +8,10 @@ import { MobileHeader } from "@/shared/components/MobileHeader";
 export default async function DashboardPage() {
   const supabase = await createClient();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const { data: categories } = await supabase
     .from("categories")
     .select("*")
@@ -38,7 +42,7 @@ export default async function DashboardPage() {
 
           <div className="lg:col-span-1">
             <div className="sticky top-6">
-              <DashboardSidebar />
+              <DashboardSidebar currentUser={user} />
             </div>
           </div>
         </div>

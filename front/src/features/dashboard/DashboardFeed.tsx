@@ -44,7 +44,7 @@ export const DashboardFeed = ({ posts, categories }: Props) => {
             />
           </div>
           <div className="shrink-0">
-            <PostFormModal categories={categories} />
+            <PostFormModal categories={categories} isAdmin={true} />
           </div>
         </div>
 

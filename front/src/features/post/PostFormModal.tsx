@@ -41,7 +41,6 @@ import { createPost, updatePost } from "@/features/post/services/post.service";
 import { toast } from "react-hot-toast";
 import { ICategory } from "@/interfaces";
 
-// Definimos una interfaz básica para el post que vamos a editar
 interface PostToEdit {
   id: number;
   title: string;
@@ -52,9 +51,10 @@ interface PostToEdit {
 
 interface PostFormModalProps {
   categories: ICategory[];
-  postToEdit?: PostToEdit | null; // Opcional: si viene, es modo Edición
-  trigger?: React.ReactNode; // Botón personalizado para abrir
-  onSuccess?: () => void; // Callback para recargar la lista externa
+  postToEdit?: PostToEdit | null;
+  trigger?: React.ReactNode;
+  onSuccess?: () => void;
+  isAdmin: boolean;
 }
 
 export const PostFormModal = ({
@@ -62,6 +62,7 @@ export const PostFormModal = ({
   postToEdit,
   trigger,
   onSuccess,
+  isAdmin, // Recibimos la prop
 }: PostFormModalProps) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -81,7 +82,6 @@ export const PostFormModal = ({
 
   const isEditing = !!postToEdit;
 
-  // --- EFECTO: Cargar datos al abrir en modo Edición ---
   useEffect(() => {
     if (open && postToEdit) {
       setTitle(postToEdit.title);
@@ -113,7 +113,6 @@ export const PostFormModal = ({
       };
       fetchEvent();
     } else if (open && !postToEdit) {
-      // Modo crear: limpiar
       resetForm();
     }
   }, [open, postToEdit]);
@@ -127,6 +126,11 @@ export const PostFormModal = ({
     }
     return options;
   }, []);
+
+
+  if (!trigger && !isAdmin) {
+    return null;
+  }
 
   const getEventTypeFromCategory = (catId: string): string => {
     const category = categories.find((c) => String(c.id) === catId);
@@ -170,7 +174,7 @@ export const PostFormModal = ({
       title,
       content,
       category_id: Number(categoryId),
-      is_pinned: false, // O podrías mantener el valor original si editas
+      is_pinned: false,
       event: eventPayload,
     };
 
@@ -190,8 +194,8 @@ export const PostFormModal = ({
       setOpen(false);
       if (!isEditing) resetForm();
 
-      if (onSuccess) onSuccess(); // Callback personalizado
-      router.refresh(); // Refresco general
+      if (onSuccess) onSuccess();
+      router.refresh();
     } else {
       toast.error(result.error || "Error al guardar");
     }
