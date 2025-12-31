@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getBookById } from "@/services/book.service";
-import { createBookContent } from "@/services/content.service";
+import { getBookById } from "@/features/books/services/book.service";
+import { createBookContent } from "@/features/books/services/content.service";
 import { IBook, IBookContent } from "@/interfaces";
 import { Button } from "@/shared/ui/Button";
 import { TextInput } from "@/shared/ui/Input";
@@ -18,7 +18,8 @@ import { toast } from "react-hot-toast";
 import dynamic from "next/dynamic";
 
 const RichTextEditor = dynamic(
-  () => import("@/shared/components/TextEditor").then((mod) => mod.RichTextEditor),
+  () =>
+    import("@/shared/components/TextEditor").then((mod) => mod.RichTextEditor),
   {
     ssr: false,
     loading: () => <p>Cargando editor...</p>,

@@ -20,7 +20,7 @@ import {
   updateUserProfile,
   changePassword,
   uploadImageProfile,
-} from "@/services/user.service";
+} from "@/features/user/services/user.service";
 import { toast } from "react-hot-toast";
 import { useRef, ChangeEvent, useState } from "react";
 import clsx from "clsx";

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { IBook } from "@/interfaces";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { ReactReader } from "react-reader";
-import { useProgressStore } from "@/app/store/progressStore";
+import { useProgressStore } from "@/features/user/store/progressStore";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { supabase } from "@/lib/supabaseClient";
 import { generateFullBookEpub } from "@/lib/epubGenerator";

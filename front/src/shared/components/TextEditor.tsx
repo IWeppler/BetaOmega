@@ -17,7 +17,7 @@ import {
   Image as ImageIcon,
   Underline as UnderlineIcon,
 } from "lucide-react";
-import { uploadContentImage } from "@/services/content.service";
+import { uploadContentImage } from "@/features/books/services/content.service";
 import Underline from "@tiptap/extension-underline";
 import type { Editor } from "@tiptap/react";
 import { useRef } from "react";

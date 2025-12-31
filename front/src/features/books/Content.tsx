@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useBookStore } from "@/app/store/bookStore";
-import { useProgressStore } from "@/app/store/progressStore";
+import { useBookStore } from "@/features/books/store/bookStore";
+import { useProgressStore } from "@/features/user/store/progressStore";
 import { Loader2 } from "lucide-react";
 import { BookCoverView } from "@/features/books/BookCoverView";
 import { BookReadingView } from "@/features/books/BookView";

@@ -9,7 +9,7 @@ import { toast } from "react-hot-toast";
 import { Button, ButtonGhost } from "@/shared/ui/Button";
 import { Card, CardContent } from "@/shared/ui/card";
 import { IBook } from "@/interfaces";
-import { reorderBooks } from "@/services/book.service";
+import { reorderBooks } from "@/features/books/services/book.service";
 import { routes } from "@/app/routes";
 import { useIsMobile } from "@/hooks/use-mobile";
 

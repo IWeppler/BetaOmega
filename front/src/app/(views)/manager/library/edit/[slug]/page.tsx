@@ -2,7 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getBookBySlug, updateBook, deleteBook } from "@/services/book.service";
+import {
+  getBookBySlug,
+  updateBook,
+  deleteBook,
+} from "@/features/books/services/book.service";
 import { IBook, IUpdateBook } from "@/interfaces";
 import { BookDetailsForm } from "@/features/manager/BookDetailForm";
 import { ChapterManager } from "@/features/manager/ChapterManager";

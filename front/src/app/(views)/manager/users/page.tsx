@@ -5,7 +5,7 @@ import {
   fetchAllUsers,
   updateUserRole,
   deleteUser as deleteUserService,
-} from "@/services/user.service";
+} from "@/features/user/services/user.service";
 import { IUser, UserRole } from "@/interfaces";
 import { Button } from "@/shared/ui/buttoncn";
 import { Loader2, PencilIcon, TrashIcon, X } from "lucide-react";

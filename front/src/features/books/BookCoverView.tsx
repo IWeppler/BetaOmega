@@ -7,7 +7,7 @@ import { Button } from "@/shared/ui/Button";
 import { Progress } from "@/shared/ui/progress";
 import { BookOpen, CheckCircle, RotateCcw } from "lucide-react";
 import Image from "next/image";
-import { useProgressStore } from "@/app/store/progressStore";
+import { useProgressStore } from "@/features/user/store/progressStore";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { clsx } from "clsx";
 

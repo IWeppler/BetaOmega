@@ -4,7 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { uploadBookCover, createBook } from "@/services/book.service";
+import {
+  uploadBookCover,
+  createBook,
+} from "@/features/books/services/book.service";
 import { Button } from "@/shared/ui/Button";
 import { TextInput } from "@/shared/ui/Input";
 import { Textarea } from "@/shared/ui/textarea";

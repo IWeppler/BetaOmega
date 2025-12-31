@@ -41,8 +41,8 @@ import {
   createBookContent,
   deleteContent,
   updateContent,
-} from "@/services/content.service";
-import { RichTextEditor } from "../../shared/components/TextEditor";
+} from "@/features/books/services/content.service";
+import { RichTextEditor } from "@/shared/components/TextEditor";
 import { TextInput } from "@/shared/ui/Input";
 
 interface Props {

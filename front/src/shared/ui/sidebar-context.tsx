@@ -10,7 +10,7 @@ import React, {
 import { usePathname } from "next/navigation";
 import { useOutsideClick } from "@/hooks/useOutsideClick"; // Asegúrate que la ruta sea correcta
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useBookStore } from "@/app/store/bookStore";
+import { useBookStore } from "@/features/books/store/bookStore";
 import { IBook } from "@/interfaces";
 
 // Definimos qué datos vamos a compartir

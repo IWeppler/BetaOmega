@@ -22,8 +22,8 @@ import { useRouter } from "next/navigation";
 
 // Stores
 import { useAuthStore } from "@/features/auth/store/authStore";
-import { useBookStore } from "@/app/store/bookStore";
-import { useProgressStore } from "@/app/store/progressStore";
+import { useBookStore } from "@/features/books/store/bookStore";
+import { useProgressStore } from "@/features/user/store/progressStore";
 import { IBook, SidebarItemProps, UserRole } from "@/interfaces";
 import { routes } from "@/app/routes";
 import Link from "next/link";

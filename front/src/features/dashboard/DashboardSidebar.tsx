@@ -15,7 +15,7 @@ import {
   BellRing,
   Quote,
   CalendarDays,
-  ArrowRight, // Cambiamos Lock por ArrowRight
+  ArrowRight,
   LucideIcon,
   Calendar as CalendarIcon,
 } from "lucide-react";
@@ -25,12 +25,11 @@ import { toast } from "react-hot-toast";
 import { useSanzheiStore } from "../sanzhei/store/sanzheiStore";
 import { StreakWidget } from "./StreakWidget";
 
-// Interfaz para los eventos que vienen de la DB
 interface DashboardEvent {
   id: number;
   title: string;
-  date: string; // ISO string
-  time?: string; // Lo formatearemos
+  date: string;
+  time?: string;
   location?: string;
 }
 
