@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Dialog, DialogContent } from "@/shared/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/dialog";
 import { Button } from "@/shared/ui/Button";
 import confetti from "canvas-confetti";
 import { Trophy } from "lucide-react";
@@ -66,9 +66,7 @@ export const LevelUpModal = ({
               <Trophy className="h-16 w-16 text-yellow-600 drop-shadow-sm" />
             </div>
 
-            <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tight mb-2">
-              ¡Ascenso!
-            </h2>
+            <DialogTitle className="text-3xl font-black text-slate-800 uppercase tracking-tight mb-2">Felicidades!</DialogTitle>
 
             <p className="text-slate-500 font-medium mb-6">
               Has alcanzado un nuevo nivel de conocimiento en{" "}

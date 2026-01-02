@@ -203,9 +203,9 @@ export default function ProfilePage() {
                               <Label htmlFor="email">Email</Label>
                               <TextInput
                                 name="email"
-                                // id="email"
-                                // value={user.email}
-                                // disabled
+                                id="email"
+                                value={user.email}
+                                disabled
                               />
                             </div>
                             <div className="space-y-2">

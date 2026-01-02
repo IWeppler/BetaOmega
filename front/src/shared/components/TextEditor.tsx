@@ -196,9 +196,6 @@ export const RichTextEditor = ({
     onUpdate({ editor }) {
       onChange(editor.getHTML());
     },
-    onCreate({ editor }) {
-      console.log("Editor creado:", editor.getJSON());
-    },
   });
 
   return (

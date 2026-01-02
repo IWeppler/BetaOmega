@@ -122,7 +122,7 @@ export default function EditBookPage() {
             <CardContent>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" className="w-full">
+                  <Button variant="destructive" className="w-full cursor-pointer">
                     Eliminar Libro
                   </Button>
                 </AlertDialogTrigger>

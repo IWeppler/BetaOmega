@@ -77,11 +77,7 @@ export const DashboardSidebar = ({ currentUser }: SidebarProps) => {
   };
 
   const toggleNotification = async (id: number, title: string) => {
-    // 1. Validación de Usuario Real
     if (!currentUser) {
-      toast.error("Debes iniciar sesión para activar recordatorios", {
-        icon: "🔒",
-      });
       return;
     }
 
@@ -89,11 +85,9 @@ export const DashboardSidebar = ({ currentUser }: SidebarProps) => {
     if (notifiedEvents.includes(id)) {
       setNotifiedEvents((prev) => prev.filter((eventId) => eventId !== id));
       toast.success("Recordatorio desactivado");
-      // TODO: Llamada a Supabase para borrar de 'event_notifications'
     } else {
       setNotifiedEvents((prev) => [...prev, id]);
       toast.success(`Te avisaremos antes de: ${title}`);
-      // TODO: Llamada a Supabase para insertar en 'event_notifications' usando currentUser.id
     }
   };
 

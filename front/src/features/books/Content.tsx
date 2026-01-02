@@ -6,6 +6,7 @@ import { useProgressStore } from "@/features/user/store/progressStore";
 import { Loader2 } from "lucide-react";
 import { BookCoverView } from "@/features/books/BookCoverView";
 import { BookReadingView } from "@/features/books/BookView";
+import { MobileHeader } from "@/shared/components/MobileHeader";
 
 interface ContentProps {
   slug: string | null;
@@ -64,6 +65,7 @@ export function Content({ slug }: ContentProps) {
 
   return (
     <div className="flex flex-col h-full w-full overflow-hidden bg-[#f9f7f5] relative">
+      <MobileHeader title={currentBook.title} subtitle='' />
       <div className="flex-1 h-full overflow-y-auto p-2 sm:p-6 pb-20 scroll-smooth custom-scrollbar">
         {viewMode === "cover" ? (
           <BookCoverView

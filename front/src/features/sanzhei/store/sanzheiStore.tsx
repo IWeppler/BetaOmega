@@ -34,15 +34,21 @@ export const useSanzheiStore = create<SanzheiState>((set, get) => ({
 
   fetchDailySanzhei: async (userId?: string) => {
     const today = new Date().toLocaleDateString("en-CA");
-    
+
     // Guardamos el userId en el estado para usarlo luego en markAsSeen
-    set({ currentUserId: userId || null }); 
+    set({ currentUserId: userId || null });
 
     const storageKeySuffix = userId ? `_${userId}` : "";
-    
-    const storedDate = localStorage.getItem(`betaomega_sanzhei_date${storageKeySuffix}`);
-    const storedContent = localStorage.getItem(`betaomega_sanzhei_content${storageKeySuffix}`);
-    const storedSeenStatus = localStorage.getItem(`betaomega_sanzhei_seen${storageKeySuffix}`);
+
+    const storedDate = localStorage.getItem(
+      `betaomega_sanzhei_date${storageKeySuffix}`
+    );
+    const storedContent = localStorage.getItem(
+      `betaomega_sanzhei_content${storageKeySuffix}`
+    );
+    const storedSeenStatus = localStorage.getItem(
+      `betaomega_sanzhei_seen${storageKeySuffix}`
+    );
 
     // 1. Caché Local
     if (storedDate === today && storedContent) {
@@ -58,20 +64,22 @@ export const useSanzheiStore = create<SanzheiState>((set, get) => ({
     try {
       set({ isLoading: true });
 
+      const TABLE_NAME = "sanzhens";
+
       const { data: allIds, error: countError } = await supabase
-        .from("sanzheis")
+        .from(TABLE_NAME)
         .select("id");
 
       if (countError || !allIds || allIds.length === 0) throw countError;
 
       const seedString = `${today}-${userId || "guest"}`;
       const seedNumber = seededRandom(seedString);
-      
+
       const targetIndex = seedNumber % allIds.length;
       const targetId = allIds[targetIndex].id;
 
       const { data: sanzheiData, error: fetchError } = await supabase
-        .from("sanzheis")
+        .from(TABLE_NAME)
         .select("*")
         .eq("id", targetId)
         .single();
@@ -79,13 +87,19 @@ export const useSanzheiStore = create<SanzheiState>((set, get) => ({
       if (fetchError) throw fetchError;
 
       if (sanzheiData) {
-        localStorage.setItem(`betaomega_sanzhei_date${storageKeySuffix}`, today);
+        localStorage.setItem(
+          `betaomega_sanzhei_date${storageKeySuffix}`,
+          today
+        );
         localStorage.setItem(
           `betaomega_sanzhei_content${storageKeySuffix}`,
           JSON.stringify(sanzheiData)
         );
         // Inicializamos en false explícitamente si es nuevo día
-        localStorage.setItem(`betaomega_sanzhei_seen${storageKeySuffix}`, "false");
+        localStorage.setItem(
+          `betaomega_sanzhei_seen${storageKeySuffix}`,
+          "false"
+        );
 
         set({
           sanzhei: sanzheiData,
@@ -106,10 +120,10 @@ export const useSanzheiStore = create<SanzheiState>((set, get) => ({
 
     // 1. Actualizamos UI inmediatamente
     set({ hasSeenToday: true });
-    
+
     // 2. Guardamos en LocalStorage con la clave CORRECTA
-    localStorage.setItem(`betaomega_sanzhei_seen${storageKeySuffix}`, "true"); 
-    
+    localStorage.setItem(`betaomega_sanzhei_seen${storageKeySuffix}`, "true");
+
     // 3. Solo llamamos a la DB si hay usuario logueado
     if (currentUserId) {
       try {

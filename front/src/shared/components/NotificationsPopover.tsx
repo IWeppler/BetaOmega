@@ -67,16 +67,12 @@ export const NotificationsPopover = () => {
           schema: "public",
           table: "notifications",
         },
-        (payload) => {
-          console.log("🔔 Cambio detectado en DB:", payload);
+        () => {
           fetchNotifications();
 
           toast("Nueva notificación recibida", { icon: "🔔" });
         }
       )
-      .subscribe((status) => {
-        console.log("🔌 Estado de suscripción:", status);
-      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -84,13 +80,11 @@ export const NotificationsPopover = () => {
   }, []);
 
   const markAsRead = async (id: number, link?: string) => {
-    // Optimistic update
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
     );
     setUnreadCount((prev) => Math.max(0, prev - 1));
 
-    // Update DB
     await supabase.from("notifications").update({ is_read: true }).eq("id", id);
 
     if (link) {

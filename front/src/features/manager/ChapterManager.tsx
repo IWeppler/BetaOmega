@@ -146,7 +146,6 @@ export const ChapterManager = ({ book, onChaptersChange }: Props) => {
                   Cap. {chapter.chapter_number}: {chapter.title}
                 </span>
                 <div className="flex items-center gap-2">
-                  {/* --- MODAL DE EDICIÓN --- */}
                   <Dialog
                     open={editingChapter?.id === chapter.id}
                     onOpenChange={(isOpen) =>
@@ -155,9 +154,8 @@ export const ChapterManager = ({ book, onChaptersChange }: Props) => {
                   >
                     <DialogTrigger asChild>
                       <Button
-                        //variant="outline"
-                        //size="icon"
                         onClick={() => setEditingChapter(chapter)}
+                        className="px-4"
                       >
                         <Pencil className="h-4 w-4" />
                         <span className="sr-only">Editar</span>
@@ -218,7 +216,7 @@ export const ChapterManager = ({ book, onChaptersChange }: Props) => {
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
-                      //variant="destructive" size="icon"
+                        className="px-4 bg-red-500 hover:bg-red-600"
                       >
                         <Trash2 className="h-4 w-4" />
                         <span className="sr-only">Eliminar</span>

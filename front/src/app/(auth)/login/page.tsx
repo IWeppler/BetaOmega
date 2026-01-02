@@ -29,7 +29,7 @@ export default function LoginPage() {
 
           <LoginFormUI />
 
-          <p className="mt-8 text-center text-sm text-slate-600">
+          <p className="mt-8 text-center text-md text-slate-600">
             ¿Aún no tenés cuenta?{" "}
             <Link
               href={routes.register}

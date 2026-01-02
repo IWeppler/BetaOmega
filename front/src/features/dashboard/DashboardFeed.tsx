@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IPost, ICategory } from "@/interfaces";
 import { PostListItem } from "@/features/post/PostListItem";
 import { PostFormModal } from "@/features/post/PostFormModal";
 import { Search } from "lucide-react";
 import { TextInput } from "@/shared/ui/Input";
+import { useAuthStore } from "@/features/auth/store/authStore";
 
 interface Props {
   posts: IPost[];
@@ -15,6 +16,18 @@ interface Props {
 export const DashboardFeed = ({ posts, categories }: Props) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+
+  // 2. Obtener el usuario del store
+  const { user, fetchUser } = useAuthStore();
+
+  useEffect(() => {
+    if (!user) {
+      fetchUser();
+    }
+  }, [user, fetchUser]);
+
+  // 3. Verificar si es admin
+  const isAdmin = user?.role === "admin";
 
   // Lógica de filtrado
   const filteredPosts = posts.filter((post) => {
@@ -43,9 +56,11 @@ export const DashboardFeed = ({ posts, categories }: Props) => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="shrink-0">
-            <PostFormModal categories={categories} isAdmin={true} />
-          </div>
+          {isAdmin && (
+            <div className="shrink-0">
+              <PostFormModal categories={categories} isAdmin={isAdmin} />
+            </div>
+          )}
         </div>
 
         {/* Filtros de Categoría */}
