@@ -127,7 +127,7 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
           <div className="flex items-center gap-2 overflow-hidden">
             <Link href={routes.home} className="flex items-center gap-2">
               <Image
-                src="/byo.png"
+                src="/byologo.png"
                 alt="Logo"
                 width={32}
                 height={32}
