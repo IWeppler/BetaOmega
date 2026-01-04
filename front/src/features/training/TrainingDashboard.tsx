@@ -67,7 +67,7 @@ export const TrainingDashboard = ({
 
   // --- MODO DASHBOARD ---
   return (
-    <div className="h-full w-full overflow-y-auto bg-slate-50/50">
+    <div className="h-full w-full overflow-y-auto bg-[#f8f8f9]">
       <MobileHeader
         title="Centro de Sabiduría"
         subtitle="Entrena tu mente y espíritu"
@@ -75,7 +75,7 @@ export const TrainingDashboard = ({
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-12">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-bold text-slate-700 hidden md:block">
+          <h2 className="text-lg font-bold text-neutral-700 hidden md:block">
             Categorías Disponibles
           </h2>
 
@@ -106,7 +106,6 @@ export const TrainingDashboard = ({
           {categories.map((cat) => {
             const mastery = masteries[cat.id];
 
-            // OBTENER ESTILOS DINÁMICOS DESDE LA DB
             const theme = getTheme(cat.color || "slate");
             const IconComponent = getIconComponent(cat.icon_key || "sparkles");
 
@@ -147,7 +146,7 @@ export const TrainingDashboard = ({
                   >
                     {cat.name}
                   </h3>
-                  <p className="text-sm text-slate-500 leading-relaxed min-h-[40px]">
+                  <p className="text-sm text-neutral-500 leading-relaxed min-h-[40px]">
                     {cat.description ||
                       "Entrena tus conocimientos en este módulo."}
                   </p>
@@ -156,15 +155,15 @@ export const TrainingDashboard = ({
                 <div className="px-6 pb-6 pt-2">
                   <div className="space-y-3">
                     <div className="flex justify-between items-end text-xs">
-                      <span className="font-semibold text-slate-600">
+                      <span className="font-semibold text-neutral-600">
                         Nivel {Math.floor((mastery?.xp || 0) / 100) + 1}
                       </span>
-                      <span className="text-slate-400">
+                      <span className="text-neutral-400">
                         {mastery?.xp || 0} XP
                       </span>
                     </div>
 
-                    <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-2.5 bg-neutral-100 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full bg-linear-to-r ${theme.gradient} transition-all duration-500`}
                         style={{
@@ -197,16 +196,16 @@ export const TrainingDashboard = ({
             );
           })}
 
-          {/* Tarjeta de Agregar Nueva (Solo Admin) */}
+          {/* Tarjeta de Agregar Nueva */}
           {isAdmin && (
             <Link
               href="/manager/training-manager"
-              className="group relative rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center p-8 hover:border-indigo-400 hover:bg-slate-50 transition-all cursor-pointer min-h-[250px]"
+              className="group relative rounded-2xl border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center p-8 hover:border-indigo-400 hover:bg-neutral-50 transition-all cursor-pointer min-h-[250px]"
             >
-              <div className="p-4 bg-slate-100 rounded-full mb-3 group-hover:bg-indigo-100 text-slate-400 group-hover:text-indigo-600 transition-colors">
+              <div className="p-4 bg-neutral-100 rounded-full mb-3 group-hover:bg-indigo-100 text-neutral-400 group-hover:text-indigo-600 transition-colors">
                 <Settings className="w-8 h-8" />
               </div>
-              <span className="font-semibold text-slate-500 group-hover:text-indigo-600">
+              <span className="font-semibold text-neutral-500 group-hover:text-indigo-600">
                 Configurar Módulos
               </span>
             </Link>

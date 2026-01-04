@@ -143,34 +143,34 @@ export const CalendarAlmanac = ({ events }: Props) => {
         {/* Título y Navegación */}
         <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-start">
           <h2 className="text-lg md:text-2xl font-bold text-slate-900 capitalize flex items-center gap-2">
-            <CalendarIcon className="w-6 h-6 text-slate-500" />
+            <CalendarIcon className="w-6 h-6 text-slate-900" />
             {format(currentDate, "MMMM yyyy", { locale: es })}
           </h2>
           <div className="flex gap-1">
-            <ButtonGhost onClick={prevMonth} className="p-2">
+            <ButtonGhost onClick={prevMonth} className="p-2 bg-white">
               <ChevronLeft className="w-5 h-5" />
             </ButtonGhost>
-            <ButtonGhost onClick={goToToday} className="text-xs font-bold">
+            <ButtonGhost
+              onClick={goToToday}
+              className="text-xs font-bold bg-white"
+            >
               HOY
             </ButtonGhost>
-            <ButtonGhost onClick={nextMonth} className="p-2">
+            <ButtonGhost onClick={nextMonth} className="p-2 bg-white">
               <ChevronRight className="w-5 h-5" />
             </ButtonGhost>
           </div>
         </div>
-
-        {/* NOTA: Ya no necesitamos el botón "Nuevo Evento" aquí si lo unificamos con Posts,
-            pero si quisieras dejarlo, aquí iría el {isAdmin && ...} */}
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8 items-start">
         {/* CALENDARIO */}
-        <div className="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="grid grid-cols-7 bg-slate-50 border-b border-slate-200">
+        <div className="flex-1 w-full bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
+          <div className="grid grid-cols-7 bg-[#e7e2e0] border-b border-neutral-200">
             {["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"].map((d) => (
               <div
                 key={d}
-                className="py-3 text-center text-xs font-bold text-slate-500 uppercase tracking-wider"
+                className="py-3 text-center text-xs font-bold text-neutral-600 uppercase tracking-wider"
               >
                 {d}
               </div>
@@ -190,16 +190,16 @@ export const CalendarAlmanac = ({ events }: Props) => {
                   key={day.toString()}
                   onClick={() => setSelectedDate(day)}
                   className={`
-                    relative min-h-[60px] md:min-h-[100px] border-b border-r border-slate-100 p-1 sm:p-2 cursor-pointer transition-all
+                    relative min-h-[60px] md:min-h-[100px] border-b border-r border-neutral-100 p-1 sm:p-2 cursor-pointer transition-all
                     ${
                       !isCurrentMonth
-                        ? "bg-slate-50/50 text-slate-300"
+                        ? "bg-neutral-50/50 text-neutral-300"
                         : "bg-white"
                     }
                     ${
                       isSelected
                         ? "ring-2 ring-inset ring-indigo-500 bg-indigo-50/30 z-10"
-                        : "hover:bg-slate-50"
+                        : "hover:bg-neutral-50"
                     }
                   `}
                 >
@@ -207,8 +207,8 @@ export const CalendarAlmanac = ({ events }: Props) => {
                     <span
                       className={`text-sm font-semibold w-7 h-7 flex items-center justify-center rounded-full ${
                         isTodayDay
-                          ? "bg-slate-900 text-white"
-                          : "text-slate-700"
+                          ? "bg-neutral-900 text-white"
+                          : "text-neutral-700"
                       }`}
                     >
                       {format(day, "d")}
@@ -225,7 +225,7 @@ export const CalendarAlmanac = ({ events }: Props) => {
                     {dayEvents.map((ev, i) => (
                       <div
                         key={i}
-                        className="text-[10px] truncate bg-slate-100 rounded px-1 text-slate-600 border border-slate-200"
+                        className="text-[10px] truncate bg-neutral-100 rounded px-1 text-neutral-600 border border-neutral-200"
                       >
                         {ev.title}
                       </div>
@@ -245,7 +245,7 @@ export const CalendarAlmanac = ({ events }: Props) => {
         {/* DETALLE LATERAL */}
         <div className="w-full lg:w-96 shrink-0 lg:sticky lg:top-6 animate-in slide-in-from-bottom-5 duration-500">
           <div
-            className={`rounded-2xl border-2 overflow-hidden shadow-sm ${selectedTheme.color}`}
+            className={`rounded-2xl border-2 overflow-hidden ${selectedTheme.color}`}
           >
             <div className="p-6 flex flex-col gap-6 items-center">
               <div className="flex flex-col items-center text-center w-full">
@@ -267,7 +267,7 @@ export const CalendarAlmanac = ({ events }: Props) => {
               </div>
 
               <div className="w-full bg-white/60 backdrop-blur-md rounded-xl p-5 border border-white/50 min-h-[160px]">
-                <h3 className="text-sm font-bold uppercase text-slate-500 mb-4 flex items-center gap-2">
+                <h3 className="text-sm font-bold uppercase text-neutral-500 mb-4 flex items-center gap-2">
                   <Clock className="w-4 h-4" /> Agenda del día
                 </h3>
 
@@ -276,21 +276,21 @@ export const CalendarAlmanac = ({ events }: Props) => {
                     {selectedEvents.map((ev, i) => (
                       <div
                         key={i}
-                        className="flex items-start gap-3 pb-3 border-b border-slate-200/50 last:border-0 last:pb-0"
+                        className="flex items-start gap-3 pb-3 border-b border-neutral-200/50 last:border-0 last:pb-0"
                       >
                         {/* Hora */}
-                        <div className="bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded shrink-0">
+                        <div className="bg-neutral-900 text-white text-[10px] font-bold px-2 py-1 rounded shrink-0">
                           {ev.time}
                         </div>
 
                         {/* Info y Botón */}
                         <div className="min-w-0 flex-1">
-                          <p className="font-bold text-slate-800 text-sm truncate">
+                          <p className="font-bold text-neutral-800 text-sm truncate">
                             {ev.title}
                           </p>
 
                           <div className="flex items-center justify-between mt-1">
-                            <div className="flex items-center gap-1 text-xs text-slate-500">
+                            <div className="flex items-center gap-1 text-xs text-neutral-500">
                               <MapPin className="w-3 h-3" /> {ev.location}
                             </div>
 
@@ -309,7 +309,7 @@ export const CalendarAlmanac = ({ events }: Props) => {
                     ))}
                   </div>
                 ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-slate-400 text-sm italic py-4">
+                  <div className="h-full flex flex-col items-center justify-center text-neutral-400 text-sm italic py-4">
                     <p>No hay eventos programados.</p>
                     <span className="text-xs opacity-70 mt-1">
                       ¡Disfruta del día!

@@ -27,10 +27,10 @@ export const MobileHeader = ({
   };
 
   const buttonClass =
-    "mr-3 p-1 rounded-lg border border-gray-300 bg-white text-gray-800 active:bg-gray-100 transition-colors flex items-center justify-center shadow-sm cursor-pointer";
+    "mr-3 p-1 rounded-lg border border-neutral-200 bg-white text-neutral-800 active:bg-neutral-100 transition-colors flex items-center justify-center shadow-sm cursor-pointer";
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-100 h-16 flex items-center px-4 shadow-sm">
+    <header className="sticky top-0 z-40 w-full bg-[#fefeff] border-b border-neutral-200 h-16 flex items-center px-4 shadow-sm">
       {showBackButton ? (
         backUrl ? (
           <Link href={backUrl} className={buttonClass}>
@@ -57,8 +57,8 @@ export const MobileHeader = ({
 
       <div className="flex items-center gap-2">
         <h1 className="text-xl font-bold text-slate-900 truncate">{title}</h1>
-        <div className="hidden md:block text-md text-slate-400">|</div>
-        <p className="hidden md:block text-md text-slate-500">{subtitle}</p>
+        <div className="hidden md:block text-md text-neutral-400">|</div>
+        <p className="hidden md:block text-md text-neutral-500">{subtitle}</p>
       </div>
       <div className="flex-1 flex justify-end">
         <NotificationsPopover />

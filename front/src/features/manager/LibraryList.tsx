@@ -71,7 +71,7 @@ export const LibraryList = ({ initialBooks }: LibraryListProps) => {
           <h2 className="text-lg font-semibold text-gray-900">
             Libros Publicados
           </h2>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-neutral-500">
             Gestiona el contenido de lectura de la plataforma.
           </p>
         </div>
@@ -86,7 +86,7 @@ export const LibraryList = ({ initialBooks }: LibraryListProps) => {
       <Card>
         <CardContent className="p-0">
           {books.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center text-neutral-500">
               No hay libros creados aún.
             </div>
           ) : (
@@ -95,7 +95,7 @@ export const LibraryList = ({ initialBooks }: LibraryListProps) => {
               {!isMobile && (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 border-b border-gray-100 text-gray-500 uppercase tracking-wider text-xs">
+                    <thead className="bg-[#fefeff] border-b border-neutral-200 text-neutral-500 uppercase tracking-wider text-xs">
                       <tr>
                         <th className="px-6 py-3 font-medium text-center w-24">
                           Orden
@@ -110,11 +110,11 @@ export const LibraryList = ({ initialBooks }: LibraryListProps) => {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-neutral-100">
                       {books.map((book, index) => (
                         <tr
                           key={book.id}
-                          className="hover:bg-gray-50/50 transition-colors group"
+                          className="hover:bg-neutral-50/50 transition-colors group"
                         >
                           {/* Columna Orden */}
                           <td className="px-6 py-4">
@@ -123,7 +123,7 @@ export const LibraryList = ({ initialBooks }: LibraryListProps) => {
                                 <button
                                   disabled={index === 0 || loading}
                                   onClick={() => handleReorder(index, "up")}
-                                  className="p-1 hover:bg-gray-200 rounded disabled:opacity-30"
+                                  className="p-1 hover:bg-neutral-200 rounded disabled:opacity-30"
                                 >
                                   <ArrowUp className="h-3 w-3" />
                                 </button>
@@ -132,12 +132,12 @@ export const LibraryList = ({ initialBooks }: LibraryListProps) => {
                                     index === books.length - 1 || loading
                                   }
                                   onClick={() => handleReorder(index, "down")}
-                                  className="p-1 hover:bg-gray-200 rounded disabled:opacity-30"
+                                  className="p-1 hover:bg-neutral-200 rounded disabled:opacity-30"
                                 >
                                   <ArrowDown className="h-3 w-3" />
                                 </button>
                               </div>
-                              <span className="font-mono font-medium text-gray-400 w-6 text-center">
+                              <span className="font-mono font-medium text-neutral-400 w-6 text-center">
                                 {index + 1}
                               </span>
                             </div>
@@ -145,7 +145,7 @@ export const LibraryList = ({ initialBooks }: LibraryListProps) => {
 
                           {/* Columna Portada */}
                           <td className="px-6 py-4">
-                            <div className="relative h-12 w-9 rounded overflow-hidden border border-gray-200 shadow-sm">
+                            <div className="relative h-12 w-9 rounded overflow-hidden border border-neutral-200 shadow-sm">
                               <Image
                                 src={book.cover_url || "/placeholder-book.png"}
                                 alt=""
@@ -157,10 +157,10 @@ export const LibraryList = ({ initialBooks }: LibraryListProps) => {
 
                           {/* Columna Info */}
                           <td className="px-6 py-4 max-w-md">
-                            <div className="font-medium text-gray-900">
+                            <div className="font-medium text-neutral-900">
                               {book.title}
                             </div>
-                            <div className="text-xs text-gray-500 line-clamp-1 mt-0.5">
+                            <div className="text-xs text-neutral-500 line-clamp-1 mt-0.5">
                               {book.description}
                             </div>
                           </td>
@@ -190,7 +190,7 @@ export const LibraryList = ({ initialBooks }: LibraryListProps) => {
 
               {/* LISTA MOBILE */}
               {isMobile && (
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-neutral-100">
                   {books.map((book, index) => (
                     <div key={book.id} className="p-4 flex gap-4 items-center">
                       {/* Controles Reordenar Mobile */}
@@ -198,14 +198,14 @@ export const LibraryList = ({ initialBooks }: LibraryListProps) => {
                         <button
                           disabled={index === 0 || loading}
                           onClick={() => handleReorder(index, "up")}
-                          className="p-1.5 bg-gray-50 rounded border border-gray-200 disabled:opacity-30"
+                          className="p-1.5 bg-neutral-50 rounded border border-neutral-200 disabled:opacity-30"
                         >
                           <ArrowUp className="h-4 w-4" />
                         </button>
                         <button
                           disabled={index === books.length - 1 || loading}
                           onClick={() => handleReorder(index, "down")}
-                          className="p-1.5 bg-gray-50 rounded border border-gray-200 disabled:opacity-30"
+                          className="p-1.5 bg-neutral-50 rounded border border-neutral-200 disabled:opacity-30"
                         >
                           <ArrowDown className="h-4 w-4" />
                         </button>
@@ -216,7 +216,7 @@ export const LibraryList = ({ initialBooks }: LibraryListProps) => {
                         className="flex-1 flex gap-3 items-center"
                         onClick={() => handleRowClick(book)}
                       >
-                        <div className="relative h-16 w-12 rounded border border-gray-200 shadow-sm shrink-0 overflow-hidden bg-gray-100">
+                        <div className="relative h-16 w-12 rounded border border-neutral-200 shadow-sm shrink-0 overflow-hidden bg-neutral-100">
                           <Image
                             src={book.cover_url || "/placeholder-book.png"}
                             alt=""
@@ -225,14 +225,14 @@ export const LibraryList = ({ initialBooks }: LibraryListProps) => {
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-gray-900 truncate">
+                          <h4 className="font-medium text-neutral-900 truncate">
                             {book.title}
                           </h4>
-                          <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                          <p className="text-xs text-neutral-500 mt-1 line-clamp-2">
                             {book.description}
                           </p>
                           <div className="flex items-center gap-2 mt-2">
-                            <span className="text-[10px] uppercase font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
+                            <span className="text-[10px] uppercase font-bold text-neutral-400 bg-neutral-50 px-1.5 py-0.5 rounded border border-neutral-100">
                               Cap {book.total_chapters}
                             </span>
                           </div>

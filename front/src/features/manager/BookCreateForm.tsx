@@ -164,7 +164,7 @@ export const BookCreateForm = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="cover-upload"
-                      className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
+                      className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer hover:bg-neutral-50 transition-colors"
                     >
                       {coverPreview ? (
                         <div className="relative w-full h-full p-2">

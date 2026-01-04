@@ -26,7 +26,7 @@ export default async function ZallampalamPage() {
   });
 
   return (
-    <div className="h-full w-full overflow-y-auto bg-slate-50/50 pb-20">
+    <div className="h-full w-full overflow-y-auto bg-[#f8f8f9] pb-10">
       <MobileHeader
         title="Calendario Zallampalam"
         subtitle="Ciclos y Eventos"

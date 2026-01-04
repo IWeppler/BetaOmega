@@ -114,7 +114,7 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
       <aside
         ref={ref}
         className={clsx(
-          "h-screen bg-white border-r border-gray-200 relative shadow-xl flex flex-col transition-all duration-300 z-50",
+          "h-screen bg-[#e7e2e0] border-r border-neutral-300 relative shadow-xl flex flex-col transition-all duration-300 z-50",
           !isMobile && (isCollapsed ? "w-20 flex items-center" : "w-72"),
           isMobile &&
             (isCollapsed
@@ -123,7 +123,7 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
         )}
       >
         {/* === HEADER DEL SIDEBAR === */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100 shrink-0">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-neutral-300 shrink-0">
           <div className="flex items-center gap-2 overflow-hidden">
             <Link href={routes.home} className="flex items-center gap-2">
               <Image
@@ -136,7 +136,7 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
             </Link>
 
             {!isCollapsed && (
-              <span className="font-bold text-lg whitespace-nowrap text-slate-800">
+              <span className="font-bold text-lg whitespace-nowrap text-neutral-800">
                 Beta & Omega
               </span>
             )}
@@ -145,7 +145,7 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
           {!isMobile && (
             <button
               onClick={toggleCollapse}
-              className="p-1.5 rounded-md hover:bg-slate-100 text-slate-500 transition-colors"
+              className="p-1.5 rounded-md hover:bg-neutral-100 text-neutral-800 transition-colors"
             >
               <LayoutGrid className="h-5 w-5" />
             </button>
@@ -158,14 +158,14 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
           {!isCollapsed && (
             <div className="p-4 pb-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
                 <input
                   ref={searchInputRef}
                   type="text"
                   placeholder="Buscar módulo..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  className="w-full pl-9 pr-4 py-2 bg-[#fefeff] border border-[#f8f8f9] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
                 />
               </div>
             </div>
@@ -178,7 +178,7 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                 {!isCollapsed && (
                   <button
                     onClick={() => setAdminDropdownOpen(!isAdminDropdownOpen)}
-                    className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider hover:text-slate-800"
+                    className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-neutral-600 uppercase tracking-wider hover:text-neutral-800"
                   >
                     <span className="flex items-center gap-2">
                       <Lock className="h-3 w-3" /> Gestión
@@ -216,7 +216,7 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                   </>
                 )}
                 {/* Separador sutil opcional */}
-                <div className="my-2 border-t border-gray-100 mx-2" />
+                <div className="my-2 border-t border-[#d3cecd] mx-2" />
               </div>
             )}
 
@@ -228,7 +228,7 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                 href="/training"
                 isCollapsed={isCollapsed}
                 isActive={false}
-                className="bg-linear-to-r from-indigo-600 to-purple-600 text-white hover:text-white border-none hover:shadow-lg transition-transform"
+                className="bg-linear-to-r from-indigo-600 to-purple-600 text-white hover:text-white border-none transition-transform"
               />
               <SidebarItem
                 icon={<Calendar />}
@@ -236,19 +236,19 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                 href="/zallampalam"
                 isCollapsed={isCollapsed}
                 isActive={false}
-                className="text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                className="text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
               />
             </div>
 
             {/* Separador entre Herramientas y Sabiduría */}
-            <div className="my-1 border-t border-gray-100 mx-2" />
+            <div className="my-1 border-t border-[#d3cecd] mx-2" />
 
             {/* SECCIÓN 3: SABIDURÍA (Libros) */}
             <div className="space-y-1">
               {!isCollapsed && (
                 <button
                   onClick={() => setWisdomDropdownOpen(!isWisdomDropdownOpen)}
-                  className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider hover:text-slate-800"
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-neutral-600 uppercase tracking-wider hover:text-neutral-800"
                 >
                   <span className="flex items-center gap-2">
                     <BookOpen className="h-3 w-3" /> Sabiduría
@@ -280,7 +280,7 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                           "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all group relative",
                           isSelected
                             ? "bg-indigo-50 text-indigo-700 font-medium"
-                            : "text-slate-600 hover:bg-slate-50",
+                            : "text-neutral-600 hover:bg-neutral-50",
                           isLocked && "opacity-50 cursor-not-allowed grayscale"
                         )}
                       >
@@ -291,7 +291,7 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                               "h-8 w-8 rounded-md flex items-center justify-center text-xs font-bold border transition-colors",
                               isSelected
                                 ? "bg-white border-indigo-200 text-indigo-600"
-                                : "bg-white border-slate-200 text-slate-500"
+                                : "bg-white border-neutral-200 text-neutral-500"
                             )}
                           >
                             {idx + 1}
@@ -317,7 +317,7 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                                   {status.label}
                                 </span>
                                 {status.status !== "new" && (
-                                  <span className="text-[10px] text-slate-400">
+                                  <span className="text-[10px] text-neutral-400">
                                     {status.progress}%
                                   </span>
                                 )}
@@ -336,12 +336,12 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
         </div>
 
         {/* === FOOTER (Perfil Usuario) === */}
-        <div className="border-t border-gray-200 p-3 shrink-0 bg-white z-20">
+        <div className="border-t border-neutral-300 p-3 shrink-0 bg-[#e7e2e0] z-20">
           <button
             onClick={handleUserAreaClick}
             className={clsx(
-              "w-full flex items-center gap-3 p-2 rounded-xl transition-colors hover:bg-slate-50",
-              isUserDropdownOpen && "bg-slate-50 ring-1 ring-slate-200"
+              "w-full flex items-center gap-3 p-2 rounded-xl transition-colors hover:bg-[#ededeb]",
+              isUserDropdownOpen && "bg-[#ededeb] ring-1 ring-neutral-300"
             )}
           >
             <div className="relative h-9 w-9 shrink-0">
@@ -349,23 +349,25 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
                 src={imageUrl}
                 alt="Avatar"
                 fill
-                className="rounded-full object-cover border border-slate-200"
+                className="rounded-full object-cover border border-neutral-200"
               />
-              <div className="absolute bottom-0 right-0 h-2.5 w-2.5 bg-green-500 rounded-full border-2 border-white"></div>
+              <div className="absolute bottom-0 right-0 h-2.5 w-2.5 bg-green-500 rounded-full border-2 border-[#ededeb]"></div>
             </div>
 
             {!isCollapsed && (
               <div className="flex-1 text-left overflow-hidden">
-                <div className="font-semibold text-sm text-slate-900 truncate">
+                <div className="font-semibold text-sm text-neutral-900 truncate">
                   {user?.full_name || "Usuario"}
                 </div>
-                <div className="text-xs text-slate-500 truncate">
+                <div className="text-xs text-neutral-500 truncate">
                   {user?.email}
                 </div>
               </div>
             )}
 
-            {!isCollapsed && <ChevronDown className="h-4 w-4 text-slate-400" />}
+            {!isCollapsed && (
+              <ChevronDown className="h-4 w-4 text-neutral-400" />
+            )}
           </button>
 
           {/* Menú desplegable Usuario */}
@@ -373,7 +375,7 @@ export const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
             <div className="mt-2 space-y-1 animate-in slide-in-from-bottom-2 fade-in duration-200">
               <button
                 onClick={() => router.push("/profile")}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg"
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-100 rounded-lg"
               >
                 <Settings className="h-4 w-4" /> Mi Perfil
               </button>
@@ -412,8 +414,8 @@ const SidebarItem = ({
           : "w-full flex items-center gap-3 px-3 py-2.5",
 
         isActive
-          ? "bg-slate-100 text-slate-900 font-medium"
-          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
+          ? "bg-neutral-100 text-neutral-900 font-medium"
+          : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900",
 
         className
       )}

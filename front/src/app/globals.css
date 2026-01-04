@@ -5,14 +5,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* 
+#d3cecd
+#e7e2e0
+#ededeb
+#f8f8f9
+#fefeff
+*/
 :root {
-  /* --- 1. Variables Base de Shadcn (NECESARIAS PARA QUE NO DE ERROR) --- */
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
+  --background: #fff;
+  --foreground: #fefeff;
+  --card: #fff;
+  --card-foreground: #fefeff;
+  --popover: #fff;
+  --popover-foreground: #fefeff;
   --primary: 222.2 47.4% 11.2%;
   --primary-foreground: 210 40% 98%;
   --secondary: 210 40% 96.1%;
@@ -23,12 +29,12 @@
   --accent-foreground: 222.2 47.4% 11.2%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%; /* <--- ESTA ES LA VARIABLE QUE FALTABA */
+  --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
-  --ring: 222.2 84% 4.9%;
+  --ring: #fefeff;
   --radius: 0.5rem;
 
-  /* --- 2. Variables de Sidebar (Shadcn) --- */
+  /* --- 2. Variables de Sidebar  --- */
   --sidebar: hsl(0 0% 98%);
   --sidebar-foreground: hsl(240 5.3% 26.1%);
   --sidebar-primary: hsl(240 5.9% 10%);
@@ -51,11 +57,11 @@
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
+  --background: #fefeff;
   --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
+  --card: #fefeff;
   --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
+  --popover: #fefeff;
   --popover-foreground: 210 40% 98%;
   --primary: 210 40% 98%;
   --primary-foreground: 222.2 47.4% 11.2%;
@@ -74,7 +80,7 @@
   --sidebar: hsl(240 5.9% 10%);
   --sidebar-foreground: hsl(240 4.8% 95.9%);
   --sidebar-primary: hsl(224.3 76.3% 48%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-primary-foreground: #fff;
   --sidebar-accent: hsl(240 3.7% 15.9%);
   --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
   --sidebar-border: hsl(240 3.7% 15.9%);

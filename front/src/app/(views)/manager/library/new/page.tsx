@@ -26,7 +26,7 @@ export default async function CreateBookPage() {
         title="Crear Nuevo Libro"
         subtitle="Completa los detalles para añadir un nuevo libro."
       />
-      <div className="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full">
+      <div className="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full bg-[#f8f8f9]">
         <BookCreateForm />
       </div>
     </>

@@ -58,21 +58,19 @@ export const NotificationsPopover = () => {
     fetchNotifications();
 
     // 2. Suscripción a cambios en vivo
-    const channel = supabase
-      .channel("realtime-notifications")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notifications",
-        },
-        () => {
-          fetchNotifications();
+    const channel = supabase.channel("realtime-notifications").on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "notifications",
+      },
+      () => {
+        fetchNotifications();
 
-          toast("Nueva notificación recibida", { icon: "🔔" });
-        }
-      )
+        toast("Nueva notificación recibida", { icon: "🔔" });
+      }
+    );
 
     return () => {
       supabase.removeChannel(channel);
@@ -183,9 +181,11 @@ export const NotificationsPopover = () => {
                     >
                       {notification.title}
                     </p>
+
                     <p className="text-xs text-slate-500 line-clamp-2">
-                      {notification.message}
+                      {notification.message.replace(/<[^>]*>?/gm, "")}
                     </p>
+
                     <p className="text-[10px] text-slate-400 pt-1">
                       {formatDistanceToNow(new Date(notification.created_at), {
                         addSuffix: true,

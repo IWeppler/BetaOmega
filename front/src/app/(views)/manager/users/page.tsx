@@ -100,12 +100,10 @@ export default function AdminUsersPage() {
     }
   };
 
-  // Función para abrir el modal de detalles del usuario en mobile
   const openUserDetailsModal = (user: IUser) => {
     setSelectedUserForModal(user);
   };
 
-  // Función para cerrar el modal de detalles
   const closeUserDetailsModal = () => {
     setSelectedUserForModal(null);
   };
@@ -126,9 +124,9 @@ export default function AdminUsersPage() {
             {/* VISTA DE ESCRITORIO (TABLA) */}
             {!isMobile && (
               <div className="overflow-x-auto">
-                <table className="min-w-full bg-white shadow rounded-lg responsive-table">
+                <table className="min-w-full bg-[#fefeff] shadow rounded-lg responsive-table ">
                   <thead>
-                    <tr className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+                    <tr className="bg-[#e7e2e0]  text-left text-sm font-semibold text-neutral-700">
                       <th className="p-3">Usuario</th>
                       <th className="p-3">Email</th>
                       <th className="p-3">País</th>
@@ -139,7 +137,10 @@ export default function AdminUsersPage() {
                   </thead>
                   <tbody>
                     {users.map((user) => (
-                      <tr key={user.id} className="border-t text-sm">
+                      <tr
+                        key={user.id}
+                        className="border-t text-sm border-neutral-300"
+                      >
                         <td className="p-3" data-label="Usuario">
                           <div className="flex items-center gap-3">
                             <Image
@@ -193,7 +194,7 @@ export default function AdminUsersPage() {
               </div>
             )}
 
-            {/* VISTA DE MÓVIL (LISTA DE TARJETAS/USUARIOS CLICKEABLES) */}
+            {/* VISTA DE MÓVIL */}
             {isMobile && (
               <div className="space-y-4">
                 {users.map((user) => (
@@ -302,7 +303,7 @@ export default function AdminUsersPage() {
               <select
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
-                className="w-full border rounded p-2 mb-4"
+                className="w-full border rounded p-2 mb-4 border-neutral-300"
               >
                 {roles.map((r) => (
                   <option key={r.value} value={r.value}>

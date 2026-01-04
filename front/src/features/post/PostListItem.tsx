@@ -24,7 +24,7 @@ export const PostListItem = ({ post, category }: PostListItemProps) => {
 
   return (
     <div
-      className={`group relative flex flex-col gap-3 p-5 rounded-xl border transition-all duration-200 bg-white hover:border-slate-300 ${
+      className={`group relative flex flex-col gap-3 p-5 rounded-xl border transition-all duration-200 bg-[#fefeff] hover:border-slate-300 ${
         post.is_pinned
           ? "border-yellow-200 bg-yellow-50/30"
           : "border-slate-100"

@@ -108,7 +108,7 @@ export const PostQuestions = ({ postId }: { postId: string }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mt-6">
+    <div className="bg-[#fefeff] rounded-2xl shadow-sm border border-neutral-200 overflow-hidden mt-6">
       <div className="p-6 sm:p-8">
         <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-6">
           <MessageCircleQuestion className="h-5 w-5 text-slate-500" />
@@ -125,7 +125,7 @@ export const PostQuestions = ({ postId }: { postId: string }) => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setNewQuestion(e.target.value)
               }
-              className="bg-slate-50 border-slate-200 focus:bg-white transition-all"
+              className="bg-neutral-50 border-neutral-200 focus:bg-white transition-all"
             />
           </div>
           <Button
@@ -145,10 +145,10 @@ export const PostQuestions = ({ postId }: { postId: string }) => {
         <div className="space-y-6">
           {loading ? (
             <div className="text-center py-4">
-              <Loader2 className="h-6 w-6 animate-spin text-slate-400 mx-auto" />
+              <Loader2 className="h-6 w-6 animate-spin text-neutral-400 mx-auto" />
             </div>
           ) : questions.length === 0 ? (
-            <p className="text-slate-400 text-sm text-center italic py-4">
+            <p className="text-neutral-400 text-sm text-center italic py-4">
               Nadie ha preguntado todavía. ¡Sé el primero!
             </p>
           ) : (
@@ -175,11 +175,11 @@ export const PostQuestions = ({ postId }: { postId: string }) => {
                 </div>
 
                 {q.answer && (
-                  <div className="flex gap-2 items-start ml-5 pl-3 border-l-2 border-slate-200 py-1">
-                    <CornerDownRight className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />
+                  <div className="flex gap-2 items-start ml-5 pl-3 border-l-2 border-neutral-200 py-1">
+                    <CornerDownRight className="h-4 w-4 text-neutral-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-slate-600 italic">{q.answer}</p>
-                      <span className="text-[10px] text-slate-400">
+                      <p className="text-neutral-600 italic">{q.answer}</p>
+                      <span className="text-[10px] text-neutral-400">
                         Respuesta del administrador
                       </span>
                     </div>

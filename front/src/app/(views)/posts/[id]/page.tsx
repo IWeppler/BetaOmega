@@ -71,7 +71,7 @@ export default async function PostDetailPage({ params }: Props) {
   const categoriesList = (categories as ICategory[]) || [];
 
   return (
-    <div className="h-full w-full overflow-y-auto bg-slate-50/50">
+    <div className="h-full w-full overflow-y-auto bg-[#f8f8f9]">
       <MobileHeader
         title="Post"
         subtitle={postData.title}
@@ -80,8 +80,8 @@ export default async function PostDetailPage({ params }: Props) {
       />
 
      <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8 pb-24">
-        <article className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-          <header className="p-6 border-b border-slate-100 bg-white">
+        <article className="bg-[#fefeff] rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
+          <header className="p-6 border-b border-neutral-200 bg-[#fefeff]">
             <div className="flex justify-between items-start gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-4">

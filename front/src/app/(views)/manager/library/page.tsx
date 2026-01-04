@@ -25,7 +25,7 @@ export default async function LibraryManagerPage() {
 
   // 3. Render
   return (
-    <div>
+    <div className="h-full w-full overflow-y-auto bg-[#f8f8f9] pb-10">
       <MobileHeader
         title="Biblioteca"
         subtitle="Crea, edita y gestiona los libros de la biblioteca"

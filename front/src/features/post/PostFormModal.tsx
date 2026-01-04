@@ -127,7 +127,6 @@ export const PostFormModal = ({
     return options;
   }, []);
 
-
   if (!trigger && !isAdmin) {
     return null;
   }
@@ -286,9 +285,9 @@ export const PostFormModal = ({
             </div>
 
             {/* EVENTO VINCULADO */}
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4">
+            <div className="bg-[#f8f8f9] p-4 rounded-xl border border-neutral-200 space-y-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-slate-700">
+                <div className="flex items-center gap-2 text-neutral-700">
                   <CalendarIcon className="w-4 h-4 text-indigo-600" />
                   <Label
                     htmlFor="event-mode"
@@ -307,23 +306,23 @@ export const PostFormModal = ({
               {hasEvent && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in slide-in-from-top-2 fade-in duration-300 pt-2 border-t border-slate-200/60">
                   <div className="space-y-1.5 flex flex-col">
-                    <Label className="text-xs text-slate-500 font-medium">
+                    <Label className="text-xs text-neutral-500 font-medium">
                       Fecha
                     </Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <ButtonGhost
                           className={cn(
-                            "w-full pl-3 flex items-center text-left font-normal border-slate-200 bg-white shadow-sm h-9",
-                            !eventDate && "text-slate-500"
+                            "w-full pl-3 flex items-center text-left font-normal rounded-md border-neutral-200 bg-white hover:bg-white hover:shadow-sm shadow-sm h-9",
+                            !eventDate && "text-neutral-500"
                           )}
                         >
+                          <CalendarIcon className="ml-auto h-3 w-3 opacity-70" />
                           {eventDate ? (
                             format(eventDate, "P", { locale: es })
                           ) : (
                             <span>Elegir fecha</span>
                           )}
-                          <CalendarIcon className="ml-auto h-3 w-3 opacity-50" />
                         </ButtonGhost>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">

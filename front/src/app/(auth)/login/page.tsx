@@ -15,7 +15,7 @@ export default function LoginPage() {
       <div
         className="relative z-10 w-full max-w-md p-8 m-4 
                       bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl
-                      lg:w-1/2 lg:max-w-none lg:bg-white lg:shadow-none lg:rounded-none lg:m-0 lg:px-24 lg:flex lg:flex-col lg:justify-center"
+                      lg:w-1/2 lg:max-w-none lg:bg-background lg:shadow-none lg:rounded-none lg:m-0 lg:px-24 lg:flex lg:flex-col lg:justify-center"
       >
         <div className="mx-auto w-full max-w-sm">
           <div className="mb-8 text-center lg:text-left">

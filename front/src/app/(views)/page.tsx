@@ -24,7 +24,7 @@ export default async function DashboardPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="h-full w-full overflow-y-auto bg-slate-50/50">
+    <div className="h-full w-full overflow-y-auto bg-[#f8f8f9]">
       <DailySanzheiModal />
       <MobileHeader
         title="Muro Informativo"
