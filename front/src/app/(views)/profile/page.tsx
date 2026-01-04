@@ -97,7 +97,7 @@ export default function ProfilePage() {
     : "/default-avatar.jpg";
 
   return (
-    <div className="h-[calc(100vh-52px)] overflow-y-auto">
+    <div className="min-h-screen overflow-y-auto">
       <div className="flex-1 flex flex-col min-h-screen ">
         <MobileHeader
           title="Mi perfil"
@@ -106,7 +106,7 @@ export default function ProfilePage() {
         <main className="flex-1 overflow-auto p-2 sm:p-6 bg-linear-to-b from-[#f9f7f5] to-white">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-1">
-              <Card className="bg-white shadow-md">
+              <Card className="bg-[#fefeff]">
                 <CardContent className="p-6 flex flex-col items-center text-center">
                   <Image
                     src={imageUrl}
@@ -128,7 +128,7 @@ export default function ProfilePage() {
                   />
                   <Button
                     variant="outline"
-                    className="mt-4 w-full focus:bg-neutral-950 focus:text-white cursor-pointer"
+                    className="mt-4 w-full bg-slate-900 text-white hover:bg-slate-800 hover:text-white cursor-pointer"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploading}
                   >
@@ -145,14 +145,14 @@ export default function ProfilePage() {
                 defaultValue="personal"
               >
                 {/* Hacemos la lista de pestañas flexible */}
-                <TabsList className="flex flex-col sm:flex-row h-auto sm:h-10 sm:grid sm:w-full sm:grid-cols-2 gap-2">
+                <TabsList className="flex flex-col sm:flex-row h-auto sm:h-10 sm:grid sm:w-full sm:grid-cols-2 gap-2 bg-[#fefeff]">
                   <TabsTrigger
                     value="personal"
                     className={clsx(
                       "w-full sm:w-auto cursor-pointer",
                       activeTab === "personal"
-                        ? "bg-neutral-950 text-white shadow-sm"
-                        : "bg-white text-neutral-950"
+                        ? "bg-red-500 text-[#fefeff]"
+                        : "bg-neutral-100 text-slate-900 border border-neutral-200"
                     )}
                   >
                     Información Personal
@@ -162,8 +162,8 @@ export default function ProfilePage() {
                     className={clsx(
                       "w-full sm:w-auto cursor-pointer",
                       activeTab === "security"
-                        ? "bg-neutral-950 text-white shadow-sm"
-                        : "bg-white text-neutral-950"
+                        ? "bg-neutral-900 text-[#fefeff]"
+                        : "bg-neutral-100 text-slate-900 border border-neutral-200"
                     )}
                   >
                     Contraseña
@@ -216,7 +216,11 @@ export default function ProfilePage() {
                                 id="phone_number"
                               />
                             </div>
-                            <Button type="submit" disabled={isSubmitting}>
+                            <Button
+                              type="submit"
+                              disabled={isSubmitting}
+                              className="cursor-pointer"
+                            >
                               Guardar Cambios
                             </Button>
                           </Form>

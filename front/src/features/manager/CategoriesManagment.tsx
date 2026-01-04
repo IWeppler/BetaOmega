@@ -219,7 +219,7 @@ export const CategoriesManagement = ({ initialCategories }: Props) => {
 
       {/* Listado de Categorías */}
       <div className="space-y-2">
-        <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wider">
+        <h3 className="text-sm font-medium text-neutral-500 uppercase tracking-wider">
           Categorías Existentes ({categories.length})
         </h3>
 
@@ -230,7 +230,7 @@ export const CategoriesManagement = ({ initialCategories }: Props) => {
               className={`p-4 bg-white border rounded-lg shadow-sm transition-all ${
                 editingId === cat.id
                   ? "border-blue-500 ring-1 ring-blue-500"
-                  : "border-slate-200"
+                  : "border-neutral-200"
               }`}
             >
               {editingId === cat.id ? (
@@ -238,7 +238,7 @@ export const CategoriesManagement = ({ initialCategories }: Props) => {
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center w-full">
                     <div className="flex-1 w-full">
-                      <label className="text-xs text-slate-500 font-bold mb-1 block">
+                      <label className="text-xs text-neutral-500 font-bold mb-1 block">
                         Nombre
                       </label>
                       <input

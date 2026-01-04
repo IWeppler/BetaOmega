@@ -15,11 +15,11 @@ export function Button({ children, className, ...props }: ButtonProps) {
         px-6 py-3
         text-sm font-medium
         text-neutral-50
-        bg-neutral-900
+        bg-slate-900
         border border-neutral-200
         transition-all duration-300 ease-out
         hover:shadow-md
-        hover:bg-neutral-700
+        hover:bg-slate-800
         cursor-pointer
         `,
         className

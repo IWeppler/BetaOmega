@@ -124,7 +124,7 @@ export const NotificationsPopover = () => {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <button className="relative p-2 rounded-full hover:bg-slate-100 transition-colors text-slate-600">
+        <button className="relative p-2 rounded-full hover:bg-neutral-100 transition-colors text-neutral-600">
           <Bell className="w-6 h-6" />
           {unreadCount > 0 && (
             <span className="absolute top-1 right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] font-bold text-white flex items-center justify-center ring-2 ring-white">
@@ -135,11 +135,11 @@ export const NotificationsPopover = () => {
       </PopoverTrigger>
 
       <PopoverContent
-        className="w-80 p-0 shadow-xl border-slate-200"
+        className="w-80 p-0 shadow-xl border-neutral-200"
         align="end"
       >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/50">
-          <h4 className="font-semibold text-sm text-slate-800">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 bg-neutral-50">
+          <h4 className="font-semibold text-sm text-neutral-800">
             Notificaciones
           </h4>
           {unreadCount > 0 && (

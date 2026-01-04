@@ -30,7 +30,7 @@ export default async function CategoriesPage() {
         subtitle="Gestiona tus categorías aquí."
       />
 
-      <div className="p-6 lg:p-10 max-w-5xl mx-auto w-full bg-[#f8f8f9]">
+      <div className="p-6 lg:p-10 max-w-5xl mx-auto w-full">
         <CategoriesManagement
           initialCategories={(categories as ICategory[]) || []}
         />

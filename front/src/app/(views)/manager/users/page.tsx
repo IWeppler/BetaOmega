@@ -129,7 +129,6 @@ export default function AdminUsersPage() {
                     <tr className="bg-[#e7e2e0]  text-left text-sm font-semibold text-neutral-700">
                       <th className="p-3">Usuario</th>
                       <th className="p-3">Email</th>
-                      <th className="p-3">País</th>
                       <th className="p-3">Rol</th>
                       <th className="p-3">Teléfono</th>
                       <th className="p-3">Acciones</th>
@@ -156,9 +155,7 @@ export default function AdminUsersPage() {
                         <td className="p-3" data-label="Email">
                           {user.email}
                         </td>
-                        <td className="p-3" data-label="País">
-                          {user.country}
-                        </td>
+
                         <td className="p-3 capitalize" data-label="Rol">
                           {user.role}
                         </td>
