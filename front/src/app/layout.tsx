@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import { AuthInitializer } from "@/features/auth/AuthInitializer";
+import { AuthModal } from "@/features/auth/AuthModal";
 
 export const metadata: Metadata = {
   title: "Sabiduría Omniversal Supina",
@@ -16,6 +18,8 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className="antialiased font-brutal-mono">
+        <AuthInitializer />
+        <AuthModal />
         {children}
         <Toaster position="bottom-right" />
       </body>

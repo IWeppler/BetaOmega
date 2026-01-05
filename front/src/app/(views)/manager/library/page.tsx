@@ -11,7 +11,7 @@ export default async function LibraryManagerPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/");
 
   // 2. Fetch de Libros (Server Side)
   const { data: books, error } = await supabase

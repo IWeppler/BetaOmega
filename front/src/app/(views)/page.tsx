@@ -12,24 +12,23 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("*")
-    .order("id");
+  const [categoriesResponse, postsResponse] = await Promise.all([
+    supabase.from("categories").select("*").order("id"),
+    supabase
+      .from("posts")
+      .select("*")
+      .order("created_at", { ascending: false }),
+  ]);
 
-  const { data: posts } = await supabase
-    .from("posts")
-    .select("*")
-    .order("is_pinned", { ascending: false })
-    .order("created_at", { ascending: false });
+  const categories = categoriesResponse.data || [];
+  const posts = postsResponse.data || [];
+
+  if (postsResponse.error) console.error("Error posts:", postsResponse.error);
 
   return (
     <div className="h-full w-full overflow-y-auto bg-[#f8f8f9]">
       <DailySanzheiModal />
-      <MobileHeader
-        title="Muro Informativo"
-        subtitle="Aqui encontraras noticias, anuncios, eventos y mucho más."
-      />
+      <MobileHeader title="Novedades" subtitle="Canal Oficial" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">

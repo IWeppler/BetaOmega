@@ -129,6 +129,12 @@ export interface ICategory {
   created_at?: string;
 }
 
+export interface IGlossaryTerm {
+  id: number;
+  term: string;
+  definition: string;
+}
+
 export interface IPost {
   id: number;
   title: string;

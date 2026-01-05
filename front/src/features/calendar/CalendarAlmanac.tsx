@@ -297,7 +297,7 @@ export const CalendarAlmanac = ({ events }: Props) => {
                             {/* Enlace al Post vinculado */}
                             {ev.post_id && (
                               <Link
-                                href={`/dashboard?highlight=${ev.post_id}`}
+                                href={`/posts/${ev.post_id}`}
                                 className="text-[10px] text-indigo-600 font-bold flex items-center gap-1 hover:underline"
                               >
                                 Ver detalle <ExternalLink className="w-3 h-3" />

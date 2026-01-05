@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { IPost, ICategory } from "@/interfaces";
 import { PostListItem } from "@/features/post/PostListItem";
 import { PostFormModal } from "@/features/post/PostFormModal";
 import { Search } from "lucide-react";
 import { TextInput } from "@/shared/ui/Input";
 import { useAuthStore } from "@/features/auth/store/authStore";
+import clsx from "clsx";
+import BannerBlock from "./BannerBlock"; // Importamos el componente limpio
 
 interface Props {
   posts: IPost[];
@@ -17,19 +19,10 @@ export const DashboardFeed = ({ posts, categories }: Props) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
-  // 2. Obtener el usuario del store
-  const { user, fetchUser } = useAuthStore();
-
-  useEffect(() => {
-    if (!user) {
-      fetchUser();
-    }
-  }, [user, fetchUser]);
-
-  // 3. Verificar si es admin
+  const { user } = useAuthStore();
   const isAdmin = user?.role === "admin";
 
-  // Lógica de filtrado
+  // 1. Lógica de Filtrado (CENTRALIZADA AQUÍ)
   const filteredPosts = posts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -40,17 +33,25 @@ export const DashboardFeed = ({ posts, categories }: Props) => {
     return matchesSearch && matchesCategory;
   });
 
+  // 2. Lógica de visualización
+  const displayedPosts = user ? filteredPosts : filteredPosts.slice(0, 2);
+
+  // 3. Condición para mostrar el Banner:
+  // - No hay usuario
+  // - Y hay posts que coinciden con la búsqueda (si la búsqueda no da resultados, no mostramos el candado de "hay más")
+  const showBanner = !user && filteredPosts.length > 0;
+
   return (
     <div className="space-y-6">
-      {/* 1. Barra de Herramientas  */}
+      {/* Barra de Herramientas */}
       <div className="space-y-4 bg-[#e7e2e0] p-4 rounded-xl border border-neutral-300 shadow-sm">
-        <div className="flex flex-row justify-center items-center gap-3">
-          {" "}
+        {/* ... (Tu código del buscador y filtros igual que antes) ... */}
+         <div className="flex flex-row justify-center items-center gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
             <TextInput
               name="search"
-              placeholder="Buscar publicaciones, anuncios, temas..."
+              placeholder="Buscar publicaciones..."
               className="w-full pl-2 pr-4 py-3 bg-[#fefeff] border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -64,9 +65,9 @@ export const DashboardFeed = ({ posts, categories }: Props) => {
         </div>
 
         {/* Filtros de Categoría */}
-        <div className="w-full bg-[#fefeff] md:bg-transparent py-2 sticky top-16 md:top-0 z-30">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 px-1 scrollbar-hide">
-            {/* Botón  */}
+        <div className="w-full bg-transparent py-2 sticky top-16 md:top-0 z-30">
+            {/* ... Tus botones de filtros ... */}
+             <div className="flex items-center gap-2 overflow-x-auto pb-2 px-1 scrollbar-hide">
             <button
               onClick={() => setSelectedCategory(null)}
               className={`whitespace-nowrap shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
@@ -78,7 +79,6 @@ export const DashboardFeed = ({ posts, categories }: Props) => {
               Todo
             </button>
 
-            {/* Mapeo de Categorías */}
             {categories.map((cat) => (
               <button
                 key={cat.id}
@@ -96,21 +96,34 @@ export const DashboardFeed = ({ posts, categories }: Props) => {
         </div>
       </div>
 
-      {/* 2. Lista de Resultados */}
-      <div className="space-y-3">
-        {filteredPosts.length > 0 ? (
-          filteredPosts.map((post) => (
-            <PostListItem
-              key={post.id}
-              post={post}
-              category={categories.find((c) => c.id === post.category_id)}
-            />
-          ))
+      {/* Lista de Resultados */}
+      <div className="space-y-3 pb-10 relative">
+        {displayedPosts.length > 0 ? (
+          <>
+            {displayedPosts.map((post, index) => (
+              <div
+                key={post.id}
+                className={clsx(
+                   // Usamos showBanner para saber si debemos desvanecer el último elemento
+                  showBanner &&
+                    index === displayedPosts.length - 1 &&
+                    "mask-linear-fade opacity-50 pointer-events-none select-none"
+                )}
+              >
+                <PostListItem
+                  post={post}
+                  category={categories.find((c) => c.id === post.category_id)}
+                />
+              </div>
+            ))}
+          </>
         ) : (
           <div className="text-center py-12 text-neutral-400">
             No se encontraron publicaciones.
           </div>
         )}
+
+        {showBanner && <BannerBlock />}
       </div>
     </div>
   );

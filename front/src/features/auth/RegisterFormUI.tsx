@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { routes } from "@/app/routes";
 import { IRegister } from "@/interfaces";
 import { Formik, Form, ErrorMessage, FormikHelpers } from "formik";
 import * as yup from "yup";
@@ -17,7 +16,12 @@ import { PasswordInput } from "@/shared/ui/PasswordInput";
 import { Button } from "@/shared/ui/Button";
 import { TextInput } from "@/shared/ui/Input";
 
-export const RegisterFormUI = () => {
+// 1. Agregamos la prop opcional para cerrar el modal
+interface Props {
+  onSuccess?: () => void;
+}
+
+export const RegisterFormUI = ({ onSuccess }: Props) => {
   const router = useRouter();
   const [hasMounted, setHasMounted] = useState(false);
 
@@ -27,7 +31,6 @@ export const RegisterFormUI = () => {
 
   if (!hasMounted) return null;
 
-  // 1. Esquema actualizado: full_name único
   const validationSchema = yup.object({
     full_name: yup
       .string()
@@ -55,6 +58,8 @@ export const RegisterFormUI = () => {
         options: {
           data: {
             full_name: values.full_name,
+            // Guardamos metadata para el Trigger de SQL que vimos antes
+            phone_number: values.phone_number,
           },
         },
       });
@@ -62,13 +67,16 @@ export const RegisterFormUI = () => {
       if (authError) {
         if (authError.message.includes("already registered")) {
           setFieldError("email", "Este correo ya está registrado.");
+          toast.error("El usuario ya existe");
           return;
         }
         throw authError;
       }
 
       if (authData.user) {
-        const { error: profileError } = await supabase.from("profiles").insert({
+        // Opcional: Si tienes el trigger SQL activo, este insert manual podría sobrar
+        // pero lo dejamos por seguridad si el trigger falla o no existe.
+        const { error: profileError } = await supabase.from("profiles").upsert({
           id: authData.user.id,
           email: values.email,
           full_name: values.full_name,
@@ -82,19 +90,19 @@ export const RegisterFormUI = () => {
         }
 
         toast.success("¡Cuenta creada exitosamente!");
-        router.refresh();
-        router.push(routes.home);
+
+        // 3. Manejo de éxito
+        if (onSuccess) {
+          onSuccess(); // Cerramos modal
+          router.refresh(); // Refrescamos sesión
+        } else {
+          router.refresh();
+          router.push("/"); // Fallback a home
+        }
       }
     } catch (error) {
       let message = "Error al registrarse";
       if (error instanceof Error) message = error.message;
-      else if (
-        typeof error === "object" &&
-        error !== null &&
-        "message" in error
-      ) {
-        message = (error as { message: string }).message;
-      }
       toast.error(message);
     }
   };
@@ -106,10 +114,10 @@ export const RegisterFormUI = () => {
           background-color: transparent;
           border: none;
           outline: none;
-          color: inherit; /* Hereda el neutral-900 */
+          color: inherit;
         }
         .custom-phone-input .PhoneInputCountry {
-          margin-right: 0.75rem; /* Ajuste visual para separar la bandera */
+          margin-right: 0.75rem;
         }
       `}</style>
 
@@ -126,7 +134,7 @@ export const RegisterFormUI = () => {
       >
         {({ isSubmitting, setFieldValue, values, errors, touched }) => (
           <Form className="space-y-4">
-            {/* NOMBRE COMPLETO (Unificado) */}
+            {/* NOMBRE COMPLETO */}
             <TextInput
               name="full_name"
               type="text"
@@ -171,7 +179,6 @@ export const RegisterFormUI = () => {
                   onCountryChange={(country) =>
                     setFieldValue("country", country)
                   }
-                  // numberInputProps={{ className: "bg-transparent outline-none border-none w-full" }} // Alternativa si no usas style jsx
                 />
               </div>
 

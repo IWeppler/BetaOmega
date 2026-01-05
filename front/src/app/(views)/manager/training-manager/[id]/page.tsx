@@ -15,7 +15,7 @@ export default async function CategoryQuestionsPage({ params }: Props) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/auth/login");
+  if (!user) redirect("/");
 
   const { data: moduleData } = await supabase
     .from("training_modules")

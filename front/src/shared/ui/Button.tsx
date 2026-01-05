@@ -61,7 +61,6 @@ export function Button({ children, className, ...props }: ButtonProps) {
   );
 }
 
-
 export function ButtonGhost({ children, className, ...props }: ButtonProps) {
   return (
     <button
@@ -83,8 +82,9 @@ export function ButtonGhost({ children, className, ...props }: ButtonProps) {
         className
       )}
     >
-
-      <span className="relative z-10 flex items-center gap-1 justify-center">{children}</span>
+      <span className="relative z-10 flex items-center gap-1 justify-center">
+        {children}
+      </span>
     </button>
   );
 }

@@ -6,14 +6,18 @@ interface AuthState {
   user: IUser | null;
   loading: boolean;
   login: (values: ILogin) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logOut: () => Promise<void>;
   fetchUser: () => Promise<void>;
   updateUserState: (newUserData: Partial<IUser>) => void;
+  setUser: (user: IUser | null) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   loading: true,
+
+  setUser: (user) => set({ user, loading: false }),
 
   fetchUser: async () => {
     try {
@@ -39,31 +43,17 @@ export const useAuthStore = create<AuthState>((set) => ({
         console.error("Error cargando perfil:", profileError);
       }
 
-      if (!profile) {
-        console.warn(
-          "El usuario está autenticado pero no tiene perfil en la DB."
-        );
-        // Aquí podrías manejarlo, pero al menos ya no rompe la app con error 406.
-      }
-
-      // 3. Unificar datos de Auth + Base de Datos
-      const fullUser = {
-        ...authUser,
-        ...profile, // Esto inyecta: branch, full_name, avatar_url, etc.
-      } as IUser;
+      const fullUser = { ...authUser, ...profile } as IUser;
 
       set({ user: fullUser, loading: false });
     } catch (error) {
-      console.error("Error general en fetchUser:", error);
+      console.error("Error al cargar el usuario:", error);
       set({ user: null, loading: false });
     }
   },
 
-  // Iniciar Sesión
   login: async ({ email, password }: ILogin) => {
-    // Desestructuramos values
     try {
-      // 1. Login con Supabase
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -92,7 +82,21 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  // Cerrar Sesión
+  loginWithGoogle: async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      });
+      if (error) throw error;
+    } catch (error) {
+      console.error("Error al iniciar con Google:", error);
+      throw error;
+    }
+  },
+
   logOut: async () => {
     try {
       await supabase.auth.signOut();

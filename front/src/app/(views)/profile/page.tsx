@@ -145,7 +145,7 @@ export default function ProfilePage() {
                 defaultValue="personal"
               >
                 {/* Hacemos la lista de pestañas flexible */}
-                <TabsList className="flex flex-col sm:flex-row h-auto sm:h-10 sm:grid sm:w-full sm:grid-cols-2 gap-2 bg-[#fefeff]">
+                <TabsList className="flex flex-col sm:flex-row h-auto sm:grid sm:w-full sm:grid-cols-2 gap-2 bg-[#fefeff]">
                   <TabsTrigger
                     value="personal"
                     className={clsx(

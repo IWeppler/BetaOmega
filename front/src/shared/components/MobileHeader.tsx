@@ -27,7 +27,7 @@ export const MobileHeader = ({
   };
 
   const buttonClass =
-    "mr-3 p-1 rounded-lg border border-neutral-200 bg-white text-neutral-800 active:bg-neutral-100 transition-colors flex items-center justify-center shadow-sm cursor-pointer";
+    "mr-3 p-1 rounded-lg border border-neutral-300 bg-neutral-100 text-neutral-800 active:bg-neutral-100 transition-colors flex items-center justify-center shadow-sm cursor-pointer";
 
   return (
     <header className="sticky top-0 z-40 w-full bg-[#d3cecd] border-b border-[#d3cecd] h-16 flex items-center px-4 shadow-sm">

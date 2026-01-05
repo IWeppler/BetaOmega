@@ -11,7 +11,7 @@ export default async function TrainingManagerPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/auth/login");
+    redirect("/");
   }
 
   const { data: profile } = await supabase

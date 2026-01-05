@@ -57,7 +57,6 @@ export const logout = async () => {
   }
 };
 
-// Obtener sesión actual (reemplaza a getMe)
 export const getSession = async () => {
   try {
     const {
@@ -71,7 +70,6 @@ export const getSession = async () => {
   }
 };
 
-// Obtener usuario actual
 export const getCurrentUser = async () => {
   try {
     const {
@@ -82,5 +80,29 @@ export const getCurrentUser = async () => {
     return user;
   } catch {
     return null;
+  }
+};
+
+export const loginWithGoogle = async () => {
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
+    });
+
+    if (error) throw error;
+
+    return { success: true, data };
+  } catch (error) {
+    return {
+      success: false,
+      error: getErrorMessage(error),
+    };
   }
 };

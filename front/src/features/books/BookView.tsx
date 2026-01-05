@@ -112,7 +112,7 @@ export const BookReadingView = ({ book, startAtChapter, onClose }: Props) => {
       const targetHref = `ch_${targetIndex}.xhtml`;
       setLocation(targetHref);
     }
-  }, [startAtChapter, loading, epubUrl]);
+  }, [ startAtChapter, loading, epubUrl]);
 
   // 3. DETECCIÓN DE PROGRESO Y FINAL
   const onLocationChange = async (loc: string | number) => {
