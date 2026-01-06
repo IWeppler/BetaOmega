@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { supabase } from "@/lib/supabaseClient";
 import { ILogin, IUser } from "@/interfaces";
+import { routes } from "@/app/routes";
 
 interface AuthState {
   user: IUser | null;
@@ -100,7 +101,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   logOut: async () => {
     try {
       await supabase.auth.signOut();
+
       set({ user: null });
+      window.location.href = routes.home;
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }

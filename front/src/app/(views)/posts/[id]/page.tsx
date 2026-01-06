@@ -3,13 +3,14 @@ import { notFound } from "next/navigation";
 import { Calendar } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import { IPost, ICategory, IGlossaryTerm } from "@/interfaces"; // Asegúrate de importar IGlossaryTerm
+import { IPost, ICategory, IGlossaryTerm } from "@/interfaces";
 import { Metadata } from "next";
 import { MobileHeader } from "@/shared/components/MobileHeader";
 import { routes } from "@/app/routes";
 import { PostQuestions } from "@/features/post/PostQuestion";
 import { PostActions } from "@/features/post/components/PostActions";
 import { GlossaryRenderer } from "@/shared/components/GlossaryRenderer";
+import { Suspense } from "react";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -56,27 +57,22 @@ export default async function PostDetailPage({ params }: Props) {
     isAdmin = profile?.role === "admin" || profile?.role === "superadmin";
   }
 
-  // CORRECCIÓN AQUÍ: Traemos 3 cosas (Post, Categorías y Glosario)
-  const [postResponse, categoriesResponse, glossaryResponse] =
-    await Promise.all([
-      supabase.from("posts").select(`*, categories (*)`).eq("id", id).single(),
-      supabase.from("categories").select("*").order("name"), // Necesario para PostActions (edición)
-      supabase.from("glossary_terms").select("*"), // Necesario para GlossaryRenderer (lectura)
-    ]);
+  // 1. Fetch CRÍTICO: Solo Post y Categorías (Esto es rápido)
+  // QUITAMOS el glosario de aquí para no bloquear
+  const [postResponse, categoriesResponse] = await Promise.all([
+    supabase.from("posts").select(`*, categories (*)`).eq("id", id).single(),
+    supabase.from("categories").select("*").order("name"),
+  ]);
 
   const { data: post, error } = postResponse;
   const { data: categories } = categoriesResponse;
-  const { data: glossary } = glossaryResponse;
 
   if (error || !post) {
     notFound();
   }
 
   const postData = post as unknown as IPost & { categories: ICategory };
-
-  // Preparamos las listas con tipos correctos
   const categoriesList = (categories as ICategory[]) || [];
-  const glossaryList = (glossary as IGlossaryTerm[]) || [];
 
   return (
     <div className="h-full w-full overflow-y-auto bg-[#f8f8f9]">
@@ -130,25 +126,28 @@ export default async function PostDetailPage({ params }: Props) {
 
           {/* Cuerpo del Contenido */}
           <div className="p-4">
-            <div
-              className="prose prose-slate prose-lg max-w-none 
-                prose-headings:font-bold prose-headings:text-slate-900 
-                prose-p:text-slate-600 prose-p:leading-relaxed
-                prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline
-                prose-img:rounded-xl prose-img:shadow-md"
-            >
-              {/* Aquí usamos el Glosario para renderizar */}
-              <GlossaryRenderer
-                content={postData.content}
-                terms={glossaryList}
-              />
+            <div className="prose prose-slate prose-lg max-w-none prose-headings:font-bold prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md">
+              <Suspense
+                fallback={
+                  <div dangerouslySetInnerHTML={{ __html: postData.content }} />
+                }
+              >
+                <AsyncGlossaryContent content={postData.content} />
+              </Suspense>
             </div>
           </div>
         </article>
 
-        {/* Sección de Preguntas */}
         <PostQuestions postId={postData.id.toString()} />
       </div>
     </div>
   );
+}
+
+async function AsyncGlossaryContent({ content }: { content: string }) {
+  const supabase = await createClient();
+  const { data: glossary } = await supabase.from("glossary_terms").select("*");
+  const glossaryList = (glossary as IGlossaryTerm[]) || [];
+
+  return <GlossaryRenderer content={content} terms={glossaryList} />;
 }

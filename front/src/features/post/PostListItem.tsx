@@ -4,11 +4,7 @@ import { useState } from "react";
 import { IPost, ICategory } from "@/interfaces";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import {
-  Pin,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { Pin, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 
 interface PostListItemProps {
@@ -19,7 +15,6 @@ interface PostListItemProps {
 export const PostListItem = ({ post, category }: PostListItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Umbral base para mostrar botón "Leer más" (aprox 3 líneas)
   const isLongContent = post.content.length > 250;
 
   return (
@@ -56,7 +51,7 @@ export const PostListItem = ({ post, category }: PostListItemProps) => {
       </div>
 
       {/* 2. Título */}
-      <Link href={`/posts/${post.id}`} className="block w-fit">
+      <Link href={`/posts/${post.id}`} prefetch={true} className="block w-fit">
         <h3 className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors cursor-pointer">
           {post.title}
         </h3>

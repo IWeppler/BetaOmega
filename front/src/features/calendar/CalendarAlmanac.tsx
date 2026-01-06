@@ -16,7 +16,6 @@ import {
   getDay,
   isToday,
 } from "date-fns";
-import { es } from "date-fns/locale";
 import {
   ChevronLeft,
   ChevronRight,
@@ -33,6 +32,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { ButtonGhost } from "@/shared/ui/Button";
+import { zallampalamLocale } from "@/lib/customLocale";
 
 // 1. Definimos la interfaz para el Tema
 interface ITheme {
@@ -46,53 +46,53 @@ interface ITheme {
 // 2. Aplicamos el tipo Record<number, ITheme>
 const THEMES: Record<number, ITheme> = {
   0: {
-    name: "Espíritu",
+    name: "Luz",
     color: "bg-orange-50 text-orange-700 border-orange-200",
     dot: "bg-orange-500",
     icon: Sun,
-    desc: "Domingo de celebración.",
+    desc: "Domingo",
   },
   1: {
-    name: "Vida",
+    name: "Cielo",
     color: "bg-red-50 text-red-700 border-red-200",
     dot: "bg-red-500",
     icon: Heart,
-    desc: "Lunes de vitalidad.",
+    desc: "Lunes",
   },
   2: {
     name: "Naturaleza",
     color: "bg-green-50 text-green-700 border-green-200",
     dot: "bg-green-500",
     icon: Leaf,
-    desc: "Martes de conexión.",
+    desc: "Martes",
   },
   3: {
-    name: "Energía",
+    name: "Omniverso",
     color: "bg-yellow-50 text-yellow-700 border-yellow-200",
     dot: "bg-yellow-500",
     icon: Sun,
-    desc: "Miércoles de potencia.",
+    desc: "Miércoles",
   },
   4: {
-    name: "Sabiduría",
+    name: "Vida",
     color: "bg-purple-50 text-purple-700 border-purple-200",
     dot: "bg-purple-500",
     icon: Moon,
-    desc: "Jueves de estudio.",
+    desc: "Jueves",
   },
   5: {
     name: "Humano",
     color: "bg-blue-50 text-blue-700 border-blue-200",
     dot: "bg-blue-500",
     icon: User,
-    desc: "Viernes de comunidad.",
+    desc: "Viernes",
   },
   6: {
     name: "Descanso",
     color: "bg-slate-50 text-slate-600 border-slate-200",
     dot: "bg-slate-400",
     icon: Coffee,
-    desc: "Sábado de reposo.",
+    desc: "Sábado",
   },
 };
 
@@ -140,11 +140,10 @@ export const CalendarAlmanac = ({ events }: Props) => {
     <div className="max-w-6xl mx-auto p-4 lg:p-8">
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
-        {/* Título y Navegación */}
         <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-start">
           <h2 className="text-lg md:text-2xl font-bold text-slate-900 capitalize flex items-center gap-2">
             <CalendarIcon className="w-6 h-6 text-slate-900" />
-            {format(currentDate, "MMMM yyyy", { locale: es })}
+            {format(currentDate, "MMMM yyyy", { locale: zallampalamLocale })}
           </h2>
           <div className="flex gap-1">
             <ButtonGhost onClick={prevMonth} className="p-2 bg-white">
@@ -253,7 +252,7 @@ export const CalendarAlmanac = ({ events }: Props) => {
                   {format(selectedDate, "d")}
                 </div>
                 <div className="text-sm font-bold uppercase tracking-widest mb-4 opacity-80">
-                  {format(selectedDate, "MMMM", { locale: es })}
+                  {format(selectedDate, "MMMM", { locale: zallampalamLocale })}
                 </div>
                 <div className="bg-white/50 backdrop-blur-sm p-4 rounded-xl w-full flex flex-col items-center border border-white/50 shadow-sm">
                   <selectedTheme.icon className="w-8 h-8 mb-2 opacity-80" />
@@ -309,9 +308,9 @@ export const CalendarAlmanac = ({ events }: Props) => {
                     ))}
                   </div>
                 ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-neutral-400 text-sm italic py-4">
+                  <div className="h-full flex flex-col items-center justify-center text-neutral-600 text-sm italic py-4">
                     <p>No hay eventos programados.</p>
-                    <span className="text-xs opacity-70 mt-1">
+                    <span className="text-xs opacity-70 mt-1 text-neutral-500">
                       ¡Disfruta del día!
                     </span>
                   </div>
