@@ -3,9 +3,8 @@ import {
   TrainingDashboard,
   IMastery,
 } from "@/features/training/TrainingDashboard";
-import { IUser } from "@/interfaces"; // Asegúrate de importar esto para el casting
+import { IUser } from "@/interfaces";
 
-// CORRECCIÓN 1: Interfaz para los datos crudos de la DB
 interface DBModule {
   id: number;
   name: string;
@@ -18,7 +17,6 @@ interface DBModule {
 export default async function TrainingPage() {
   const supabase = await createClient();
 
-  // 1. Obtener Usuario
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -33,15 +31,12 @@ export default async function TrainingPage() {
     isAdmin = profile?.role === "admin";
   }
 
-  // 2. Obtener Módulos (Juegos)
   const { data: modulesData } = await supabase
     .from("training_modules")
     .select("*")
     .order("id");
 
-  // CORRECCIÓN 2: Usamos la interfaz DBModule en lugar de 'any'
-  // Si modulesData es null, usamos un array vacío
-  const modules = (modulesData as DBModule[] || []).map((m) => ({
+  const modules = ((modulesData as DBModule[]) || []).map((m) => ({
     id: m.id,
     name: m.name,
     created_at: m.created_at,

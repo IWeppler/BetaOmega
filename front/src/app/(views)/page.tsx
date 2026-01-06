@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabaseServer";
 import { DashboardFeed } from "@/features/dashboard/DashboardFeed";
 import { DashboardSidebar } from "@/features/dashboard/DashboardSidebar";
 import { ICategory, IPost } from "@/interfaces";
 import { DailySanzheiModal } from "@/features/sanzhei/DailySanzheiModal";
 import { MobileHeader } from "@/shared/components/MobileHeader";
+
+export const metadata: Metadata = {
+  title: "Novedades — Canal Oficial",
+  description: "Explora las últimas novedades de Sabiduría Omniversal Supina.",
+};
 
 export default async function DashboardPage() {
   const supabase = await createClient();

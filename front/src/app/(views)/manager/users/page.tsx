@@ -114,7 +114,7 @@ export default function AdminUsersPage() {
         title="Gestión de Usuarios"
         subtitle="Gestiona tus usuarios aquí."
       />
-      <main className="flex-1 overflow-auto p-6 bg-linear-to-b from-[#f9f7f5] to-white">
+      <main className="max-w-7xl flex-1 overflow-auto p-6 bg-linear-to-b from-[#f9f7f5] to-white">
         {loading ? (
           <div className="flex-1 flex items-center justify-center h-screen">
             <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
