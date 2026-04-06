@@ -84,7 +84,7 @@ export const LoginFormUI = ({ onSuccess }: Props) => {
       <button
         type="button"
         onClick={handleGoogleLogin}
-        className="w-full flex items-center justify-center px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+        className="w-full flex items-center justify-center px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
       >
         <GoogleIcon />
         Continuar con Google
@@ -127,7 +127,7 @@ export const LoginFormUI = ({ onSuccess }: Props) => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full flex align-center justify-center bg-slate-900 hover:bg-slate-800 text-white"
+              className="w-full flex align-center justify-center bg-slate-900 hover:bg-slate-800 text-white cursor-pointer"
             >
               {isSubmitting ? "Iniciando Sesión..." : "Iniciar Sesión"}
             </Button>

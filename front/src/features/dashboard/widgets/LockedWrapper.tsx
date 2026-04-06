@@ -1,6 +1,7 @@
 "use client";
 
 import { useUIStore } from "@/shared/store/uiStore";
+import { Button } from "@/shared/ui/Button";
 import { Lock } from "lucide-react";
 
 interface Props {
@@ -13,7 +14,7 @@ export const LockedWrapper = ({ children, isLocked }: Props) => {
 
   return (
     <div className="relative rounded-xl">
-      {/* Contenido (con Blur si está bloqueado) */}
+      {/* Contenido */}
       <div
         className={`flex flex-col gap-6 transition-all duration-500 ${
           isLocked
@@ -29,16 +30,17 @@ export const LockedWrapper = ({ children, isLocked }: Props) => {
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center rounded-xl bg-white/20 backdrop-blur-[1px] transition-all duration-300">
           <button
             onClick={() => openAuthModal("login")}
-            className="flex flex-col items-center gap-3 group/btn cursor-pointer transform hover:scale-105 transition-transform"
+            className="flex flex-col items-center gap-3 group/btn cursor-pointer"
           >
-            <div className="p-4 bg-slate-900 rounded-full shadow-2xl shadow-indigo-500/30 border border-slate-900 transition-all duration-300 group-hover:scale-110">
+            <div className="p-4 bg-slate-900 rounded-full shadow-2xl shadow-indigo-500/30 border border-slate-900 transition-all duration-300">
               <Lock className="h-6 w-6 text-slate-100" />
             </div>
-            <div className="px-4 py-1.5 bg-slate-800 rounded-full border border-slate-900 shadow-lg backdrop-blur-md">
-              <span className="text-xs font-bold text-slate-100 uppercase tracking-wide">
-                Inicia Sesión para ver
-              </span>
-            </div>
+            <Button
+              onClick={() => openAuthModal("login")}
+              className="border-slate-800 bg-slate-900 hover:bg-slate-800 text-white px-6 shadow-lg"
+            >
+              Únete para ver más
+            </Button>
           </button>
         </div>
       )}

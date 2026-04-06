@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  Youtube,
-  Instagram,
-  MessageCircle,
-  Facebook,
-  LucideIcon,
-} from "lucide-react";
+import React from "react";
+import { Instagram, LucideIcon } from "lucide-react";
 
 export const SocialLinks = () => {
   return (
@@ -18,17 +13,17 @@ export const SocialLinks = () => {
       />
       <SocialIcon
         href="https://www.youtube.com/@sabiduriaomniversalsupina"
-        icon={Youtube}
+        icon="/youtube.svg"
         color="text-red-600"
       />
       <SocialIcon
         href="https://whatsapp.com/"
-        icon={MessageCircle}
+        icon="/whatsapp.svg"
         color="text-green-600"
       />
       <SocialIcon
         href="https://www.facebook.com/profile.php?id=61579209137758&locale=es_LA"
-        icon={Facebook}
+        icon="/facebook.svg"
         color="text-blue-600"
       />
     </div>
@@ -41,15 +36,19 @@ const SocialIcon = ({
   color,
 }: {
   href: string;
-  icon: LucideIcon;
+  icon: LucideIcon | string;
   color: string;
 }) => (
   <a
     href={href}
     target="_blank"
     rel="noreferrer"
-    className={`p-2 bg-white rounded-full shadow-sm border border-slate-100 transition-transform hover:scale-110 ${color}`}
+    className={`p-2 bg-white rounded-full shadow-sm border border-slate-100 transition-transform flex items-center justify-center ${color}`}
   >
-    <Icon className="h-4 w-4" />
+    {typeof Icon === "string" ? (
+      <img src={Icon} alt="Social icon" className="h-4 w-4" />
+    ) : (
+      <Icon className="h-4 w-4" />
+    )}
   </a>
 );

@@ -12,7 +12,7 @@ const AuthModalContent = () => {
   const { isAuthModalOpen, closeAuthModal, authView, openAuthModal } =
     useUIStore();
 
-  const searchParams = useSearchParams(); 
+  const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -32,13 +32,10 @@ const AuthModalContent = () => {
   return (
     <Dialog open={isAuthModalOpen} onOpenChange={closeAuthModal}>
       <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden bg-white">
-        <div className="p-6 bg-slate-50 border-b border-slate-100 text-center">
+        <div className="p-6 border-b border-slate-100 text-center">
           <DialogTitle className="text-xl font-bold text-slate-900">
             Bienvenido a Beta & Omega
           </DialogTitle>
-          <p className="text-sm text-slate-500 mt-1">
-            Únete a la comunidad para acceder a todo el contenido.
-          </p>
         </div>
 
         <div className="p-6">
@@ -48,8 +45,12 @@ const AuthModalContent = () => {
             className="w-full"
           >
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
-              <TabsTrigger value="register">Registrarse</TabsTrigger>
+              <TabsTrigger value="login" className="cursor-pointer">
+                Iniciar Sesión
+              </TabsTrigger>
+              <TabsTrigger value="register" className="cursor-pointer">
+                Registrarse
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="login" className="mt-0">
